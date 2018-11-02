@@ -1,0 +1,34 @@
+
+
+Links: 
+	To speed up tree traversal by not looking at same moves twice - https://en.wikipedia.org/wiki/Transposition_table
+	To speed up calculations and storage - https://en.wikipedia.org/wiki/Bitboard
+	Paper on how to improve Othello - https://skatgame.net/mburo/ps/improve.pdf
+	Paper on playing Othello using Monte-Carlo simulations (What AlphaZero uses) - https://project.dke.maastrichtuniversity.nl/games/files/bsc/Nijssen_BSc-paper.pdf
+	Most powerful Othello engine - https://en.wikipedia.org/wiki/NTest
+	Someone Else's AI implementation - https://github.com/Somnibyte/Othello-AI-Game/tree/master/Othello
+
+
+Solvability: 
+	8x8 has about 10^28 legal moves. 8x8 is practically solved. 6x6 is definitly solved. 
+
+	"Regarding the three main openings of diagonal, perpendicular and parallel, it appears that both diagonal and perpendicular openings lead to drawing lines, while the parallel opening is a win for black. The drawing tree also seems bigger after the diagonal opening than after the perpendicular opening.[14] The parallel opening has strong advantages for the black player, enabling him to always win in a perfect play"
+
+
+
+Improvements: 
+	Can use Negamax, or MTD-f instead of minimax. 
+	https://en.wikipedia.org/wiki/Principal_variation_search
+	https://en.wikipedia.org/wiki/Negamax
+	https://en.wikipedia.org/wiki/MTD-f
+
+	Have opening book, which is a database of good openings, to reduce computations. 
+	Can implement parallel searching if have multi-core. 
+
+Evaluation/heuristic techniques: 
+	Different squares have different values - Corners are important, and more values. 
+	Mobility is important - More possible moves for you, and fewer for your opponent, is good. 
+	Pattern evaluation - Look at previous games to determine patterns. 
+
+	Can try and incorporate reinforcement learning as a part of the heuristic function. 
+

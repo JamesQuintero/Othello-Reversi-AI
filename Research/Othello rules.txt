@@ -1,0 +1,18 @@
+Othello rules: 
+
+Black and white pieces. 
+
+Board is denoted a-h columns left to right, and 1-8 for rows, top to bottom. 
+
+Pieces are called stones. 
+Start off with white in D4 and E5, and black in D5 and E4. 
+
+If you place a piece and it sandwiches your opponents piece or pieces inbetween 2 of your pieces, either vertically, horizontally, or diagonally, you must flip their pieces to your color. 
+
+A piece can only be played if it will flip an opponent's.
+
+If there are no options, your turn passes, and the opponent goes again. 
+
+When the board is filled, or neither player has a legal move, the game is over. 
+
+The winner is the player with the most pieces in their color. 
