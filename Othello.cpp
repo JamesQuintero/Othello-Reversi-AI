@@ -11,7 +11,6 @@ Othello::Othello()
 {
 	Tree tree;
 
-
 	//player is white
 	player_piece = 2;
 	//AI is black
@@ -99,7 +98,6 @@ void Othello::run()
 bool Othello::playersMove()
 {
 	cout<<"Player's move. "<<endl;
-	cout<<"Current board: "<<endl;
 	printBoard(board, size);
 
 	string choice = "";
@@ -110,8 +108,6 @@ bool Othello::playersMove()
 	while (valid_move == false)
 	{
 		//returns array of possible move coordinates, with each index being an array of size 2: (col, row)
-		// int** possible_moves = new int*[size*size];
-		// possibleMoves(possible_moves);
 		vector<vector<int>> possible_moves = possibleMoves(player_piece);
 
 
@@ -133,8 +129,6 @@ bool Othello::playersMove()
 
 		cout<<"Where to move? (ex: c3): ";
 		cin>>choice;
-
-		cout<<"You chose: "<<choice<<endl;
 
 		int* coordinates = new int[2];
 		convert_to_coordinates(choice, coordinates);
@@ -172,6 +166,56 @@ bool Othello::AIMove(int AI_version)
 
 	//will get children from the tree
 
+	cout<<"AI's move. "<<endl;
+	printBoard(board, size);
+
+	string choice = "";
+	int col = -1;
+	int row = -1;
+
+	bool valid_move = false;
+	while (valid_move == false)
+	{
+		//returns array of possible move coordinates, with each index being an array of size 2: (col, row)
+		vector<vector<int>> possible_moves = possibleMoves(AI_piece);
+
+
+		cout<<"Legal moves: "<<endl;
+		for(int x = 0; x < possible_moves.size(); x++)
+		{
+			string notation = convert_to_notation(possible_moves[x][0], possible_moves[x][1]);
+			cout<<notation<<endl;	
+		}
+		cout<<endl;
+		
+
+		//no possible moves
+		if(possible_moves.size()==0)
+		{
+			cout<<"No legal moves"<<endl;
+			return false;
+		}
+
+		
+		srand(time(NULL));
+
+		int random_index = randNum(0, possible_moves.size());
+
+
+
+		col = possible_moves[random_index][0];
+		row = possible_moves[random_index][1];
+
+		valid_move = true;
+	}
+
+	//player places piece
+	place_piece(board, AI_piece, col, row);
+
+	//add player's move to neural net
+	// tree.playerMove(board);
+
+	cout<<endl<<endl<<endl;
 
 	return true;
 }
@@ -179,12 +223,6 @@ bool Othello::AIMove(int AI_version)
 //places piece down at specified position
 bool Othello::place_piece(int** board, int piece, int col, int row)
 {
-	// int* coordinates = new int[2];
-	// convert_to_coordinates(position, coordinates);
-
-	// int row = coordinates[0];
-	// int col = coordinates[1];
-
 
 	try{
 		board[col][row] = piece;
@@ -395,161 +433,7 @@ bool Othello::place_piece(int** board, int piece, int col, int row)
 	return true;
 }
 
-//returns number of flips if given a vector of whatever
-int Othello::count_flips(vector<int> row, int piece, int other_piece)
-{
-	int num_flips = 0;
-	bool encountered_my_piece = false;
-	bool encountered_other_piece = false;
-	for(int x = 0; x < row.size(); x++)
-	{
-		// cout<<x<<": "<<row[x]<<endl;
-
-		//if other player's piece, might be sandwiching them
-		if(row[x]==other_piece)
-			encountered_other_piece = true;
-		//if found piece, then might be end of sandwhich
-		else if(row[x]==piece)
-		{
-			//if start of sandwich
-			if(encountered_my_piece==false)
-			{
-				encountered_my_piece = true;
-				encountered_other_piece = false;
-			}
-			//if end of sandwich
-			else if(encountered_other_piece==true)
-			{
-				num_flips++;
-				encountered_other_piece = false;
-			}
-		}
-		//if encountered blank space
-		else
-			encountered_other_piece = false;
-	}
-	// cout<<endl;
-
-	return num_flips;
-}
-
-//returns specified column of board
-vector<int> Othello::get_column(int** board, int col)
-{
-	vector<int> col_list;
-
-	for(int x = 0; x < size; x++)
-		col_list.push_back(board[col][x]);
-
-	return col_list;
-}
-
-//returns specified row of board
-vector<int> Othello::get_row(int** board, int row)
-{
-	vector<int> row_list;
-
-	for(int x = 0; x < size; x++)
-		row_list.push_back(board[x][row]);
-
-	return row_list;
-}
-
-//returns positive slope diagonal of board, and can have length of 1 to sqrt( size^2 + size^2)
-vector<int> Othello::get_up_diagonal(int** board, int col, int row)
-{
-
-	//gets to bottom of diagonal by subtracting 1 from col and adding 1 to row until can't. 
-	while(col>0 && row<size-1)
-	{
-		col--;
-		row++;
-	}
-
-
-	vector<int> diagonal_list;
-
-	//goes to the top of diagonal by adding 1 to col and subtracting 1 from row until can't. 
-	while(col<size && row>=0)
-	{
-
-		diagonal_list.push_back(board[col][row]);
-
-		col++;
-		row--;
-	}
-
-
-	return diagonal_list;
-}
-
-//returns positive slope diagonal of board, and can have length of 1 to sqrt( size^2 + size^2)
-vector<int> Othello::get_down_diagonal(int** board, int col, int row)
-{
-	//gets to top of the diagonal by subtracting 1 from col and subtracting 1 from row until can't. 
-	while(col>0 && row>0)
-	{
-		col--;
-		row--;
-	}
-
-
-	vector<int> diagonal_list;
-
-	//goes to the top of diagonal by adding 1 to col and adding 1 to row until can't. 
-	while(col<size && row<size)
-	{
-
-		diagonal_list.push_back(board[col][row]);
-
-		col++;
-		row++;
-	}
-
-
-	return diagonal_list;
-}
-
-//converts a string position, like "d4" into index coordinates, like [4,3]
-void Othello::convert_to_coordinates(string position, int * coordinates)
-{
-	int letter = int(position[0]);
-	int number = int(position[1]); //converts "4" to ascii 52 
-
-	int row = 0;
-	int col = number - 48 - 1; //-48 to get actual number from ascii, then -1 to get proper index
-
-	//if letter is lowercase
-	if (letter >= 97)
-		row = letter-97;
-	//if letter is uppercase
-	else
-		row = letter-65;
-
-
-	// cout<<"Letter: "<<letter<<endl;
-	// cout<<"Number: "<<number<<endl;
-	// cout<<"coor: ("<<col<<","<<row<<")"<<endl<<endl;
-
-
-	// coordinates[0] = col;
-	// coordinates[1] = row;
-	coordinates[0] = row;
-	coordinates[1] = col;
-}
-
-//converts a string position, like "d4" into index coordinates, like [4,3]
-string Othello::convert_to_notation(int col, int row)
-{
-	char letter = 'a'+col;
-	char c = '1'+row;
-
-	string to_return = string() + letter+c;
-	return to_return;
-}
-
-//returns coordinates of possible board configurations for next move consideration.
-//unneeded parts of the list have coordinates (-1,-1).
+//returns coordinates of legal moves
 vector<vector<int>> Othello::possibleMoves(int piece)
 {
 
@@ -701,4 +585,43 @@ void Othello::resetGame()
 
 	//resets current game state to root node
 	tree.ptr = tree.root;
+}
+
+
+//converts a string position, like "d4" into index coordinates, like [4,3]
+void Othello::convert_to_coordinates(string position, int * coordinates)
+{
+	int letter = int(position[0]);
+	int number = int(position[1]); //converts "4" to ascii 52 
+
+	int row = 0;
+	int col = number - 48 - 1; //-48 to get actual number from ascii, then -1 to get proper index
+
+	//if letter is lowercase
+	if (letter >= 97)
+		row = letter-97;
+	//if letter is uppercase
+	else
+		row = letter-65;
+
+
+	// cout<<"Letter: "<<letter<<endl;
+	// cout<<"Number: "<<number<<endl;
+	// cout<<"coor: ("<<col<<","<<row<<")"<<endl<<endl;
+
+
+	// coordinates[0] = col;
+	// coordinates[1] = row;
+	coordinates[0] = row;
+	coordinates[1] = col;
+}
+
+//converts a string position, like "d4" into index coordinates, like [4,3]
+string Othello::convert_to_notation(int col, int row)
+{
+	char letter = 'a'+col;
+	char c = '1'+row;
+
+	string to_return = string() + letter+c;
+	return to_return;
 }

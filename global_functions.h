@@ -134,5 +134,12 @@ inline extern string stringBoard(int** board, int side_size)
 	return new_board;
 }
 
+//returns random int from start to end
+inline extern int randNum(int start, int end)
+{
+	int max = end-start;
+	return rand() % max + start;
+}
+
 
 // #endif

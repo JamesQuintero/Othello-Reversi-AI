@@ -48,21 +48,24 @@ class Othello
 		bool playerWon();
 		//returns true if AI won the game
 		bool AIWon();
+		//places specified piece on the specified board at the specified position, and flips the opponent's pieces
 		bool place_piece(int** board, int piece, int col, int row);
+		//converts c4 into (2,3)
 		void convert_to_coordinates(string position, int * coordinates);
+		//converts (2,3) into c4
 		string convert_to_notation(int col, int row);
-
 		//returns array of possible moves in string format
 		vector<vector<int>> possibleMoves(int piece);
+		//callbacks list of pieces surrounding specified position
 		void get_neighbors(int* neighbors, int x, int y);
 		//reset's game
 		void resetGame();
 
-		int count_flips(vector<int> col_list, int piece, int other_piece);
-		vector<int> get_column(int** board, int col);
-		vector<int> get_row(int** board, int row);
-		vector<int> get_up_diagonal(int** board, int col, int row);
-		vector<int> get_down_diagonal(int** board, int col, int row);
+		// int count_flips(vector<int> col_list, int piece, int other_piece);
+		// vector<int> get_column(int** board, int col);
+		// vector<int> get_row(int** board, int row);
+		// vector<int> get_up_diagonal(int** board, int col, int row);
+		// vector<int> get_down_diagonal(int** board, int col, int row);
 
 		int countPieces(int** board, int piece);
 
