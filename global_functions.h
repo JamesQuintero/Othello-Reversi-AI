@@ -37,9 +37,15 @@ inline extern void printBoard(int** board, int size)
 		for(int y = 0; y < size; y++)
 		{
 			//1 = X
-			if(board[x][y]==1)
+			// if(board[x][y]==1)
+			// 	cout<<"[B]";
+			// else if(board[x][y]==2)
+			// 	cout<<"[W]";
+			// else
+			// 	cout<<"[ ]";
+			if(board[y][x]==1)
 				cout<<"[B]";
-			else if(board[x][y]==2)
+			else if(board[y][x]==2)
 				cout<<"[W]";
 			else
 				cout<<"[ ]";
@@ -47,6 +53,24 @@ inline extern void printBoard(int** board, int size)
 		cout<<endl;
 	}
 
+}
+
+//creates a size x size 2D array
+inline extern int** copyBoard(int** board, int size)
+{
+	int** new_board = new int*[size];
+	for(int x =0; x <size; x++)
+	{
+		int* col = new int[size];
+
+		//places 0
+		for(int y =0; y < size; y++)
+			col[y] = board[x][y];
+
+		new_board[x] = col;
+	}
+
+	return new_board;
 }
 
 //creates a size x size 2D array
