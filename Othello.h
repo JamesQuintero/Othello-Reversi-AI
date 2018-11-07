@@ -1,6 +1,8 @@
 #include <iostream>
 #include <string>
+#include <vector>
 #include "Tree.h"
+
 
 
 
@@ -50,6 +52,7 @@ class Othello
 		void convert_to_coordinates(string position, int * coordinates);
 		//returns array of possible moves in string format
 		void possibleMoves(int** moves);
+		void get_neighbors(int* neighbors, int x, int y);
 		//reset's game
 		void resetGame();
 

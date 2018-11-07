@@ -1,11 +1,11 @@
 
 #include <iostream>
 #include <string>
+#include <vector>
 #include "global_functions.h"
 #include "Othello.h"
 
 
-using namespace std;
 
 Othello::Othello()
 {
@@ -155,6 +155,9 @@ bool Othello::playersMove()
 bool Othello::AIMove(int AI_version)
 {
 
+	//will get children from the tree
+
+
 	return true;
 }
 
@@ -204,9 +207,40 @@ void Othello::convert_to_coordinates(string position, int coordinates[])
 }
 
 //returns coordinates of possible board configurations for next move consideration.
-//utreeeeded parts of the list have coordinates (-1,-1).
+//unneeded parts of the list have coordinates (-1,-1).
 void Othello::possibleMoves(int ** moves)
 {
+	// int index = 0;
+	// //iterates through each part of the board
+	// for(int x = 0; x < size; x++)
+	// {
+	// 	for(int y = 0; y < size; y++)
+	// 	{
+	// 		//gets the neighbors
+	// 		int* neighbors = new int[9];
+	// 		get_neighbors(neighbors, y, x);
+
+	// 		// cout<<endl;
+	// 		// cout<<"("<<x<<","<<y<<"): ";
+	// 		// for(int z = 0; z < 9; z++)
+	// 		// 	cout<<neighbors[z]<<" ";
+	// 		// cout<<endl;
+
+	// 		int top_left = neighbors[0];
+	// 		int top_middle = neighbors[1];
+	// 		int top_right = neighbors[2];
+	// 		int middle_left = neighbors[3];
+	// 		int middle_right = neighbors[5];
+	// 		int bottom_left = neighbors[6];
+	// 		int bottom_middle = neighbors[7];
+	// 		int bottom_right = neighbors[8];
+
+	// 		//checks if player will be placing by the other player's piece. 
+			
+
+	// 	}
+	// }
+
 	int index = 0;
 
 	for(int x = 0; x < size; x++)
@@ -236,6 +270,26 @@ void Othello::possibleMoves(int ** moves)
 		moves[index] = pair;
 		// cout<<"Addr "<<index<<" :"<<moves[index]<<endl;
 		index++;
+	}
+}
+
+void Othello::get_neighbors(int* neighbors, int col, int row)
+{
+
+	//iterates through all neighbors
+	int index = 0;
+	for(int x = col-1; x <= col+1; x++)
+	{
+		for(int y = row-1; y <= row+1; y++)
+		{
+			//if out of bounds, skip
+			if(x <0 || y <0 || x>=size || y >= size)
+				neighbors[index] = -1;
+			else
+				neighbors[index] = board[x][y];
+			
+			index++;
+		}
 	}
 }
 
