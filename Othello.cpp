@@ -84,7 +84,7 @@ void Othello::run()
 		{
 			tree.printNet(tree.root);
 
-			cout<<end<<endl<<endl;
+			cout<<endl<<endl<<endl;
 		}
 	
 	}
@@ -141,7 +141,7 @@ bool Othello::playersMove()
 	cout<<"Is valid move"<<endl;
 
 	//player places piece
-	board[col][row] = player_piece;
+	place_piece(player_piece, choice);
 
 	//add player's move to neural net
 	// tree.playerMove(board);
