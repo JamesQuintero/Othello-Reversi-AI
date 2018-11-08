@@ -35,6 +35,9 @@ class Othello
 
 	public:
 		Othello();
+
+		int MIN = numeric_limits<int>::min();
+		int MAX = numeric_limits<int>::max();
 		
 
 		//runs the game

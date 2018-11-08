@@ -1,7 +1,6 @@
 #include <iostream>
 #include <string>
 #include <ctime>
-#include <limits>
 // #include "sqlite/sqlite3.h"
 
 #include "global_functions.h"
@@ -61,11 +60,12 @@ Board Tree::getBoardMinHeuristic(node* ptr)
 }
 
 
+
 //calculates heuristics for AI down to a certain depth
 //considers current node as the AI's move, and therefore will be minimizing heuristic
-int Tree::getMinHeuristic(node * ptr, int depth_left)
+int Tree::getMinHeuristic(node * ptr, int alpha /* starts as -INFINITY */, int beta /* starts as INFINITY */, int depth_left)
 {
-	int cur_heuristic = 0;
+	int cur_heuristic = -1;
 
 	//if has no children
 	if(ptr->next_index == 0 || depth_left<=0)
@@ -73,20 +73,35 @@ int Tree::getMinHeuristic(node * ptr, int depth_left)
 		cur_heuristic = calculateHeuristic(ptr);
 		ptr->h = cur_heuristic;
 
-		// ptr->board.printBoard(5-depth_left);
-		// cout<<"h: "<<ptr->h<<endl;
-
 		return cur_heuristic;
 	}
+
+
+
+	// bestVal = +INFINITY 
+ //    for each child node :
+ //        value = minimax(node, depth+1, true, alpha, beta)
+ //        bestVal = min( bestVal, value) 
+ //        beta = min( beta, bestVal)
+ //        if beta <= alpha:
+ //            break
+ //    return bestVal
 
 
 	//iterates through all children
 	int min_heuristic = numeric_limits<int>::max(); // max value
 	for(int x = 0; x < ptr->next_index; x++)
 	{
-		int h = getMaxHeuristic(ptr->next[x], depth_left--);
+		int h = getMaxHeuristic(ptr->next[x], alpha, beta, depth_left--);
 		if(h < min_heuristic)
 			min_heuristic = h;
+
+		if(min_heuristic < beta)
+			beta = min_heuristic;
+
+		//prunes
+		if(beta <= alpha)
+			break;
 
 	}
 
@@ -97,9 +112,9 @@ int Tree::getMinHeuristic(node * ptr, int depth_left)
 
 }
 
-int Tree::getMaxHeuristic(node * ptr, int depth_left)
+int Tree::getMaxHeuristic(node * ptr, int alpha /* starts as -INFINITY */, int beta /* starts as INFINITY */, int depth_left)
 {
-	int cur_heuristic = 0;
+	int cur_heuristic = -1;
 	
 	//if has no children
 	if(ptr->next_index == 0 || depth_left<=0)
@@ -111,13 +126,31 @@ int Tree::getMaxHeuristic(node * ptr, int depth_left)
 	}
 
 
+
+	// bestVal = -INFINITY 
+ //    for each child node :
+ //        value = minimax(node, depth+1, false, alpha, beta)
+ //        bestVal = max( bestVal, value) 
+ //        alpha = max( alpha, bestVal)
+ //        if beta <= alpha:
+ //            break
+ //    return bestVal
+
+
 	//iterates through all children
 	int max_heuristic = numeric_limits<int>::min(); // minimum value
 	for(int x = 0; x < ptr->next_index; x++)
 	{
-		int h = getMinHeuristic(ptr->next[x], depth_left--);
+		int h = getMinHeuristic(ptr->next[x], alpha, beta, depth_left--);
 		if(h > max_heuristic)
 			max_heuristic = h;
+
+		if(max_heuristic > alpha)
+			alpha = max_heuristic;
+
+		//prune the rest
+		if(beta <= alpha)
+			break;
 
 	}
 	ptr->h = max_heuristic;

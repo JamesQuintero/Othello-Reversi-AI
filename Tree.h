@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <limits>
 #include "Board.h"
 
 
@@ -64,8 +65,8 @@ class Tree
 		void newNode(node * ptr, Board * new_board, int piece);
 
 		void determinePossibleMoves(node* ptr, int piece);
-		int getMinHeuristic(node * ptr, int depth_left);
-		int getMaxHeuristic(node * ptr, int depth_left);
+		int getMinHeuristic(node * ptr, int alpha, int beta, int depth_left);
+		int getMaxHeuristic(node * ptr, int alpha, int beta, int depth_left);
 		int calculateHeuristic(node* ptr);
 
 		bool hasLegalMoves(node* ptr);

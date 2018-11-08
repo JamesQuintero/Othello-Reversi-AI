@@ -108,7 +108,8 @@ void Othello::run()
 //Player's turn to move. returns true if successful
 bool Othello::playersMove()
 {
-	tree.getMaxHeuristic(tree.ptr, tree.max_depth+1);
+	tree.getMaxHeuristic(tree.ptr, MIN, MAX, tree.max_depth+1);
+
 	// tree.printNet(tree.ptr);
 
 	cout<<"Player's move. "<<endl;
@@ -180,7 +181,7 @@ bool Othello::playersMove()
 //AI's turn to move. returns true if successful. 
 bool Othello::AIMove(int AI_version)
 {
-	tree.getMinHeuristic(tree.ptr, tree.max_depth+1);
+	tree.getMinHeuristic(tree.ptr, MIN, MAX, tree.max_depth+1);
 	//will get children from the tree
 
 
