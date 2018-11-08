@@ -68,6 +68,8 @@ class Tree
 		void printNode(node * ptr);
 		void printNet(node * ptr);
 
+		int getOtherPiece(int piece);
+
 
 
 };

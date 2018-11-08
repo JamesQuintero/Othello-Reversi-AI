@@ -77,6 +77,15 @@ void Tree::iterateTreeDepth(node* ptr, int piece, int cur_depth, int max_depth)
 	//if has no children
 	if(ptr->next_index == 0)
 		determinePossibleMoves(&*ptr, piece);
+
+	//if reached max depth, stop
+	if(cur_depth==max_depth)
+		return;
+
+
+	//iterates through all children
+	for(int x = 0; x < ptr->next_index; x++)
+		iterateTreeDepth(ptr->next[x], getOtherPiece(piece), cur_depth+1, max_depth);
 	
 }
 
@@ -88,6 +97,14 @@ void Tree::printNode(node * ptr)
 	ptr->board.printBoard();
 	cout<<"Num next nodes: "<<ptr->next_index<<endl;
 	cout<<"Heuristic: "<<ptr->h<<endl;
+}
+
+int Tree::getOtherPiece(int piece)
+{
+	if(piece==1)
+		return 2;
+	else
+		return 1;
 }
 
 //prints the neural network in one long output.
