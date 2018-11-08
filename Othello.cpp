@@ -54,11 +54,9 @@ void Othello::run()
 				cout<<"New game Human vs AI"<<endl;
 				resetGame();
 
-				bool player_won = false;
-				bool AI_won = false;
-				bool success = true;
-
+				
 				//goes forever until someone has an unsuccessful move (board is full or no legal moves)
+				bool success = true;
 				while(success==true)
 				{
 					//player moves
@@ -72,17 +70,23 @@ void Othello::run()
 				}
 
 				//determines who won
-				if(playerWon())
+				int player_won = determineWinner();
+				if(player_won==1)
 				{
-					player_won = true;
 					cout<<endl;
 					cout<<"Player WON"<<endl;
 					cout<<endl<<endl;
 				}
-				else if(AIWon())
+				else if(player_won==-1)
 				{
-					AI_won = true;
+					cout<<endl;
 					cout<<"AI WON"<<endl;
+					cout<<endl<<endl;
+				}
+				else
+				{
+					cout<<endl;
+					cout<<"TIE"<<endl;
 					cout<<endl<<endl;
 				}
 
@@ -179,8 +183,11 @@ bool Othello::AIMove(int AI_version)
 	tree.getMinHeuristic(tree.ptr, tree.max_depth+1);
 	//will get children from the tree
 
-	cout<<"AI's move. "<<endl;
+
 	board.printBoard();
+	cout<<endl;
+	cout<<"AI's move. "<<endl;
+	
 
 	string choice = "";
 	int col = -1;
@@ -206,6 +213,9 @@ bool Othello::AIMove(int AI_version)
 	// board.place_piece(AI_piece, col, row);
 	board = new_board;
 
+	board.printBoard();
+	cout<<endl;
+
 	//add player's move to neural net
 	// tree.AIMove(col, row);
 	tree.move(new_board);
@@ -219,15 +229,20 @@ bool Othello::AIMove(int AI_version)
 
 
 //returns true if player won the game
-bool Othello::playerWon()
+int Othello::determineWinner()
 {
-	return false;
-}
+	int num_player_pieces = board.countPieces(player_piece);
+	cout<<"Num player pieces: "<<num_player_pieces<<endl;
 
-//returns true if AI won the game
-bool Othello::AIWon()
-{
-	return false;
+	int num_AI_pieces = board.countPieces(AI_piece);
+	cout<<"Num AI pieces: "<<num_AI_pieces<<endl;
+
+	if(num_player_pieces > num_AI_pieces)
+		return 1;
+	else if(num_player_pieces < num_AI_pieces)
+		return -1;
+	else
+		return 0;
 }
 
 //returns true if it's player's turn to move.

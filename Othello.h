@@ -47,10 +47,8 @@ class Othello
 		bool playersMove();
 		//AI's turn to move. returns true if successful
 		bool AIMove(int AI_version);
-		//returns true if player won the game
-		bool playerWon();
-		//returns true if AI won the game
-		bool AIWon();
+		//returns 1 if player won, -1 if AI won, and 0 if tie
+		int determineWinner();
 		
 		//converts c4 into (2,3)
 		void convert_to_coordinates(string position, int * coordinates);
