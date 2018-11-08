@@ -15,11 +15,15 @@ Othello::Othello()
 	//AI is black
 	AI_piece = 1;
 
+	tree.player_piece = player_piece;
+	tree.AI_piece = AI_piece;
+
 	resetGame();
 
 	//gets first possible moves for black
 	// tree.determinePossibleMoves(&*tree.ptr, AI_piece);
-	tree.iterateTreeDepth(tree.ptr, AI_piece, 1, 2);
+	tree.iterateTreeDepth(tree.ptr, AI_piece, 1, tree.max_depth);
+	// tree.getMinHeuristic(tree.ptr, 2);
 }
 
 //runs the game
@@ -100,6 +104,9 @@ void Othello::run()
 //Player's turn to move. returns true if successful
 bool Othello::playersMove()
 {
+	tree.getMaxHeuristic(tree.ptr, tree.max_depth+1);
+	// tree.printNet(tree.ptr);
+
 	cout<<"Player's move. "<<endl;
 	// printBoard(board, size);
 	board.printBoard();
@@ -158,7 +165,8 @@ bool Othello::playersMove()
 	board.place_piece(player_piece, col, row);
 
 	//add player's move to neural net
-	// tree.playerMove(board);
+	tree.playerMove(col, row);
+	tree.iterateTreeDepth(tree.ptr, AI_piece, 1, tree.max_depth);
 
 	cout<<endl<<endl<<endl;
 
@@ -168,7 +176,7 @@ bool Othello::playersMove()
 //AI's turn to move. returns true if successful. 
 bool Othello::AIMove(int AI_version)
 {
-
+	tree.getMinHeuristic(tree.ptr, tree.max_depth+1);
 	//will get children from the tree
 
 	cout<<"AI's move. "<<endl;
@@ -178,48 +186,31 @@ bool Othello::AIMove(int AI_version)
 	int col = -1;
 	int row = -1;
 
+	Board new_board;
 	bool valid_move = false;
 	while (valid_move == false)
 	{
-		//returns array of possible move coordinates, with each index being an array of size 2: (col, row)
-		vector<vector<int>> possible_moves = board.getPossibleMoveCoordinates(AI_piece);
-
-
-		cout<<"Legal moves: "<<endl;
-		for(int x = 0; x < possible_moves.size(); x++)
-		{
-			string notation = convert_to_notation(possible_moves[x][0], possible_moves[x][1]);
-			cout<<notation<<endl;	
-		}
-		cout<<endl;
-		
-
-		//no possible moves
-		if(possible_moves.size()==0)
-		{
-			cout<<"No legal moves"<<endl;
+		//if no boards
+		if(tree.hasLegalMoves(tree.ptr) == false)
 			return false;
-		}
 
+		//returns board corresponding with the minimum heuristic
+		new_board = tree.getBoardMinHeuristic(tree.ptr);
 		
-		srand(time(NULL));
-
-		int random_index = randNum(0, possible_moves.size());
-
-
-
-		col = possible_moves[random_index][0];
-		row = possible_moves[random_index][1];
+		
 
 		valid_move = true;
 	}
 
-	//player places piece
-	// place_piece(board, AI_piece, col, row);
-	board.place_piece(AI_piece, col, row);
+	//AI places piece
+	// board.place_piece(AI_piece, col, row);
+	board = new_board;
 
 	//add player's move to neural net
-	// tree.playerMove(board);
+	// tree.AIMove(col, row);
+	tree.move(new_board);
+
+	tree.iterateTreeDepth(tree.ptr, player_piece, 1, tree.max_depth);
 
 	cout<<endl<<endl<<endl;
 

@@ -35,8 +35,9 @@ class Board
 		//callbacks list of pieces surrounding specified position
 		void get_neighbors(int* neighbors, int x, int y);
 		int countPieces(int piece);
-		void printBoard();
+		void printBoard(int num_indents=0);
 
+		bool isEqual(Board other_board);
 		int getPieceAtPosition(int col, int row);
 		void copyBoard(Board *old_board);
 

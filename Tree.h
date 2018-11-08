@@ -27,6 +27,8 @@ class Tree
 			// int** board;
 			Board board;
 
+			int piece = 0;
+
 
 			//heuristic
 			double h = 0;
@@ -45,11 +47,16 @@ class Tree
 	public:
 		int piece = 0;
 
+		int AI_piece = 0;
+		int player_piece = 0;
+
 		//root node of the tree
 		node * root;
 
 		//current position in the tree
 		node * ptr;
+
+		int max_depth = 5;
 
 
 		Tree();
@@ -57,16 +64,24 @@ class Tree
 		void newNode(node * ptr, Board * new_board, int piece);
 
 		void determinePossibleMoves(node* ptr, int piece);
+		int getMinHeuristic(node * ptr, int depth_left);
+		int getMaxHeuristic(node * ptr, int depth_left);
+		int calculateHeuristic(node* ptr);
+
+		bool hasLegalMoves(node* ptr);
+		Board getBoardMinHeuristic(node* ptr);
 
 		void iterateTreeDepth(node* ptr, int piece, int cur_depth, int max_depth);
+
 
 		//returns a new board containing Tree's next move
 		// int** AIMove(int** board, int** possible_moves);
 		void AIMove(int col, int row);
 		void playerMove(int col, int row);
+		void move(Board board);
 
-		void printNode(node * ptr);
-		void printNet(node * ptr);
+		void printNode(node * ptr, int indent=0);
+		void printNet(node * ptr, int indent=0);
 
 		int getOtherPiece(int piece);
 

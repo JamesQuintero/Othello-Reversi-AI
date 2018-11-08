@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string>
 #include <ctime>
+#include <limits>
 // #include "sqlite/sqlite3.h"
 
 #include "global_functions.h"
@@ -19,24 +20,6 @@ Tree::Tree()
 	srand(time(0));  // needed once per program run
 }
 
-//links a new node to ptr, with initialized board
-void Tree::newNode(node * ptr, Board * new_board, int piece)
-{
-	ptr->next[ptr->next_index] = new node();
-
-	//ptr to new next node
-	node * next = ptr->next[ptr->next_index];
-
-	//copies new board into new node
-	next->board.copyBoard(new_board);
-
-	//increments number of next nodes
-	ptr->next_index++;
-
-	//pointer to parent
-	next->prev = ptr;
-}
-
 //determines the possible moves by piece, then adds them as children to the current pointer
 void Tree::determinePossibleMoves(node* ptr, int piece)
 {
@@ -50,18 +33,165 @@ void Tree::determinePossibleMoves(node* ptr, int piece)
 	}
 }
 
+//returns tree if there are legal moves, i.e. if there are children to specified node
+bool Tree::hasLegalMoves(node* ptr)
+{
+	if(ptr->next_index>0)
+		return true;
+	else
+		return false;
+}
+
+//returns the node with the smallest heuristic
+Board Tree::getBoardMinHeuristic(node* ptr)
+{
+	int index = 0;
+	int min_heuristic = numeric_limits<int>::max();
+	for(int x = 0; x < ptr->next_index; x++)
+	{
+		int h = ptr->next[x]->h;
+		if(h < min_heuristic)
+		{
+			min_heuristic = h;
+			index = x;
+		}
+	}
+
+	return ptr->next[index]->board;
+}
+
+
+//calculates heuristics for AI down to a certain depth
+//considers current node as the AI's move, and therefore will be minimizing heuristic
+int Tree::getMinHeuristic(node * ptr, int depth_left)
+{
+	int cur_heuristic = 0;
+
+	//if has no children
+	if(ptr->next_index == 0 || depth_left<=0)
+	{
+		cur_heuristic = calculateHeuristic(ptr);
+		ptr->h = cur_heuristic;
+
+		// ptr->board.printBoard(5-depth_left);
+		// cout<<"h: "<<ptr->h<<endl;
+
+		return cur_heuristic;
+	}
+
+
+	//iterates through all children
+	int min_heuristic = numeric_limits<int>::max(); // max value
+	for(int x = 0; x < ptr->next_index; x++)
+	{
+		int h = getMaxHeuristic(ptr->next[x], depth_left--);
+		if(h < min_heuristic)
+			min_heuristic = h;
+
+	}
+
+	ptr->h = min_heuristic;
+
+	return min_heuristic;
+
+
+}
+
+int Tree::getMaxHeuristic(node * ptr, int depth_left)
+{
+	int cur_heuristic = 0;
+	
+	//if has no children
+	if(ptr->next_index == 0 || depth_left<=0)
+	{
+		cur_heuristic = calculateHeuristic(ptr);
+		ptr->h = cur_heuristic;
+
+		return cur_heuristic;
+	}
+
+
+	//iterates through all children
+	int max_heuristic = numeric_limits<int>::min(); // minimum value
+	for(int x = 0; x < ptr->next_index; x++)
+	{
+		int h = getMinHeuristic(ptr->next[x], depth_left--);
+		if(h > max_heuristic)
+			max_heuristic = h;
+
+	}
+	ptr->h = max_heuristic;
+
+	return max_heuristic;
+}
+
+//returns heuristic for specified pointer
+int Tree::calculateHeuristic(node* ptr)
+{
+	Board board = ptr->board;
+
+	
+	int player_count = board.countPieces(player_piece);
+	int AI_count = board.countPieces(AI_piece);
+
+	//Looks at opponent's moves vs player's moves
+	return player_count-AI_count;
+}
+
 
 //Player moves to (col,row), so determine which board that is and move there
 void Tree::playerMove(int col, int row)
 {
-	return;
+	//iterates through current ptrs children
+	for(int x = 0; x < ptr->next_index; x++)
+	{
+		Board temp_board = ptr->next[x]->board;
+
+		//if board matches by seeing if a piece has been placed in specified position
+		if(temp_board.board[col][row]!=0)
+		{
+			ptr = ptr->next[x];
+			break;
+		}
+	}
 }
 
 
 //returns the Board object that the AI moves to
 void Tree::AIMove(int col, int row)
 {
-	return;
+
+	//iterates through current ptrs children
+	for(int x = 0; x < ptr->next_index; x++)
+	{
+		Board temp_board = ptr->next[x]->board;
+
+		//if board matches by seeing if a piece has been placed in specified position
+		if(temp_board.board[col][row]!=0)
+		{
+			ptr = ptr->next[x];
+			break;
+		}
+	}
+
+}
+
+
+//moves to child with board
+void Tree::move(Board board)
+{
+	//iterates through current ptrs children
+	for(int x = 0; x < ptr->next_index; x++)
+	{
+		Board temp_board = ptr->next[x]->board;
+
+		//if board matches by seeing if a piece has been placed in specified position
+		if(board.isEqual(temp_board)==true)
+		{
+			ptr = ptr->next[x];
+			break;
+		}
+	}
 }
 
 
@@ -90,11 +220,30 @@ void Tree::iterateTreeDepth(node* ptr, int piece, int cur_depth, int max_depth)
 }
 
 
+//links a new node to ptr, with initialized board
+void Tree::newNode(node * ptr, Board * new_board, int piece)
+{
+	ptr->next[ptr->next_index] = new node();
+
+	//ptr to new next node
+	node * next = ptr->next[ptr->next_index];
+
+	//copies new board into new node
+	next->board.copyBoard(new_board);
+
+	//increments number of next nodes
+	ptr->next_index++;
+
+	//pointer to parent
+	next->prev = ptr;
+}
+
+
 //prints node's contents in a readable format
-void Tree::printNode(node * ptr)
+void Tree::printNode(node * ptr, int indents /*default is 0 */)
 {
 	//prints tic-tac-toe board
-	ptr->board.printBoard();
+	ptr->board.printBoard(indents);
 	cout<<"Num next nodes: "<<ptr->next_index<<endl;
 	cout<<"Heuristic: "<<ptr->h<<endl;
 }
@@ -108,14 +257,14 @@ int Tree::getOtherPiece(int piece)
 }
 
 //prints the neural network in one long output.
-void Tree::printNet(node * ptr)
+void Tree::printNet(node * ptr, int indents /*default is 0 */)
 {
-	printNode(ptr);
+	printNode(ptr, indents);
 	cout<<endl;
 
-	for(int x =0; x < ptr->next_index; x++)
+	for(int x = 0; x < ptr->next_index; x++)
 	{
-		printNet(ptr->next[x]);
+		printNet(ptr->next[x], indents+1);
 	}
 
 }

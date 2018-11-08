@@ -426,12 +426,34 @@ int Board::countPieces(int piece)
 	return count;
 }
 
-
-void Board::printBoard()
+//compares boards
+bool Board::isEqual(Board other_board)
 {
+	bool matches = true;
+	for(int x = 0; x < size; x++)
+	{
+		for(int y = 0; y < size; y++)
+		{
+			if(board[x][y]!=other_board.board[x][y])
+				matches = false;
+		}
+	}
+
+	return matches;
+}
+
+
+void Board::printBoard(int num_indents)
+{
+	//adds 2*num_indents spaces in front of each printed line
+	string padding = "";
+	for(int x = 0; x < num_indents; x++)
+		padding += "   ";
+
+
 	//prints column headers
 	char header[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-	cout<<"  "; 
+	cout<<padding<<"  "; 
 	for(int x = 0; x < size; x++)
 	{
 		cout<<" "<<header[x]<<" ";
@@ -443,7 +465,7 @@ void Board::printBoard()
 	for(int x = 0; x < size; x++)
 	{
 		//prints row header
-		cout<<(x+1)<<" ";
+		cout<<padding<<(x+1)<<" ";
 
 		for(int y = 0; y < size; y++)
 		{
