@@ -16,45 +16,6 @@ using namespace std;
 // 7 [ ][ ][ ][ ][ ][ ][ ][ ]
 // 8 [ ][ ][ ][ ][ ][ ][ ][ ]
 
-inline extern void printBoard(int** board, int size)
-{
-	//prints column headers
-	char header[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-	cout<<"  "; 
-	for(int x = 0; x < size; x++)
-	{
-		cout<<" "<<header[x]<<" ";
-	}
-	cout<<endl;
-
-
-	//prints board contents
-	for(int x = 0; x < size; x++)
-	{
-		//prints row header
-		cout<<(x+1)<<" ";
-
-		for(int y = 0; y < size; y++)
-		{
-			//1 = X
-			// if(board[x][y]==1)
-			// 	cout<<"[B]";
-			// else if(board[x][y]==2)
-			// 	cout<<"[W]";
-			// else
-			// 	cout<<"[ ]";
-			if(board[y][x]==1)
-				cout<<"[B]";
-			else if(board[y][x]==2)
-				cout<<"[W]";
-			else
-				cout<<"[ ]";
-		}
-		cout<<endl;
-	}
-
-}
-
 //creates a size x size 2D array
 inline extern int** copyBoard(int** board, int size)
 {

@@ -9,7 +9,7 @@
 
 Othello::Othello()
 {
-	Tree tree;
+	// Tree tree;
 
 	//player is white
 	player_piece = 2;
@@ -25,7 +25,8 @@ void Othello::run()
 	while(true)
 	{
 
-		printBoard(board, size);
+		// printBoard(board, size);
+		board.printBoard();
 
 		cout<<endl;
 		cout<<"Menu: "<<endl;
@@ -43,7 +44,7 @@ void Othello::run()
 		//Human vs AI
 		if(choice==1)
 		{
-				tree.piece = AI_piece;
+				// tree.piece = AI_piece;
 
 				cout<<"New game Human vs AI"<<endl;
 				resetGame();
@@ -84,7 +85,7 @@ void Othello::run()
 		//Prints the neural nets
 		else
 		{
-			tree.printNet(tree.root);
+			// tree.printNet(tree.root);
 
 			cout<<endl<<endl<<endl;
 		}
@@ -98,7 +99,8 @@ void Othello::run()
 bool Othello::playersMove()
 {
 	cout<<"Player's move. "<<endl;
-	printBoard(board, size);
+	// printBoard(board, size);
+	board.printBoard();
 
 	string choice = "";
 	int col = -1;
@@ -108,7 +110,7 @@ bool Othello::playersMove()
 	while (valid_move == false)
 	{
 		//returns array of possible move coordinates, with each index being an array of size 2: (col, row)
-		vector<vector<int>> possible_moves = possibleMoves(player_piece);
+		vector<vector<int>> possible_moves = board.possibleMoves(player_piece);
 
 
 		cout<<"Legal moves: "<<endl;
@@ -138,7 +140,7 @@ bool Othello::playersMove()
 
 
 		//determines if given move is a possible move
-		for(int x =0; x < size*size; x++)
+		for(int x =0; x < possible_moves.size(); x++)
 		{
 			if(possible_moves[x][0]==col && possible_moves[x][1]==row)
 			{
@@ -150,7 +152,8 @@ bool Othello::playersMove()
 	}
 
 	//player places piece
-	place_piece(board, player_piece, col, row);
+	// place_piece(board, player_piece, col, row);
+	board.place_piece(player_piece, col, row);
 
 	//add player's move to neural net
 	// tree.playerMove(board);
@@ -167,7 +170,7 @@ bool Othello::AIMove(int AI_version)
 	//will get children from the tree
 
 	cout<<"AI's move. "<<endl;
-	printBoard(board, size);
+	board.printBoard();
 
 	string choice = "";
 	int col = -1;
@@ -177,7 +180,7 @@ bool Othello::AIMove(int AI_version)
 	while (valid_move == false)
 	{
 		//returns array of possible move coordinates, with each index being an array of size 2: (col, row)
-		vector<vector<int>> possible_moves = possibleMoves(AI_piece);
+		vector<vector<int>> possible_moves = board.possibleMoves(AI_piece);
 
 
 		cout<<"Legal moves: "<<endl;
@@ -210,7 +213,8 @@ bool Othello::AIMove(int AI_version)
 	}
 
 	//player places piece
-	place_piece(board, AI_piece, col, row);
+	// place_piece(board, AI_piece, col, row);
+	board.place_piece(AI_piece, col, row);
 
 	//add player's move to neural net
 	// tree.playerMove(board);
@@ -218,329 +222,6 @@ bool Othello::AIMove(int AI_version)
 	cout<<endl<<endl<<endl;
 
 	return true;
-}
-
-//places piece down at specified position
-bool Othello::place_piece(int** board, int piece, int col, int row)
-{
-
-	try{
-		board[col][row] = piece;
-	} catch(exception &ex)
-	{
-		return false;
-	}
-
-	//// flips other player's pieces////
-
-	int other_piece = 0;
-
-
-	if(piece==player_piece)
-		other_piece = AI_piece;
-	else
-		other_piece = player_piece;
-
-
-
-	//flips pieces down the column
-	for(int x = row+1; x < size; x++)
-	{
-		//if encountered my piece, traverse back and flip previous pieces
-		if(board[col][x]==piece)
-		{
-			//reverses back over previous squares and flips the pieces
-			for(int temp_x = x-1; temp_x >= row+1; temp_x--)
-				board[col][temp_x] = piece;
-
-			break;
-		}
-		//if encountered blank space, stop
-		else if(board[col][x]==0)
-			break;
-	}
-
-	//flips pieces up the column
-	for(int x = row-1; x >= 0; x--)
-	{
-		//if encountered my piece, traverse back and flip previous pieces
-		if(board[col][x]==piece)
-		{
-			//reverses back over previous squares and flips the pieces
-			for(int temp_x = x+1; temp_x <= row-1; temp_x++)
-				board[col][temp_x] = piece;
-
-			break;
-		}
-		//if encountered blank space, stop
-		else if(board[col][x]==0)
-			break;
-	}
-
-	//flips pieces right the row
-	for(int x = col+1; x < size; x++)
-	{
-		//if encountered my piece, traverse back and flip previous pieces
-		if(board[x][row]==piece)
-		{
-			//reverses back over previous squares and flips the pieces
-			for(int temp_x = x-1; temp_x >= col+1; temp_x--)
-				board[temp_x][row] = piece;
-
-			break;
-		}
-		//if encountered blank space, stop
-		else if(board[x][row]==0)
-			break;
-	}
-
-	//flips pieces left the row
-	for(int x = col-1; x >= 0; x--)
-	{
-		//if encountered my piece, traverse back and flip previous pieces
-		if(board[x][row]==piece)
-		{
-			//reverses back over previous squares and flips the pieces
-			for(int temp_x = x+1; temp_x <= col-1; temp_x++)
-				board[temp_x][row] = piece;
-
-			break;
-		}
-		//if encountered blank space, stop
-		else if(board[x][row]==0)
-			break;
-	}
-
-
-	//flips pieces up the positive slope diagonal
-	int temp_col = col+1;
-	int temp_row = row-1;
-	while(temp_col < size && temp_row >= 0)
-	{
-		//if encountered my piece, traverse back and flip previous pieces
-		if(board[temp_col][temp_row]==piece)
-		{
-			//reverses back over previous squares and flips the pieces
-			temp_col = temp_col-1;
-			temp_row = temp_row+1;
-			while(temp_col >= col+1 && temp_row <= row-1)
-			{
-				board[temp_col][temp_row] = piece;
-
-				temp_col--;
-				temp_row++;
-			}
-
-			break;
-		}
-		//if encountered blank space, stop
-		else if(board[temp_col][temp_row]==0)
-			break;
-
-		temp_col++;
-		temp_row--;
-	}
-
-
-	//flips pieces down the positive slope diagonal
-	temp_col = col-1;
-	temp_row = row+1;
-	while(temp_col >= 0 && temp_row < size)
-	{
-		//if encountered my piece, traverse back and flip previous pieces
-		if(board[temp_col][temp_row]==piece)
-		{
-			//reverses back over previous squares and flips the pieces
-			temp_col = temp_col+1;
-			temp_row = temp_row-1;
-			while(temp_col <= col-1 && temp_row >= row+1)
-			{
-				board[temp_col][temp_row] = piece;
-
-				temp_col++;
-				temp_row--;
-			}
-
-			break;
-		}
-		//if encountered blank space, stop
-		else if(board[temp_col][temp_row]==0)
-			break;
-
-		temp_col--;
-		temp_row++;
-	}
-
-	//flips pieces up the negative slope diagonal
-	temp_col = col+1;
-	temp_row = row+1;
-	while(temp_col < size && temp_row < size)
-	{
-		//if encountered my piece, traverse back and flip previous pieces
-		if(board[temp_col][temp_row]==piece)
-		{
-			//reverses back over previous squares and flips the pieces
-			temp_col = temp_col-1;
-			temp_row = temp_row-1;
-			while(temp_col >= col+1 && temp_row >= row+1)
-			{
-				board[temp_col][temp_row] = piece;
-
-				temp_col--;
-				temp_row--;
-			}
-
-			break;
-		}
-		//if encountered blank space, stop
-		else if(board[temp_col][temp_row]==0)
-			break;
-
-		temp_col++;
-		temp_row++;
-	}
-
-	//flips pieces down the negative slope diagonal
-	temp_col = col-1;
-	temp_row = row-1;
-	while(temp_col >= 0 && temp_row >= 0)
-	{
-		//if encountered my piece, traverse back and flip previous pieces
-		if(board[temp_col][temp_row]==piece)
-		{
-			//reverses back over previous squares and flips the pieces
-			temp_col = temp_col+1;
-			temp_row = temp_row+1;
-			while(temp_col <= col-1 && temp_row <= row-1)
-			{
-				board[temp_col][temp_row] = piece;
-
-				temp_col++;
-				temp_row++;
-			}
-
-			break;
-		}
-		//if encountered blank space, stop
-		else if(board[temp_col][temp_row]==0)
-			break;
-
-		temp_col--;
-		temp_row--;
-	}
-
-
-	return true;
-}
-
-//returns coordinates of legal moves
-vector<vector<int>> Othello::possibleMoves(int piece)
-{
-
-	vector<vector<int>> possible_moves;
-
-	int other_piece = 0;
-
-
-	if(piece==player_piece)
-		other_piece = AI_piece;
-	else
-		other_piece = player_piece;
-
-
-	//iterates through entire board
-	for(int x = 0; x < size; x++)
-	{
-		for(int y = 0; y < size; y++)
-		{
-
-			//if a piece already resides here, skip
-			if(board[x][y]!=0)
-				continue;
-
-			//gets neighboring spots around current spot
-			int* neighbors = new int[9];
-			get_neighbors(neighbors, x, y);
-
-			//gets if other piece is around this spot
-			bool has_neighbors = false;
-			for(int z = 0; z < 9; z++)
-			{
-				if(neighbors[z]==other_piece)
-				{
-					has_neighbors = true;
-					break;
-				}
-			}
-
-
-			//checks if this spot is a possible move by seeing if other pieces are flipped
-			if(has_neighbors)
-			{
-				//gets copy of board to simulate what would happen if piece is placed
-				int** board_copy = copyBoard(board, size);
-
-				int piece_count = countPieces(board_copy, piece);
-				int other_piece_count = countPieces(board_copy, other_piece);
-
-				place_piece(board_copy, piece, x, y);
-
-				int new_piece_count = countPieces(board_copy, piece);
-				int new_other_piece_count = countPieces(board_copy, other_piece);
-
-				//if flipped any opponent's pieces
-				if(other_piece_count > new_other_piece_count)
-				{
-					vector<int> pair;
-					pair.push_back(x);
-					pair.push_back(y);
-					possible_moves.push_back(pair);
-				}
-			}
-
-		}
-	}
-
-
-	return possible_moves;
-}
-
-void Othello::get_neighbors(int* neighbors, int col, int row)
-{
-
-	//iterates through all neighbors
-	int index = 0;
-	for(int x = col-1; x <= col+1; x++)
-	{
-		for(int y = row-1; y <= row+1; y++)
-		{
-			//if out of bounds, skip
-			if(x <0 || y <0 || x>=size || y >= size)
-				neighbors[index] = -1;
-			else
-				neighbors[index] = board[x][y];
-			
-			index++;
-		}
-	}
-}
-
-
-
-//returns the count of piece on the board
-int Othello::countPieces(int** board, int piece)
-{
-	int count = 0;
-	for(int x = 0; x < size; x++)
-	{
-		for(int y = 0; y < size; y++)
-		{
-			if(board[x][y]==piece)
-				count++;
-		}
-	}
-
-	return count;
 }
 
 
@@ -572,19 +253,13 @@ void Othello::changeTurn()
 //resets the game
 void Othello::resetGame()
 {
-	board = createMatrix(size);
-
-	//places initial pieces
-	place_piece(board, 2, 3,3);
-	place_piece(board, 1, 4,3);
-	place_piece(board, 1, 3,4);
-	place_piece(board, 2, 4,4);
+	board.resetBoard();
 
 	//AI goes first if turn = false
 	turn = false;
 
 	//resets current game state to root node
-	tree.ptr = tree.root;
+	// tree.ptr = tree.root;
 }
 
 

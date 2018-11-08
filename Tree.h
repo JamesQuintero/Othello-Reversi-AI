@@ -24,6 +24,9 @@ class Tree
 			//matrix of board state
 			//acts like the ID of the node
 			int** board;
+			// Board board;
+
+
 			//heuristic
 			double h = 0;
 			

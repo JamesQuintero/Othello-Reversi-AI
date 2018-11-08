@@ -96,7 +96,7 @@ void Tree::saveNode()
 void Tree::printNode(node * ptr)
 {
 	//prints tic-tac-toe board
-	printBoard(ptr->board, size);
+	// ptr->board.printBoard();
 	cout<<"Num next nodes: "<<ptr->next_index<<endl;
 	cout<<"Heuristic: "<<ptr->h<<endl;
 }
