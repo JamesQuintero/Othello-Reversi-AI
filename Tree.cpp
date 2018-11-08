@@ -27,7 +27,7 @@ void Tree::determinePossibleMoves(node* ptr, int piece)
 	for(int x = 0; x < possible_move_boards.size(); x++)
 	{
 		// possible_move_boards[x].printBoard();
-		newNode(ptr, &possible_move_boards[x], piece);
+		newNode(ptr, possible_move_boards[x], piece);
 		// cout<<"Added new board"<<endl;
 	}
 }
@@ -222,9 +222,11 @@ void Tree::move(Board board)
 		if(board.isEqual(temp_board)==true)
 		{
 			ptr = ptr->next[x];
-			break;
+			return;
 		}
 	}
+
+	cout<<"Error, couldn't find move!"<<endl;
 }
 
 
@@ -254,7 +256,7 @@ void Tree::iterateTreeDepth(node* ptr, int piece, int cur_depth, int max_depth)
 
 
 //links a new node to ptr, with initialized board
-void Tree::newNode(node * ptr, Board * new_board, int piece)
+void Tree::newNode(node * ptr, Board new_board, int piece)
 {
 	ptr->next[ptr->next_index] = new node();
 
@@ -262,7 +264,7 @@ void Tree::newNode(node * ptr, Board * new_board, int piece)
 	node * next = ptr->next[ptr->next_index];
 
 	//copies new board into new node
-	next->board.copyBoard(new_board);
+	next->board.copyBoard(&new_board);
 
 	//increments number of next nodes
 	ptr->next_index++;
@@ -298,6 +300,7 @@ void Tree::printNet(node * ptr, int indents /*default is 0 */)
 	for(int x = 0; x < ptr->next_index; x++)
 	{
 		printNet(ptr->next[x], indents+1);
+		// printNode(ptr->next[x], indents+1);
 	}
 
 }

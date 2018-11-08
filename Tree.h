@@ -62,7 +62,7 @@ class Tree
 
 		Tree();
 		//links a new node to ptr, with initialized board
-		void newNode(node * ptr, Board * new_board, int piece);
+		void newNode(node * ptr, Board new_board, int piece);
 
 		void determinePossibleMoves(node* ptr, int piece);
 		int getMinHeuristic(node * ptr, int alpha, int beta, int depth_left);
