@@ -9,7 +9,6 @@
 
 Othello::Othello()
 {
-	// Tree tree;
 
 	//player is white
 	player_piece = 2;
@@ -17,6 +16,10 @@ Othello::Othello()
 	AI_piece = 1;
 
 	resetGame();
+
+	//gets first possible moves for black
+	// tree.determinePossibleMoves(&*tree.ptr, AI_piece);
+	tree.iterateTreeDepth(tree.ptr, AI_piece, 1, 2);
 }
 
 //runs the game
@@ -24,19 +27,17 @@ void Othello::run()
 {
 	while(true)
 	{
-
-		// printBoard(board, size);
-		board.printBoard();
-
 		cout<<endl;
 		cout<<"Menu: "<<endl;
 		cout<<"1) Play against AI"<<endl;
 		// cout<<"2) AI vs AI"<<endl;
-		cout<<"3) Print Game Tree"<<endl;
+		cout<<"2) Print Game Tree"<<endl;
 
 		cout<<"Choice: ";
 		int choice;
 		cin>>choice;
+
+		// int choice = 1;
 
 		cout<<endl<<endl;
 
@@ -44,7 +45,7 @@ void Othello::run()
 		//Human vs AI
 		if(choice==1)
 		{
-				// tree.piece = AI_piece;
+				tree.piece = AI_piece;
 
 				cout<<"New game Human vs AI"<<endl;
 				resetGame();
@@ -85,7 +86,8 @@ void Othello::run()
 		//Prints the neural nets
 		else
 		{
-			// tree.printNet(tree.root);
+			tree.printNet(tree.root);
+			// tree.determinePossibleMoves(&*tree.ptr, AI_piece);
 
 			cout<<endl<<endl<<endl;
 		}
@@ -110,7 +112,7 @@ bool Othello::playersMove()
 	while (valid_move == false)
 	{
 		//returns array of possible move coordinates, with each index being an array of size 2: (col, row)
-		vector<vector<int>> possible_moves = board.possibleMoves(player_piece);
+		vector<vector<int>> possible_moves = board.getPossibleMoveCoordinates(player_piece);
 
 
 		cout<<"Legal moves: "<<endl;
@@ -180,7 +182,7 @@ bool Othello::AIMove(int AI_version)
 	while (valid_move == false)
 	{
 		//returns array of possible move coordinates, with each index being an array of size 2: (col, row)
-		vector<vector<int>> possible_moves = board.possibleMoves(AI_piece);
+		vector<vector<int>> possible_moves = board.getPossibleMoveCoordinates(AI_piece);
 
 
 		cout<<"Legal moves: "<<endl;
@@ -259,7 +261,7 @@ void Othello::resetGame()
 	turn = false;
 
 	//resets current game state to root node
-	// tree.ptr = tree.root;
+	tree.ptr = tree.root;
 }
 
 

@@ -1,8 +1,8 @@
 #include <iostream>
 #include <string>
 #include <vector>
-// #include "Tree.h"
 #include "Board.h"
+#include "Tree.h"
 
 
 
@@ -31,7 +31,7 @@ class Othello
 		int AI_piece;
 
 		//AI #1
-		// Tree tree;
+		Tree tree;
 
 	public:
 		Othello();

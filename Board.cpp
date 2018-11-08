@@ -246,8 +246,8 @@ bool Board::place_piece(int piece, int col, int row)
 
 
 
-//returns coordinates of legal moves
-vector<vector<int>> Board::possibleMoves(int piece)
+//returns list of coordinates of legal moves
+vector<vector<int>> Board::getPossibleMoveCoordinates(int piece)
 {
 
 	vector<vector<int>> possible_moves;
@@ -260,6 +260,9 @@ vector<vector<int>> Board::possibleMoves(int piece)
 	else
 		other_piece = white_piece;
 
+
+	Board board_copy;
+				
 
 	//iterates through entire board
 	for(int x = 0; x < size; x++)
@@ -292,7 +295,6 @@ vector<vector<int>> Board::possibleMoves(int piece)
 			{
 				//gets copy of board to simulate what would happen if piece is placed
 				// int** board_copy = copyBoard(board, size);
-				Board board_copy;
 				board_copy.copyBoard(this);
 
 				int piece_count = board_copy.countPieces(piece);
@@ -318,6 +320,72 @@ vector<vector<int>> Board::possibleMoves(int piece)
 
 
 	return possible_moves;
+}
+
+//returns list of legal board states that are possible for piece
+vector<Board> Board::getPossibleMoveBoards(int piece)
+{
+	vector<Board> possible_boards;
+
+	//gets opponent's piece
+	int other_piece = 0;
+	if(piece == white_piece)
+		other_piece = black_piece;
+	else
+		other_piece = white_piece;
+				
+
+	//iterates through entire board
+	for(int x = 0; x < size; x++)
+	{
+		for(int y = 0; y < size; y++)
+		{
+
+			//if a piece already resides here, skip
+			if(board[x][y]!=0)
+				continue;
+
+			//gets neighboring spots around current spot
+			int* neighbors = new int[9];
+			get_neighbors(neighbors, x, y);
+
+			//gets if other piece is around this spot
+			bool has_neighbors = false;
+			for(int z = 0; z < 9; z++)
+			{
+				if(neighbors[z]==other_piece)
+				{
+					has_neighbors = true;
+					break;
+				}
+			}
+
+
+			//checks if this spot is a possible move by seeing if other pieces are flipped
+			if(has_neighbors)
+			{
+				//gets copy of board to simulate what would happen if piece is placed
+				Board board_copy;
+				board_copy.copyBoard(this);
+
+				int piece_count = board_copy.countPieces(piece);
+				int other_piece_count = board_copy.countPieces(other_piece);
+
+				board_copy.place_piece(piece, x, y);
+
+				int new_piece_count = board_copy.countPieces(piece);
+				int new_other_piece_count = board_copy.countPieces(other_piece);
+
+				//if flipped any opponent's pieces
+				if(other_piece_count > new_other_piece_count)
+					possible_boards.push_back(board_copy);
+			}
+
+		}
+	}
+
+
+	return possible_boards;
 }
 
 void Board::get_neighbors(int* neighbors, int col, int row)

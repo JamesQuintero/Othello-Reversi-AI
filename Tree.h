@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string>
-
+#include <vector>
+#include "Board.h"
 
 
 #ifndef Tree_H
@@ -23,8 +24,8 @@ class Tree
 		{
 			//matrix of board state
 			//acts like the ID of the node
-			int** board;
-			// Board board;
+			// int** board;
+			Board board;
 
 
 			//heuristic
@@ -53,14 +54,16 @@ class Tree
 
 		Tree();
 		//links a new node to ptr, with initialized board
-		void newNode(node * ptr, int** board);
+		void newNode(node * ptr, Board * new_board, int piece);
+
+		void determinePossibleMoves(node* ptr, int piece);
+
+		void iterateTreeDepth(node* ptr, int piece, int cur_depth, int max_depth);
 
 		//returns a new board containing Tree's next move
-		int** AIMove(int** board, int** possible_moves);
-		void playerMove(int** board);
-
-		void saveNet();
-		void saveNode();
+		// int** AIMove(int** board, int** possible_moves);
+		void AIMove(int col, int row);
+		void playerMove(int col, int row);
 
 		void printNode(node * ptr);
 		void printNet(node * ptr);
