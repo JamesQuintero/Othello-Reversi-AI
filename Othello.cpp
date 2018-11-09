@@ -194,6 +194,8 @@ bool Othello::AIMove(int AI_version)
 	//will get children from the tree
 
 	// tree.printNet(tree.ptr);
+	// string to_continue;
+	// cin>>to_continue;
 
 
 	board.printBoard();

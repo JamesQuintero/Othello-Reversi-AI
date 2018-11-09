@@ -36,10 +36,12 @@ class Tree
 			
 			//indices for children
 			int next_index = 0;
-			int prev_index = 0;
+			// int prev_index = 0;
 
 			//children
-			node** next = new node*[size*size];
+			// node** next = new node*[size*size];
+			node** next = new node*[4*(size-2)];
+
 			//parent
 			node* prev;
 		};
@@ -57,8 +59,8 @@ class Tree
 		//current position in the tree
 		node * ptr;
 
-		int max_depth = 3;
-		int max_h_depth = 10;
+		int max_depth = 4;
+		int max_h_depth = 20;
 
 
 		Tree();
@@ -66,9 +68,9 @@ class Tree
 		void newNode(node * ptr, Board new_board, int piece);
 
 		void determinePossibleMoves(node* ptr, int piece);
-		int getMinHeuristic(node * ptr, int alpha, int beta, int depth_left);
-		int getMaxHeuristic(node * ptr, int alpha, int beta, int depth_left);
-		int calculateHeuristic(node* ptr);
+		double getMinHeuristic(node * ptr, int alpha, int beta, int depth_left);
+		double getMaxHeuristic(node * ptr, int alpha, int beta, int depth_left);
+		double calculateHeuristic(node* ptr);
 
 		bool hasLegalMoves(node* ptr);
 		Board getBoardMinHeuristic(node* ptr);

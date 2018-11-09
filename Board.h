@@ -30,7 +30,7 @@ class Board
 		//places specified piece on the specified board at the specified position, and flips the opponent's pieces
 		bool place_piece(int piece, int col, int row);
 		
-		int getPossibleMovesCount(int piece);
+		double getPossibleMovesCount(int piece);
 		vector<vector<int>> getPossibleMoveCoordinates(int piece);
 		vector<Board> getPossibleMoveBoards(int piece);
 

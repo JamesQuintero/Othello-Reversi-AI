@@ -248,7 +248,7 @@ bool Board::place_piece(int piece, int col, int row)
 
 
 //returns list of coordinates of legal moves
-int Board::getPossibleMovesCount(int piece)
+double Board::getPossibleMovesCount(int piece)
 {
 
 	int other_piece = 0;
@@ -307,15 +307,19 @@ int Board::getPossibleMovesCount(int piece)
 
 				//if flipped any opponent's pieces
 				if(other_piece_count > new_other_piece_count)
-					// num_moves++;
-					num_flips += new_piece_count-piece_count;
+				{
+					num_moves++;
+					num_flips += (new_piece_count-piece_count - 2);
+				}
 			}
 
 		}
 	}
 
 
-	return num_moves;
+	// return (double)num_moves;
+	// return (double)num_flips;
+	return (double)num_flips/(double)num_moves;
 }
 
 

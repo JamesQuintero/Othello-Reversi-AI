@@ -52,10 +52,10 @@ Board Tree::getBoardMinHeuristic(node* ptr)
 	vector<int> minimum_indices;
 
 	// int index = 0;
-	int min_heuristic = numeric_limits<int>::max();
+	double min_heuristic = numeric_limits<double>::max();
 	for(int x = 0; x < ptr->next_index; x++)
 	{
-		int h = ptr->next[x]->h;
+		double h = ptr->next[x]->h;
 		if(h < min_heuristic)
 		{
 			min_heuristic = h;
@@ -83,9 +83,9 @@ Board Tree::getBoardMinHeuristic(node* ptr)
 
 //calculates heuristics for AI down to a certain depth
 //considers current node as the AI's move, and therefore will be minimizing heuristic
-int Tree::getMinHeuristic(node * ptr, int alpha /* starts as -INFINITY */, int beta /* starts as INFINITY */, int depth_left)
+double Tree::getMinHeuristic(node * ptr, int alpha /* starts as -INFINITY */, int beta /* starts as INFINITY */, int depth_left)
 {
-	int cur_heuristic = -1;
+	double cur_heuristic = -1;
 
 	//if has no children
 	if(ptr->next_index == 0 || depth_left<=0)
@@ -107,10 +107,10 @@ int Tree::getMinHeuristic(node * ptr, int alpha /* starts as -INFINITY */, int b
 
 
 	//iterates through all children
-	int min_heuristic = numeric_limits<int>::max(); // max value
+	double min_heuristic = (double)numeric_limits<int>::max(); // max value
 	for(int x = 0; x < ptr->next_index; x++)
 	{
-		int h = getMaxHeuristic(ptr->next[x], alpha, beta, depth_left--);
+		double h = getMaxHeuristic(ptr->next[x], alpha, beta, depth_left--);
 		if(h < min_heuristic)
 			min_heuristic = h;
 
@@ -130,9 +130,9 @@ int Tree::getMinHeuristic(node * ptr, int alpha /* starts as -INFINITY */, int b
 
 }
 
-int Tree::getMaxHeuristic(node * ptr, int alpha /* starts as -INFINITY */, int beta /* starts as INFINITY */, int depth_left)
+double Tree::getMaxHeuristic(node * ptr, int alpha /* starts as -INFINITY */, int beta /* starts as INFINITY */, int depth_left)
 {
-	int cur_heuristic = -1;
+	double cur_heuristic = -1;
 	
 	//if has no children
 	if(ptr->next_index == 0 || depth_left<=0)
@@ -142,8 +142,6 @@ int Tree::getMaxHeuristic(node * ptr, int alpha /* starts as -INFINITY */, int b
 
 		return cur_heuristic;
 	}
-
-
 
 	// bestVal = -INFINITY 
  //    for each child node :
@@ -156,10 +154,10 @@ int Tree::getMaxHeuristic(node * ptr, int alpha /* starts as -INFINITY */, int b
 
 
 	//iterates through all children
-	int max_heuristic = numeric_limits<int>::min(); // minimum value
+	double max_heuristic = (double)numeric_limits<int>::min(); // minimum value
 	for(int x = 0; x < ptr->next_index; x++)
 	{
-		int h = getMinHeuristic(ptr->next[x], alpha, beta, depth_left--);
+		double h = getMinHeuristic(ptr->next[x], alpha, beta, depth_left--);
 		if(h > max_heuristic)
 			max_heuristic = h;
 
@@ -177,14 +175,14 @@ int Tree::getMaxHeuristic(node * ptr, int alpha /* starts as -INFINITY */, int b
 }
 
 //returns heuristic for specified pointer
-int Tree::calculateHeuristic(node* ptr)
+double Tree::calculateHeuristic(node* ptr)
 {
 	
 	int player_count = ptr->board.countPieces(player_piece);
 	int AI_count = ptr->board.countPieces(AI_piece);
 
-	int num_player_flips = ptr->board.getPossibleMovesCount(player_piece);
-	int num_AI_flips = ptr->board.getPossibleMovesCount(AI_piece);
+	double num_player_flips = ptr->board.getPossibleMovesCount(player_piece);
+	double num_AI_flips = ptr->board.getPossibleMovesCount(AI_piece);
 
 
 
@@ -193,8 +191,15 @@ int Tree::calculateHeuristic(node* ptr)
 
 	// return (player_count - AI_count) + (num_player_flips - num_AI_flips);
 
+	int* weights = new int[3];
+	weights[0] = 1;
+	weights[1] = 1;
+
+	// cout<<"Num player flips: "<<num_player_flips<<endl;
+	// cout<<"Num AI flips: "<<num_AI_flips<<endl;
+	double heuristic = weights[0]*(player_count-AI_count) + weights[1]*(num_player_flips - num_AI_flips);
 	
-	return (player_count+num_player_flips) - (AI_count+abs(num_AI_flips));
+	return heuristic;
 
 	//reatio heuristic doesn't work very well, and crashes...
 	// return (player_count/(player_count+AI_count)) + (num_player_moves/(num_player_moves+num_AI_moves));
@@ -280,7 +285,7 @@ void Tree::iterateTreeDepth(node* ptr, int piece, int cur_depth, int max_depth)
 		new_cur_depth++;
 
 	//if reached max depth, stop
-	if(cur_depth==max_depth)
+	if((new_cur_depth-1)==max_depth)
 		return;
 
 
@@ -295,6 +300,7 @@ void Tree::iterateTreeDepth(node* ptr, int piece, int cur_depth, int max_depth)
 void Tree::newNode(node * ptr, Board new_board, int piece)
 {
 	ptr->next[ptr->next_index] = new node();
+	// ptr->next.push_back(new node());
 
 	//ptr to new next node
 	node * next = ptr->next[ptr->next_index];
