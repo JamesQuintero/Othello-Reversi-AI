@@ -1,0 +1,70 @@
+# Temporary Python files
+*.pyc
+
+# Windows image file caches
+Thumbs.db
+ehthumbs.db
+
+#C++ files
+~$*.stackdump*
+
+# Temporary office files
+*.tmp
+~$*.doc*
+~$*.xls*
+~$*.xlk
+~$*.ppt*
+~$*.vsd*
+
+# Folder config file
+Desktop.ini
+
+# Recycle Bin used on file shares
+$RECYCLE.BIN/
+
+# Windows Installer files
+*.cab
+*.msi
+*.msm
+*.msp
+
+# Windows shortcuts
+*.lnk
+
+# =========================
+# Operating System Files
+# =========================
+
+# OSX
+# =========================
+
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Thumbnails
+._*
+
+# Files that might appear in the root of a volume
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+
+# Directories potentially created on remote AFP share
+.AppleDB
+.AppleDesktop
+Network Trash Folder
+Temporary Items
+.apdisk
+/San Francisco State University/CSC 413 - Software Development/nbproject/private/
+/San Francisco State University/CSC 413 - Software Development/Project 3/nbproject/private/
+/San Francisco State University/CSC 413 - Software Development/Project 3/build/
+/San Francisco State University/CSC 413 - Software Development/TankGame/nbproject/private/
+/San Francisco State University/CSC 413 - Software Development/TankGame/build/
+/San Francisco State University/CSC 413 - Software Development/Second-Game/nbproject/private/
+/San Francisco State University/CSC 413 - Software Development/Second-Game/build/
+/San Francisco State University/CSC 413 - Software Development/GerardoHW1/nbproject/private/
+/San Francisco State University/CSC 413 - Software Development/GerardoHW1/build/

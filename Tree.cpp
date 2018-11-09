@@ -22,6 +22,11 @@ Tree::Tree()
 //determines the possible moves by piece, then adds them as children to the current pointer
 void Tree::determinePossibleMoves(node* ptr, int piece)
 {
+	//stop if has children, meaning it's already been expanded
+	if(ptr->next_index>0)
+		return;
+
+
 	vector<Board> possible_move_boards = ptr->board.getPossibleMoveBoards(piece);
 
 	for(int x = 0; x < possible_move_boards.size(); x++)
@@ -75,8 +80,6 @@ int Tree::getMinHeuristic(node * ptr, int alpha /* starts as -INFINITY */, int b
 
 		return cur_heuristic;
 	}
-
-
 
 	// bestVal = +INFINITY 
  //    for each child node :
@@ -161,11 +164,9 @@ int Tree::getMaxHeuristic(node * ptr, int alpha /* starts as -INFINITY */, int b
 //returns heuristic for specified pointer
 int Tree::calculateHeuristic(node* ptr)
 {
-	Board board = ptr->board;
-
 	
-	int player_count = board.countPieces(player_piece);
-	int AI_count = board.countPieces(AI_piece);
+	int player_count = ptr->board.countPieces(player_piece);
+	int AI_count = ptr->board.countPieces(AI_piece);
 
 	//Looks at opponent's moves vs player's moves
 	return player_count-AI_count;
@@ -211,15 +212,14 @@ void Tree::AIMove(int col, int row)
 
 
 //moves to child with board
-void Tree::move(Board board)
+void Tree::move(Board new_board)
 {
 	//iterates through current ptrs children
 	for(int x = 0; x < ptr->next_index; x++)
 	{
-		Board temp_board = ptr->next[x]->board;
 
 		//if board matches by seeing if a piece has been placed in specified position
-		if(board.isEqual(temp_board)==true)
+		if(new_board.isEqual(ptr->next[x]->board)==true)
 		{
 			ptr = ptr->next[x];
 			return;
@@ -241,7 +241,8 @@ void Tree::iterateTreeDepth(node* ptr, int piece, int cur_depth, int max_depth)
 
 	//if has no children
 	if(ptr->next_index == 0)
-		determinePossibleMoves(&*ptr, piece);
+		determinePossibleMoves(ptr, piece);
+		// determinePossibleMoves(&*ptr, piece);
 
 	//if reached max depth, stop
 	if(cur_depth==max_depth)
@@ -299,8 +300,8 @@ void Tree::printNet(node * ptr, int indents /*default is 0 */)
 
 	for(int x = 0; x < ptr->next_index; x++)
 	{
-		printNet(ptr->next[x], indents+1);
-		// printNode(ptr->next[x], indents+1);
+		// printNet(ptr->next[x], indents+1);
+		printNode(ptr->next[x], indents+1);
 	}
 
 }

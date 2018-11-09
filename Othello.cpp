@@ -21,8 +21,9 @@ Othello::Othello()
 	resetGame();
 
 	//gets first possible moves for black
-	// tree.determinePossibleMoves(&*tree.ptr, AI_piece);
-	tree.iterateTreeDepth(tree.ptr, AI_piece, 1, tree.max_depth);
+	tree.determinePossibleMoves(&*tree.ptr, AI_piece);
+	// tree.iterateTreeDepth(tree.ptr, AI_piece, 1, tree.max_depth);
+
 	// tree.getMinHeuristic(tree.ptr, 2);
 }
 
@@ -163,6 +164,12 @@ bool Othello::playersMove()
 			}
 		}
 
+
+		// int random_index = randNum(0, possible_moves.size());
+		// col = possible_moves[random_index][0];
+		// row = possible_moves[random_index][1];
+		// valid_move = true;
+
 	}
 
 	//player places piece
@@ -183,7 +190,7 @@ bool Othello::AIMove(int AI_version)
 {
 	// tree.iterateTreeDepth(tree.ptr, player_piece, 1, tree.max_depth);
 	tree.iterateTreeDepth(tree.ptr, AI_piece, 1, tree.max_depth);
-	tree.getMinHeuristic(tree.ptr, MIN, MAX, tree.max_depth+1);
+	tree.getMinHeuristic(tree.ptr, MIN, MAX, tree.max_h_depth+1);
 	//will get children from the tree
 
 	// tree.printNet(tree.ptr);
@@ -216,7 +223,7 @@ bool Othello::AIMove(int AI_version)
 
 	//AI places piece
 	// board.place_piece(AI_piece, col, row);
-	board = new_board;
+	board.copyBoard(&new_board);
 
 	board.printBoard();
 	cout<<endl;
