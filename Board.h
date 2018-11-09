@@ -29,9 +29,11 @@ class Board
 		void resetBoard();
 		//places specified piece on the specified board at the specified position, and flips the opponent's pieces
 		bool place_piece(int piece, int col, int row);
-		//returns array of possible moves in string format
+		
+		int getPossibleMovesCount(int piece);
 		vector<vector<int>> getPossibleMoveCoordinates(int piece);
 		vector<Board> getPossibleMoveBoards(int piece);
+
 		//callbacks list of pieces surrounding specified position
 		void get_neighbors(int* neighbors, int x, int y);
 		int countPieces(int piece);

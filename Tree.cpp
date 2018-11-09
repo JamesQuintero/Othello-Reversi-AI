@@ -49,7 +49,9 @@ bool Tree::hasLegalMoves(node* ptr)
 //returns the node with the smallest heuristic
 Board Tree::getBoardMinHeuristic(node* ptr)
 {
-	int index = 0;
+	vector<int> minimum_indices;
+
+	// int index = 0;
 	int min_heuristic = numeric_limits<int>::max();
 	for(int x = 0; x < ptr->next_index; x++)
 	{
@@ -57,9 +59,22 @@ Board Tree::getBoardMinHeuristic(node* ptr)
 		if(h < min_heuristic)
 		{
 			min_heuristic = h;
-			index = x;
+			// index = x;
+			minimum_indices.clear();
+			minimum_indices.push_back(x);
 		}
+
+
+		if(h==min_heuristic)
+		{
+			minimum_indices.push_back(x);
+		}
+
 	}
+
+	//chooses randomly out of all the smallest heuristics
+	int random_index = randNum(0, minimum_indices.size());
+	int index = minimum_indices[random_index];
 
 	return ptr->next[index]->board;
 }
@@ -168,8 +183,21 @@ int Tree::calculateHeuristic(node* ptr)
 	int player_count = ptr->board.countPieces(player_piece);
 	int AI_count = ptr->board.countPieces(AI_piece);
 
+	int num_player_flips = ptr->board.getPossibleMovesCount(player_piece);
+	int num_AI_flips = ptr->board.getPossibleMovesCount(AI_piece);
+
+
+
 	//Looks at opponent's moves vs player's moves
-	return player_count-AI_count;
+	// return player_count-AI_count;
+
+	// return (player_count - AI_count) + (num_player_flips - num_AI_flips);
+
+	
+	return (player_count+num_player_flips) - (AI_count+abs(num_AI_flips));
+
+	//reatio heuristic doesn't work very well, and crashes...
+	// return (player_count/(player_count+AI_count)) + (num_player_moves/(num_player_moves+num_AI_moves));
 }
 
 
@@ -238,11 +266,18 @@ void Tree::iterateTreeDepth(node* ptr, int piece, int cur_depth, int max_depth)
 	//if has no children, determinePosslbeMoves()
 	//iterate through new children and run recursively
 	
+	int new_cur_depth = cur_depth;
 
-	//if has no children
+	//if has no children, then create the children
 	if(ptr->next_index == 0)
+	{
 		determinePossibleMoves(ptr, piece);
-		// determinePossibleMoves(&*ptr, piece);
+		new_cur_depth++;
+	}
+	//comment out this else if you want the tree to add max_depth amount of new layers each time
+	//or leave if you want the tree to count already existing layers towards the depth. 
+	else
+		new_cur_depth++;
 
 	//if reached max depth, stop
 	if(cur_depth==max_depth)
@@ -251,7 +286,7 @@ void Tree::iterateTreeDepth(node* ptr, int piece, int cur_depth, int max_depth)
 
 	//iterates through all children
 	for(int x = 0; x < ptr->next_index; x++)
-		iterateTreeDepth(ptr->next[x], getOtherPiece(piece), cur_depth+1, max_depth);
+		iterateTreeDepth(ptr->next[x], getOtherPiece(piece), new_cur_depth, max_depth);
 	
 }
 
