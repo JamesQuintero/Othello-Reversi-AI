@@ -116,7 +116,7 @@ bool Othello::playersMove()
 
 	cout<<"Player's move. "<<endl;
 	// printBoard(board, size);
-	board.printBoard();
+	board_obj.printBoard(tree.ptr->board);
 
 	string choice = "";
 	int col = -1;
@@ -126,7 +126,7 @@ bool Othello::playersMove()
 	while (valid_move == false)
 	{
 		//returns array of possible move coordinates, with each index being an array of size 2: (col, row)
-		vector<vector<int>> possible_moves = board.getPossibleMoveCoordinates(player_piece);
+		vector<vector<int>> possible_moves = board_obj.getPossibleMoveCoordinates(tree.ptr->board, player_piece);
 
 
 		cout<<"Legal moves: "<<endl;
@@ -145,38 +145,41 @@ bool Othello::playersMove()
 			return false;
 		}
 
-		cout<<"Where to move? (ex: c3): ";
-		cin>>choice;
 
-		int* coordinates = new int[2];
-		convert_to_coordinates(choice, coordinates);
+		//// Comment this if you want the player to move randomly ////
 
-		col = coordinates[0];
-		row = coordinates[1];
+		// cout<<"Where to move? (ex: c3): ";
+		// cin>>choice;
+
+		// int* coordinates = new int[2];
+		// convert_to_coordinates(choice, coordinates);
+
+		// col = coordinates[0];
+		// row = coordinates[1];
 
 
-		//determines if given move is a possible move
-		for(int x =0; x < possible_moves.size(); x++)
-		{
-			if(possible_moves[x][0]==col && possible_moves[x][1]==row)
-			{
-				valid_move=true;
-				break;
-			}
-		}
+		// //determines if given move is a possible move
+		// for(int x =0; x < possible_moves.size(); x++)
+		// {
+		// 	if(possible_moves[x][0]==col && possible_moves[x][1]==row)
+		// 	{
+		// 		valid_move=true;
+		// 		break;
+		// 	}
+		// }
 
 
 		//// unncomment this if you want the player to move randomly ////
-		// int random_index = randNum(0, possible_moves.size());
-		// col = possible_moves[random_index][0];
-		// row = possible_moves[random_index][1];
-		// valid_move = true;
+		int random_index = randNum(0, possible_moves.size());
+		col = possible_moves[random_index][0];
+		row = possible_moves[random_index][1];
+		valid_move = true;
 
 	}
 
 	//player places piece
 	// place_piece(board, player_piece, col, row);
-	board.place_piece(player_piece, col, row);
+	board_obj.place_piece(tree.ptr->board, player_piece, col, row);
 
 	//add player's move to neural net
 	tree.playerMove(col, row);
@@ -195,21 +198,21 @@ bool Othello::AIMove(int AI_version)
 	tree.getMinHeuristic(tree.ptr, MIN, MAX, tree.max_h_depth+1);
 	//will get children from the tree
 
+	//for testing, prints out tree
 	// tree.printNet(tree.ptr);
 	// string to_continue;
 	// cin>>to_continue;
 
 
-	board.printBoard();
-	cout<<endl;
-	cout<<"AI's move. "<<endl;
+	// cout<<"AI's move. "<<endl;
 	
 
 	string choice = "";
 	int col = -1;
 	int row = -1;
 
-	Board new_board;
+	// Board new_board;
+	int** new_board; 
 	bool valid_move = false;
 	while (valid_move == false)
 	{
@@ -226,19 +229,10 @@ bool Othello::AIMove(int AI_version)
 	}
 
 	//AI places piece
-	// board.place_piece(AI_piece, col, row);
-	board.copyBoard(&new_board);
-
-	board.printBoard();
-	cout<<endl;
+	// board.copyBoard(&new_board);
 
 	//add player's move to neural net
-	// tree.AIMove(col, row);
 	tree.move(new_board);
-
-	
-
-	cout<<endl<<endl<<endl;
 
 	return true;
 }
@@ -247,10 +241,10 @@ bool Othello::AIMove(int AI_version)
 //returns true if player won the game
 int Othello::determineWinner()
 {
-	int num_player_pieces = board.countPieces(player_piece);
+	int num_player_pieces = board_obj.countPieces(tree.ptr->board, player_piece);
 	cout<<"Num player pieces: "<<num_player_pieces<<endl;
 
-	int num_AI_pieces = board.countPieces(AI_piece);
+	int num_AI_pieces = board_obj.countPieces(tree.ptr->board, AI_piece);
 	cout<<"Num AI pieces: "<<num_AI_pieces<<endl;
 
 	if(num_player_pieces > num_AI_pieces)
@@ -277,13 +271,16 @@ void Othello::changeTurn()
 //resets the game
 void Othello::resetGame()
 {
-	board.resetBoard();
+	// board_obj.resetBoard();
 
 	//AI goes first if turn = false
 	turn = false;
 
 	//resets current game state to root node
 	tree.ptr = tree.root;
+
+	// board_obj.printBoard(tree.ptr->board);
+
 }
 
 

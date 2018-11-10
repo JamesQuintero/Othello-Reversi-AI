@@ -13,26 +13,26 @@ using namespace std;
 
 Board::Board()
 {
-	resetBoard();
+	// resetBoard();
 
-	srand(time(0));  // needed once per program run
+	// srand(time(0));  // needed once per program run
 
 }
 
-void Board::resetBoard()
+void Board::resetBoard(int**& board)
 {
 	board = createMatrix(this->size);
 
 	//places initial pieces
-	place_piece(2, 3, 3);
-	place_piece(1, 4, 3);
-	place_piece(1, 3, 4);
-	place_piece(2, 4, 4);
+	place_piece(board, 2, 3, 3);
+	place_piece(board, 1, 4, 3);
+	place_piece(board, 1, 3, 4);
+	place_piece(board, 2, 4, 4);
 }
 
 
 //places piece down at specified position
-bool Board::place_piece(int piece, int col, int row)
+bool Board::place_piece(int**& board, int piece, int col, int row)
 {
 
 	try{
@@ -249,7 +249,7 @@ bool Board::place_piece(int piece, int col, int row)
 
 
 //returns list of coordinates of legal moves
-double Board::getPossibleMovesCount(int piece)
+double Board::getPossibleMovesCount(int**& board, int piece)
 {
 
 	int other_piece = 0;
@@ -263,7 +263,9 @@ double Board::getPossibleMovesCount(int piece)
 
 	int num_moves = 0;
 	int num_flips = 0;
-	Board board_copy;
+	// Board board_copy;
+
+	int** board_copy = createMatrix(this->size);
 				
 
 	//iterates through entire board
@@ -277,7 +279,7 @@ double Board::getPossibleMovesCount(int piece)
 
 			//gets neighboring spots around current spot
 			int* neighbors = new int[9];
-			get_neighbors(neighbors, x, y);
+			get_neighbors(board, neighbors, x, y);
 
 			//gets if other piece is around this spot
 			bool has_neighbors = false;
@@ -296,15 +298,16 @@ double Board::getPossibleMovesCount(int piece)
 			{
 				//gets copy of board to simulate what would happen if piece is placed
 				// int** board_copy = copyBoard(board, size);
-				board_copy.copyBoard(this);
+				// board_copy.copyBoard(this);
+				copyBoard(board_copy, board);
 
-				int piece_count = board_copy.countPieces(piece);
-				int other_piece_count = board_copy.countPieces(other_piece);
+				int piece_count = countPieces(board_copy, piece);
+				int other_piece_count = countPieces(board_copy, other_piece);
 
-				board_copy.place_piece(piece, x, y);
+				place_piece(board_copy, piece, x, y);
 
-				int new_piece_count = board_copy.countPieces(piece);
-				int new_other_piece_count = board_copy.countPieces(other_piece);
+				int new_piece_count = countPieces(board_copy, piece);
+				int new_other_piece_count = countPieces(board_copy, other_piece);
 
 				//if flipped any opponent's pieces
 				if(other_piece_count > new_other_piece_count)
@@ -326,7 +329,7 @@ double Board::getPossibleMovesCount(int piece)
 
 
 //returns list of coordinates of legal moves
-vector<vector<int>> Board::getPossibleMoveCoordinates(int piece)
+vector<vector<int>> Board::getPossibleMoveCoordinates(int**& board, int piece)
 {
 
 	vector<vector<int>> possible_moves;
@@ -340,7 +343,8 @@ vector<vector<int>> Board::getPossibleMoveCoordinates(int piece)
 		other_piece = white_piece;
 
 
-	Board board_copy;
+	// Board board_copy;
+	int** board_copy = createMatrix(this->size);
 				
 
 	//iterates through entire board
@@ -355,7 +359,7 @@ vector<vector<int>> Board::getPossibleMoveCoordinates(int piece)
 
 			//gets neighboring spots around current spot
 			int* neighbors = new int[9];
-			get_neighbors(neighbors, x, y);
+			get_neighbors(board, neighbors, x, y);
 
 			//gets if other piece is around this spot
 			bool has_neighbors = false;
@@ -374,15 +378,15 @@ vector<vector<int>> Board::getPossibleMoveCoordinates(int piece)
 			{
 				//gets copy of board to simulate what would happen if piece is placed
 				// int** board_copy = copyBoard(board, size);
-				board_copy.copyBoard(this);
+				copyBoard(board_copy, board);
 
-				int piece_count = board_copy.countPieces(piece);
-				int other_piece_count = board_copy.countPieces(other_piece);
+				int piece_count = countPieces(board_copy, piece);
+				int other_piece_count = countPieces(board_copy, other_piece);
 
-				board_copy.place_piece(piece, x, y);
+				place_piece(board_copy, piece, x, y);
 
-				int new_piece_count = board_copy.countPieces(piece);
-				int new_other_piece_count = board_copy.countPieces(other_piece);
+				int new_piece_count = countPieces(board_copy, piece);
+				int new_other_piece_count = countPieces(board_copy, other_piece);
 
 				//if flipped any opponent's pieces
 				if(other_piece_count > new_other_piece_count)
@@ -402,9 +406,10 @@ vector<vector<int>> Board::getPossibleMoveCoordinates(int piece)
 }
 
 //returns list of legal board states that are possible for piece
-vector<Board> Board::getPossibleMoveBoards(int piece)
+vector<int**> Board::getPossibleMoveBoards(int**& board, int piece)
 {
-	vector<Board> possible_boards;
+
+	vector<int**> possible_boards;
 
 	//gets opponent's piece
 	int other_piece = 0;
@@ -419,14 +424,14 @@ vector<Board> Board::getPossibleMoveBoards(int piece)
 	{
 		for(int y = 0; y < size; y++)
 		{
-
+			// cout<<"x,y: "<<x<<","<<y<<endl;
 			//if a piece already resides here, skip
 			if(board[x][y]!=0)
 				continue;
 
 			//gets neighboring spots around current spot
 			int* neighbors = new int[9];
-			get_neighbors(neighbors, x, y);
+			get_neighbors(board, neighbors, x, y);
 
 			//gets if other piece is around this spot
 			bool has_neighbors = false;
@@ -444,30 +449,34 @@ vector<Board> Board::getPossibleMoveBoards(int piece)
 			if(has_neighbors)
 			{
 				//gets copy of board to simulate what would happen if piece is placed
-				Board board_copy;
-				board_copy.copyBoard(this);
+				// Board board_copy;
+				// board_copy.copyBoard(this);
 
-				int piece_count = board_copy.countPieces(piece);
-				int other_piece_count = board_copy.countPieces(other_piece);
+				int** board_copy = createMatrix(this->size);
+				copyBoard(board_copy, board);
 
-				board_copy.place_piece(piece, x, y);
+				int piece_count = countPieces(board_copy, piece);
+				int other_piece_count = countPieces(board_copy, other_piece);
 
-				int new_piece_count = board_copy.countPieces(piece);
-				int new_other_piece_count = board_copy.countPieces(other_piece);
+				place_piece(board_copy, piece, x, y);
+
+				int new_piece_count = countPieces(board_copy, piece);
+				int new_other_piece_count = countPieces(board_copy, other_piece);
 
 				//if flipped any opponent's pieces
 				if(other_piece_count > new_other_piece_count)
+				{
 					possible_boards.push_back(board_copy);
+				}
 			}
 
 		}
 	}
 
-
 	return possible_boards;
 }
 
-void Board::get_neighbors(int* neighbors, int col, int row)
+void Board::get_neighbors(int**& board, int* neighbors, int col, int row)
 {
 
 	//iterates through all neighbors
@@ -490,7 +499,7 @@ void Board::get_neighbors(int* neighbors, int col, int row)
 
 
 //returns the count of piece on the board
-int Board::countPieces(int piece)
+int Board::countPieces(int**& board, int piece)
 {
 	int count = 0;
 	for(int x = 0; x < size; x++)
@@ -506,14 +515,14 @@ int Board::countPieces(int piece)
 }
 
 //compares boards
-bool Board::isEqual(Board other_board)
+bool Board::isEqual(int**& board, int**& other_board)
 {
 	bool matches = true;
 	for(int x = 0; x < size; x++)
 	{
 		for(int y = 0; y < size; y++)
 		{
-			if(board[x][y]!=other_board.board[x][y])
+			if(board[x][y]!=other_board[x][y])
 				matches = false;
 		}
 	}
@@ -522,8 +531,12 @@ bool Board::isEqual(Board other_board)
 }
 
 
-void Board::printBoard(int num_indents)
+void Board::printBoard(int**& board, int num_indents)
 {
+
+	// cout<<"printBoard()"<<endl;
+	// cout<<"Addr: "<<&board<<endl;
+
 	//adds 2*num_indents spaces in front of each printed line
 	string padding = "";
 	for(int x = 0; x < num_indents; x++)
@@ -567,7 +580,7 @@ void Board::printBoard(int num_indents)
 
 }
 
-int Board::getPieceAtPosition(int col, int row)
+int Board::getPieceAtPosition(int**& board, int col, int row)
 {
 	if(col<0 || col>size || row<0 || row>size)
 		return -1;
@@ -575,13 +588,14 @@ int Board::getPieceAtPosition(int col, int row)
 	return board[col][row];
 }
 
-void Board::copyBoard(Board *old_board)
+void Board::copyBoard(int**& board, int**& old_board)
 {
 	for(int x = 0; x < size; x++)
 	{
 		for(int y = 0; y < size; y++)
 		{
-			board[x][y] = old_board->getPieceAtPosition(x, y);
+			// board[x][y] = old_board->getPieceAtPosition(x, y);
+			board[x][y] = old_board[x][y];
 		}
 	}
 }

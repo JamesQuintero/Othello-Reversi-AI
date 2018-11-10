@@ -37,26 +37,26 @@ class Board
 	    };
 
 	public:
-		int** board;
+		// int** board;
 
 
 		Board();
-		void resetBoard();
+		void resetBoard(int**& board);
 		//places specified piece on the specified board at the specified position, and flips the opponent's pieces
-		bool place_piece(int piece, int col, int row);
+		bool place_piece(int**& board, int piece, int col, int row);
 		
-		double getPossibleMovesCount(int piece);
-		vector<vector<int>> getPossibleMoveCoordinates(int piece);
-		vector<Board> getPossibleMoveBoards(int piece);
+		double getPossibleMovesCount(int**& board, int piece);
+		vector<vector<int>> getPossibleMoveCoordinates(int**& board, int piece);
+		vector<int**> getPossibleMoveBoards(int**& board, int piece);
 
 		//callbacks list of pieces surrounding specified position
-		void get_neighbors(int* neighbors, int x, int y);
-		int countPieces(int piece);
-		void printBoard(int num_indents=0);
+		void get_neighbors(int**& board, int* neighbors, int x, int y);
+		int countPieces(int**& board, int piece);
+		void printBoard(int**& board, int num_indents=0);
 
-		bool isEqual(Board other_board);
-		int getPieceAtPosition(int col, int row);
-		void copyBoard(Board *old_board);
+		bool isEqual(int**& board, int**& other_board);
+		int getPieceAtPosition(int**& board, int col, int row);
+		void copyBoard(int**& board, int**& old_board);
 
 };
 

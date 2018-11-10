@@ -14,6 +14,12 @@ Tree::Tree()
 {
 	root = new node();
 	// root->board = createMatrix(size);
+	board_obj.resetBoard(root->board);
+	board_obj.printBoard(root->board);
+
+	// string something = "";
+	// cin>>something;
+
 	this->ptr = root;
 
 	srand(time(0));  // needed once per program run
@@ -26,8 +32,10 @@ void Tree::determinePossibleMoves(node* ptr, int piece)
 	if(ptr->next_index>0)
 		return;
 
+	// cout<<"Board addr: "<<&ptr->board<<endl;
 
-	vector<Board> possible_move_boards = ptr->board.getPossibleMoveBoards(piece);
+
+	vector<int**> possible_move_boards = board_obj.getPossibleMoveBoards(ptr->board, piece);
 
 	for(int x = 0; x < possible_move_boards.size(); x++)
 	{
@@ -35,6 +43,8 @@ void Tree::determinePossibleMoves(node* ptr, int piece)
 		newNode(ptr, possible_move_boards[x], piece);
 		// cout<<"Added new board"<<endl;
 	}
+
+	
 }
 
 //returns tree if there are legal moves, i.e. if there are children to specified node
@@ -47,7 +57,7 @@ bool Tree::hasLegalMoves(node* ptr)
 }
 
 //returns the node with the smallest heuristic
-Board Tree::getBoardMinHeuristic(node* ptr)
+int** Tree::getBoardMinHeuristic(node* ptr)
 {
 	vector<int> minimum_indices;
 
@@ -178,11 +188,13 @@ double Tree::getMaxHeuristic(node * ptr, int alpha /* starts as -INFINITY */, in
 double Tree::calculateHeuristic(node* ptr)
 {
 	
-	int player_count = ptr->board.countPieces(player_piece);
-	int AI_count = ptr->board.countPieces(AI_piece);
+	int player_count = board_obj.countPieces(ptr->board, player_piece);
+	int AI_count = board_obj.countPieces(ptr->board, AI_piece);
 
-	double num_player_flips = ptr->board.getPossibleMovesCount(player_piece);
-	double num_AI_flips = ptr->board.getPossibleMovesCount(AI_piece);
+	double num_player_flips = board_obj.countPieces(ptr->board, player_piece);
+	double num_AI_flips =board_obj.countPieces(ptr->board, AI_piece);
+
+
 
 
 
@@ -199,7 +211,7 @@ double Tree::calculateHeuristic(node* ptr)
 	// cout<<"Num AI flips: "<<num_AI_flips<<endl;
 	double heuristic = weights[0]*(player_count-AI_count) + weights[1]*(num_player_flips - num_AI_flips);
 
-	// double heuristic = num_player_flips - num_AI_flips;
+	// double heuristic = player_count - AI_count;
 
 	return heuristic;
 
@@ -214,10 +226,11 @@ void Tree::playerMove(int col, int row)
 	//iterates through current ptrs children
 	for(int x = 0; x < ptr->next_index; x++)
 	{
-		Board temp_board = ptr->next[x]->board;
+		// Board temp_board = ptr->next[x]->board_obj;
+
 
 		//if board matches by seeing if a piece has been placed in specified position
-		if(temp_board.board[col][row]!=0)
+		if(ptr->next[x]->board[col][row]!=0)
 		{
 			ptr = ptr->next[x];
 			break;
@@ -233,10 +246,9 @@ void Tree::AIMove(int col, int row)
 	//iterates through current ptrs children
 	for(int x = 0; x < ptr->next_index; x++)
 	{
-		Board temp_board = ptr->next[x]->board;
 
 		//if board matches by seeing if a piece has been placed in specified position
-		if(temp_board.board[col][row]!=0)
+		if(ptr->next[x]->board[col][row]!=0)
 		{
 			ptr = ptr->next[x];
 			break;
@@ -247,14 +259,14 @@ void Tree::AIMove(int col, int row)
 
 
 //moves to child with board
-void Tree::move(Board new_board)
+void Tree::move(int**& new_board)
 {
 	//iterates through current ptrs children
 	for(int x = 0; x < ptr->next_index; x++)
 	{
 
 		//if board matches by seeing if a piece has been placed in specified position
-		if(new_board.isEqual(ptr->next[x]->board)==true)
+		if(board_obj.isEqual(new_board, ptr->next[x]->board))
 		{
 			ptr = ptr->next[x];
 			return;
@@ -299,16 +311,17 @@ void Tree::iterateTreeDepth(node* ptr, int piece, int cur_depth, int max_depth)
 
 
 //links a new node to ptr, with initialized board
-void Tree::newNode(node * ptr, Board new_board, int piece)
+void Tree::newNode(node * ptr, int**& new_board, int piece)
 {
 	ptr->next[ptr->next_index] = new node();
 	// ptr->next.push_back(new node());
 
 	//ptr to new next node
 	node * next = ptr->next[ptr->next_index];
+	next->board = createMatrix(size);
 
 	//copies new board into new node
-	next->board.copyBoard(&new_board);
+	board_obj.copyBoard(next->board, new_board);
 
 	//increments number of next nodes
 	ptr->next_index++;
@@ -322,7 +335,7 @@ void Tree::newNode(node * ptr, Board new_board, int piece)
 void Tree::printNode(node * ptr, int indents /*default is 0 */)
 {
 	//prints tic-tac-toe board
-	ptr->board.printBoard(indents);
+	board_obj.printBoard(ptr->board, indents);
 	cout<<"Num next nodes: "<<ptr->next_index<<endl;
 	cout<<"Heuristic: "<<ptr->h<<endl;
 }

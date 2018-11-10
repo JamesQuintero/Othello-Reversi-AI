@@ -6,7 +6,7 @@ Thumbs.db
 ehthumbs.db
 
 #C++ files
-~$*.stackdump*
+*.stackdump
 
 # Temporary office files
 *.tmp

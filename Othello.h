@@ -18,7 +18,7 @@ class Othello
 {
 	private:
 		// int** board;
-		Board board;
+		Board board_obj;
 
 		int size = 8;
 		
