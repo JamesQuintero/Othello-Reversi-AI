@@ -11,12 +11,13 @@ Othello::Othello()
 {
 
 	//player is white
-	player_piece = 2;
+	player_piece = '2';
 	//AI is black
-	AI_piece = 1;
+	AI_piece = '1';
 
 	tree.player_piece = player_piece;
 	tree.AI_piece = AI_piece;
+
 
 	resetGame();
 
@@ -147,32 +148,32 @@ bool Othello::playersMove()
 
 
 		//// Comment this if you want the player to move randomly ////
-		cout<<"Where to move? (ex: c3): ";
-		cin>>choice;
+		// cout<<"Where to move? (ex: c3): ";
+		// cin>>choice;
 
-		int* coordinates = new int[2];
-		convert_to_coordinates(choice, coordinates);
+		// int* coordinates = new int[2];
+		// convert_to_coordinates(choice, coordinates);
 
-		col = coordinates[0];
-		row = coordinates[1];
+		// col = coordinates[0];
+		// row = coordinates[1];
 
 
-		//determines if given move is a possible move
-		for(int x =0; x < possible_moves.size(); x++)
-		{
-			if(possible_moves[x][0]==col && possible_moves[x][1]==row)
-			{
-				valid_move=true;
-				break;
-			}
-		}
+		// //determines if given move is a possible move
+		// for(int x =0; x < possible_moves.size(); x++)
+		// {
+		// 	if(possible_moves[x][0]==col && possible_moves[x][1]==row)
+		// 	{
+		// 		valid_move=true;
+		// 		break;
+		// 	}
+		// }
 
 
 		//// unncomment this if you want the player to move randomly ////
-		// int random_index = randNum(0, possible_moves.size());
-		// col = possible_moves[random_index][0];
-		// row = possible_moves[random_index][1];
-		// valid_move = true;
+		int random_index = randNum(0, possible_moves.size());
+		col = possible_moves[random_index][0];
+		row = possible_moves[random_index][1];
+		valid_move = true;
 
 	}
 
@@ -211,7 +212,7 @@ bool Othello::AIMove(int AI_version)
 	int row = -1;
 
 	// Board new_board;
-	int** new_board; 
+	char** new_board; 
 	bool valid_move = false;
 	while (valid_move == false)
 	{

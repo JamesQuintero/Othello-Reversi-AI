@@ -26,7 +26,7 @@ Tree::Tree()
 }
 
 //determines the possible moves by piece, then adds them as children to the current pointer
-void Tree::determinePossibleMoves(node* ptr, int piece)
+void Tree::determinePossibleMoves(node* ptr, char piece)
 {
 	//stop if has children, meaning it's already been expanded
 	if(ptr->next_index>0)
@@ -35,7 +35,7 @@ void Tree::determinePossibleMoves(node* ptr, int piece)
 	// cout<<"Board addr: "<<&ptr->board<<endl;
 
 
-	vector<int**> possible_move_boards = board_obj.getPossibleMoveBoards(ptr->board, piece);
+	vector<char**> possible_move_boards = board_obj.getPossibleMoveBoards(ptr->board, piece);
 
 	for(int x = 0; x < possible_move_boards.size(); x++)
 	{
@@ -57,7 +57,7 @@ bool Tree::hasLegalMoves(node* ptr)
 }
 
 //returns the node with the smallest heuristic
-int** Tree::getBoardMinHeuristic(node* ptr)
+char** Tree::getBoardMinHeuristic(node* ptr)
 {
 	vector<int> minimum_indices;
 
@@ -251,7 +251,7 @@ void Tree::playerMove(int col, int row)
 
 
 		//if board matches by seeing if a piece has been placed in specified position
-		if(ptr->next[x]->board[col][row]!=0)
+		if(ptr->next[x]->board[col][row] != '0')
 		{
 			ptr = ptr->next[x];
 			break;
@@ -269,7 +269,7 @@ void Tree::AIMove(int col, int row)
 	{
 
 		//if board matches by seeing if a piece has been placed in specified position
-		if(ptr->next[x]->board[col][row]!=0)
+		if(ptr->next[x]->board[col][row] != '0')
 		{
 			ptr = ptr->next[x];
 			break;
@@ -280,7 +280,7 @@ void Tree::AIMove(int col, int row)
 
 
 //moves to child with board
-void Tree::move(int**& new_board)
+void Tree::move(char**& new_board)
 {
 	//iterates through current ptrs children
 	for(int x = 0; x < ptr->next_index; x++)
@@ -299,7 +299,7 @@ void Tree::move(int**& new_board)
 
 
 //iterates down the tree and populates with possible moves down to specified depth
-void Tree::iterateTreeDepth(node* ptr, int piece, int cur_depth, int max_depth)
+void Tree::iterateTreeDepth(node* ptr, char piece, int cur_depth, int max_depth)
 {
 
 	//checks if ptr has no children
@@ -332,7 +332,7 @@ void Tree::iterateTreeDepth(node* ptr, int piece, int cur_depth, int max_depth)
 
 
 //links a new node to ptr, with initialized board
-void Tree::newNode(node * ptr, int**& new_board, int piece)
+void Tree::newNode(node * ptr, char**& new_board, char piece)
 {
 	ptr->next[ptr->next_index] = new node();
 	// ptr->next.push_back(new node());
@@ -361,12 +361,12 @@ void Tree::printNode(node * ptr, int indents /*default is 0 */)
 	cout<<"Heuristic: "<<ptr->h<<endl;
 }
 
-int Tree::getOtherPiece(int piece)
+char Tree::getOtherPiece(char piece)
 {
-	if(piece==1)
-		return 2;
+	if(piece == AI_piece)
+		return player_piece;
 	else
-		return 1;
+		return AI_piece;
 }
 
 //prints the neural network in one long output.

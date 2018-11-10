@@ -18,8 +18,8 @@ class Board
 		//percentage of the "neuron" that gets increment if its path results in a good outcome
 		// static constexpr double perc = 0.25;
 
-		int white_piece = 2;
-		int black_piece = 1;
+		int white_piece = '2';
+		int black_piece = '1';
 
 
 
@@ -65,26 +65,26 @@ class Board
 
 
 		Board();
-		void resetBoard(int**& board);
+		void resetBoard(char**& board);
 		//places specified piece on the specified board at the specified position, and flips the opponent's pieces
-		bool place_piece(int**& board, int piece, int col, int row);
+		bool place_piece(char**& board, char piece, int col, int row);
 		
-		double getPossibleMovesCount(int**& board, int piece);
-		vector<vector<int>> getPossibleMoveCoordinates(int**& board, int piece);
-		vector<int**> getPossibleMoveBoards(int**& board, int piece);
+		double getPossibleMovesCount(char**& board, char piece);
+		vector<vector<int>> getPossibleMoveCoordinates(char**& board, char piece);
+		vector<char**> getPossibleMoveBoards(char**& board, char piece);
 
 		//callbacks list of pieces surrounding specified position
-		void get_neighbors(int**& board, int* neighbors, int x, int y);
-		int countPieces(int**& board, int piece);
+		void get_neighbors(char**& board, char* neighbors, int x, int y);
+		int countPieces(char**& board, char piece);
 		double getWeight(int col, int row);
 		
 
-		bool isEqual(int**& board, int**& other_board);
-		vector<vector<int>> getDifferenceCoordinates(int**& board, int**& board2);
-		int getPieceAtPosition(int**& board, int col, int row);
-		void copyBoard(int**& board, int**& old_board);
+		bool isEqual(char**& board, char**& other_board);
+		vector<vector<int>> getDifferenceCoordinates(char**& board, char**& board2);
+		char getPieceAtPosition(char**& board, int col, int row);
+		void copyBoard(char**& board, char**& old_board);
 
-		void printBoard(int**& board, int num_indents=0);
+		void printBoard(char**& board, int num_indents=0);
 
 };
 

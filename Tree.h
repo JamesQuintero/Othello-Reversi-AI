@@ -25,16 +25,18 @@ class Tree
 		{
 			//matrix of board state
 			//acts like the ID of the node
-			int** board;
+			// int** board;
 			// Board board;
 
-			int piece = 0;
+			char** board;
+
+			char piece = '0';
 
 			//heuristic
 			double h = 0;
 			
 			//indices for children
-			int next_index = 0;
+			short next_index = 0;
 
 			//children
 			// node** next = new node*[size*size];
@@ -48,10 +50,10 @@ class Tree
 	public:
 		Board board_obj;
 
-		int piece = 0;
+		char piece = '0';
 
-		int AI_piece = 0;
-		int player_piece = 0;
+		char AI_piece = '0';
+		char player_piece = '0';
 
 		//root node of the tree
 		node * root;
@@ -65,29 +67,29 @@ class Tree
 
 		Tree();
 		//links a new node to ptr, with initialized board
-		void newNode(node * ptr, int**& new_board, int piece);
+		void newNode(node * ptr, char**& new_board, char piece);
 
-		void determinePossibleMoves(node* ptr, int piece);
+		void determinePossibleMoves(node* ptr, char piece);
 		double getMinHeuristic(node * ptr, int alpha, int beta, int depth_left);
 		double getMaxHeuristic(node * ptr, int alpha, int beta, int depth_left);
 		double calculateHeuristic(node* ptr);
 
 		bool hasLegalMoves(node* ptr);
-		int** getBoardMinHeuristic(node* ptr);
+		char** getBoardMinHeuristic(node* ptr);
 
-		void iterateTreeDepth(node* ptr, int piece, int cur_depth, int max_depth);
+		void iterateTreeDepth(node* ptr, char piece, int cur_depth, int max_depth);
 
 
 		//returns a new board containing Tree's next move
 		// int** AIMove(int** board, int** possible_moves);
 		void AIMove(int col, int row);
 		void playerMove(int col, int row);
-		void move(int**& board);
+		void move(char**& board);
 
 		void printNode(node * ptr, int indent=0);
 		void printNet(node * ptr, int indent=0);
 
-		int getOtherPiece(int piece);
+		char getOtherPiece(char piece);
 
 
 

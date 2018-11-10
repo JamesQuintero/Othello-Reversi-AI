@@ -19,20 +19,20 @@ Board::Board()
 
 }
 
-void Board::resetBoard(int**& board)
+void Board::resetBoard(char**& board)
 {
 	board = createMatrix(this->size);
 
 	//places initial pieces
-	place_piece(board, 2, 3, 3);
-	place_piece(board, 1, 4, 3);
-	place_piece(board, 1, 3, 4);
-	place_piece(board, 2, 4, 4);
+	place_piece(board, '2', 3, 3);
+	place_piece(board, '1', 4, 3);
+	place_piece(board, '1', 3, 4);
+	place_piece(board, '2', 4, 4);
 }
 
 
 //places piece down at specified position
-bool Board::place_piece(int**& board, int piece, int col, int row)
+bool Board::place_piece(char**& board, char piece, int col, int row)
 {
 
 	try{
@@ -44,7 +44,7 @@ bool Board::place_piece(int**& board, int piece, int col, int row)
 
 	//// flips other player's pieces////
 
-	int other_piece = 0;
+	char other_piece = '0';
 
 
 	if(piece == white_piece)
@@ -67,7 +67,7 @@ bool Board::place_piece(int**& board, int piece, int col, int row)
 			break;
 		}
 		//if encountered blank space, stop
-		else if(board[col][x]==0)
+		else if(board[col][x] == '0')
 			break;
 	}
 
@@ -75,7 +75,7 @@ bool Board::place_piece(int**& board, int piece, int col, int row)
 	for(int x = row-1; x >= 0; x--)
 	{
 		//if encountered my piece, traverse back and flip previous pieces
-		if(board[col][x]==piece)
+		if(board[col][x] == piece)
 		{
 			//reverses back over previous squares and flips the pieces
 			for(int temp_x = x+1; temp_x <= row-1; temp_x++)
@@ -84,7 +84,7 @@ bool Board::place_piece(int**& board, int piece, int col, int row)
 			break;
 		}
 		//if encountered blank space, stop
-		else if(board[col][x]==0)
+		else if(board[col][x] == '0')
 			break;
 	}
 
@@ -92,7 +92,7 @@ bool Board::place_piece(int**& board, int piece, int col, int row)
 	for(int x = col+1; x < size; x++)
 	{
 		//if encountered my piece, traverse back and flip previous pieces
-		if(board[x][row]==piece)
+		if(board[x][row] == piece)
 		{
 			//reverses back over previous squares and flips the pieces
 			for(int temp_x = x-1; temp_x >= col+1; temp_x--)
@@ -101,7 +101,7 @@ bool Board::place_piece(int**& board, int piece, int col, int row)
 			break;
 		}
 		//if encountered blank space, stop
-		else if(board[x][row]==0)
+		else if(board[x][row] == '0')
 			break;
 	}
 
@@ -109,7 +109,7 @@ bool Board::place_piece(int**& board, int piece, int col, int row)
 	for(int x = col-1; x >= 0; x--)
 	{
 		//if encountered my piece, traverse back and flip previous pieces
-		if(board[x][row]==piece)
+		if(board[x][row] == piece)
 		{
 			//reverses back over previous squares and flips the pieces
 			for(int temp_x = x+1; temp_x <= col-1; temp_x++)
@@ -118,7 +118,7 @@ bool Board::place_piece(int**& board, int piece, int col, int row)
 			break;
 		}
 		//if encountered blank space, stop
-		else if(board[x][row]==0)
+		else if(board[x][row] == '0')
 			break;
 	}
 
@@ -129,7 +129,7 @@ bool Board::place_piece(int**& board, int piece, int col, int row)
 	while(temp_col < size && temp_row >= 0)
 	{
 		//if encountered my piece, traverse back and flip previous pieces
-		if(board[temp_col][temp_row]==piece)
+		if(board[temp_col][temp_row] == piece)
 		{
 			//reverses back over previous squares and flips the pieces
 			temp_col = temp_col-1;
@@ -145,7 +145,7 @@ bool Board::place_piece(int**& board, int piece, int col, int row)
 			break;
 		}
 		//if encountered blank space, stop
-		else if(board[temp_col][temp_row]==0)
+		else if(board[temp_col][temp_row] == '0')
 			break;
 
 		temp_col++;
@@ -159,7 +159,7 @@ bool Board::place_piece(int**& board, int piece, int col, int row)
 	while(temp_col >= 0 && temp_row < size)
 	{
 		//if encountered my piece, traverse back and flip previous pieces
-		if(board[temp_col][temp_row]==piece)
+		if(board[temp_col][temp_row] == piece)
 		{
 			//reverses back over previous squares and flips the pieces
 			temp_col = temp_col+1;
@@ -175,7 +175,7 @@ bool Board::place_piece(int**& board, int piece, int col, int row)
 			break;
 		}
 		//if encountered blank space, stop
-		else if(board[temp_col][temp_row]==0)
+		else if(board[temp_col][temp_row] == '0')
 			break;
 
 		temp_col--;
@@ -188,7 +188,7 @@ bool Board::place_piece(int**& board, int piece, int col, int row)
 	while(temp_col < size && temp_row < size)
 	{
 		//if encountered my piece, traverse back and flip previous pieces
-		if(board[temp_col][temp_row]==piece)
+		if(board[temp_col][temp_row] == piece)
 		{
 			//reverses back over previous squares and flips the pieces
 			temp_col = temp_col-1;
@@ -204,7 +204,7 @@ bool Board::place_piece(int**& board, int piece, int col, int row)
 			break;
 		}
 		//if encountered blank space, stop
-		else if(board[temp_col][temp_row]==0)
+		else if(board[temp_col][temp_row] == '0')
 			break;
 
 		temp_col++;
@@ -217,7 +217,7 @@ bool Board::place_piece(int**& board, int piece, int col, int row)
 	while(temp_col >= 0 && temp_row >= 0)
 	{
 		//if encountered my piece, traverse back and flip previous pieces
-		if(board[temp_col][temp_row]==piece)
+		if(board[temp_col][temp_row] == piece)
 		{
 			//reverses back over previous squares and flips the pieces
 			temp_col = temp_col+1;
@@ -233,7 +233,7 @@ bool Board::place_piece(int**& board, int piece, int col, int row)
 			break;
 		}
 		//if encountered blank space, stop
-		else if(board[temp_col][temp_row]==0)
+		else if(board[temp_col][temp_row] == '0')
 			break;
 
 		temp_col--;
@@ -249,10 +249,10 @@ bool Board::place_piece(int**& board, int piece, int col, int row)
 
 
 //returns list of coordinates of legal moves
-double Board::getPossibleMovesCount(int**& board, int piece)
+double Board::getPossibleMovesCount(char**& board, char piece)
 {
 
-	int other_piece = 0;
+	char other_piece = '0';
 
 
 	if(piece == white_piece)
@@ -265,7 +265,7 @@ double Board::getPossibleMovesCount(int**& board, int piece)
 	int num_flips = 0;
 	// Board board_copy;
 
-	int** board_copy = createMatrix(this->size);
+	char** board_copy = createMatrix(this->size);
 				
 
 	//iterates through entire board
@@ -274,11 +274,11 @@ double Board::getPossibleMovesCount(int**& board, int piece)
 		for(int y = 0; y < size; y++)
 		{
 			//if a piece already resides here, skip
-			if(board[x][y]!=0)
+			if(board[x][y]!='0')
 				continue;
 
 			//gets neighboring spots around current spot
-			int* neighbors = new int[9];
+			char* neighbors = new char[9];
 			get_neighbors(board, neighbors, x, y);
 
 			//gets if other piece is around this spot
@@ -329,12 +329,12 @@ double Board::getPossibleMovesCount(int**& board, int piece)
 
 
 //returns list of coordinates of legal moves
-vector<vector<int>> Board::getPossibleMoveCoordinates(int**& board, int piece)
+vector<vector<int>> Board::getPossibleMoveCoordinates(char**& board, char piece)
 {
 
 	vector<vector<int>> possible_moves;
 
-	int other_piece = 0;
+	char other_piece = '0';
 
 
 	if(piece == white_piece)
@@ -344,7 +344,7 @@ vector<vector<int>> Board::getPossibleMoveCoordinates(int**& board, int piece)
 
 
 	// Board board_copy;
-	int** board_copy = createMatrix(this->size);
+	char** board_copy = createMatrix(this->size);
 				
 
 	//iterates through entire board
@@ -354,11 +354,11 @@ vector<vector<int>> Board::getPossibleMoveCoordinates(int**& board, int piece)
 		{
 
 			//if a piece already resides here, skip
-			if(board[x][y]!=0)
+			if(board[x][y]!='0')
 				continue;
 
 			//gets neighboring spots around current spot
-			int* neighbors = new int[9];
+			char* neighbors = new char[9];
 			get_neighbors(board, neighbors, x, y);
 
 			//gets if other piece is around this spot
@@ -406,13 +406,13 @@ vector<vector<int>> Board::getPossibleMoveCoordinates(int**& board, int piece)
 }
 
 //returns list of legal board states that are possible for piece
-vector<int**> Board::getPossibleMoveBoards(int**& board, int piece)
+vector<char**> Board::getPossibleMoveBoards(char**& board, char piece)
 {
 
-	vector<int**> possible_boards;
+	vector<char**> possible_boards;
 
 	//gets opponent's piece
-	int other_piece = 0;
+	char other_piece = '0';
 	if(piece == white_piece)
 		other_piece = black_piece;
 	else
@@ -424,13 +424,13 @@ vector<int**> Board::getPossibleMoveBoards(int**& board, int piece)
 	{
 		for(int y = 0; y < size; y++)
 		{
-			// cout<<"x,y: "<<x<<","<<y<<endl;
+			// cout<<"x,y: "<<x<<","<<y<<": "<<board[x][y]<<endl;
 			//if a piece already resides here, skip
-			if(board[x][y]!=0)
+			if(board[x][y]!='0')
 				continue;
 
 			//gets neighboring spots around current spot
-			int* neighbors = new int[9];
+			char* neighbors = new char[9];
 			get_neighbors(board, neighbors, x, y);
 
 			//gets if other piece is around this spot
@@ -452,7 +452,7 @@ vector<int**> Board::getPossibleMoveBoards(int**& board, int piece)
 				// Board board_copy;
 				// board_copy.copyBoard(this);
 
-				int** board_copy = createMatrix(this->size);
+				char** board_copy = createMatrix(this->size);
 				copyBoard(board_copy, board);
 
 				int piece_count = countPieces(board_copy, piece);
@@ -476,7 +476,7 @@ vector<int**> Board::getPossibleMoveBoards(int**& board, int piece)
 	return possible_boards;
 }
 
-void Board::get_neighbors(int**& board, int* neighbors, int col, int row)
+void Board::get_neighbors(char**& board, char* neighbors, int col, int row)
 {
 
 	//iterates through all neighbors
@@ -487,7 +487,7 @@ void Board::get_neighbors(int**& board, int* neighbors, int col, int row)
 		{
 			//if out of bounds, skip
 			if(x <0 || y <0 || x>=size || y >= size)
-				neighbors[index] = -1;
+				neighbors[index] = ' ';
 			else
 				neighbors[index] = board[x][y];
 			
@@ -505,14 +505,14 @@ double Board::getWeight(int col, int row)
 
 
 //returns the count of piece on the board
-int Board::countPieces(int**& board, int piece)
+int Board::countPieces(char**& board, char piece)
 {
 	int count = 0;
 	for(int x = 0; x < size; x++)
 	{
 		for(int y = 0; y < size; y++)
 		{
-			if(board[x][y]==piece)
+			if(board[x][y] == piece)
 				count++;
 		}
 	}
@@ -521,15 +521,18 @@ int Board::countPieces(int**& board, int piece)
 }
 
 //compares boards
-bool Board::isEqual(int**& board, int**& other_board)
+bool Board::isEqual(char**& board, char**& other_board)
 {
 	bool matches = true;
 	for(int x = 0; x < size; x++)
 	{
 		for(int y = 0; y < size; y++)
 		{
-			if(board[x][y]!=other_board[x][y])
+			if(board[x][y] != other_board[x][y])
+			{
 				matches = false;
+				break;
+			}
 		}
 	}
 
@@ -537,7 +540,7 @@ bool Board::isEqual(int**& board, int**& other_board)
 }
 
 //returns list of coordinates where the two boards differ
-vector<vector<int>> Board::getDifferenceCoordinates(int**& board, int**& board2)
+vector<vector<int>> Board::getDifferenceCoordinates(char**& board, char**& board2)
 {
 	vector<vector<int>> coordinates;
 
@@ -566,7 +569,7 @@ vector<vector<int>> Board::getDifferenceCoordinates(int**& board, int**& board2)
 }
 
 
-void Board::printBoard(int**& board, int num_indents)
+void Board::printBoard(char**& board, int num_indents)
 {
 
 	// cout<<"printBoard()"<<endl;
@@ -603,9 +606,9 @@ void Board::printBoard(int**& board, int num_indents)
 			// 	cout<<"[W]";
 			// else
 			// 	cout<<"[ ]";
-			if(board[y][x]==1)
+			if(board[y][x]=='1')
 				cout<<"[B]";
-			else if(board[y][x]==2)
+			else if(board[y][x]=='2')
 				cout<<"[W]";
 			else
 				cout<<"[ ]";
@@ -615,15 +618,15 @@ void Board::printBoard(int**& board, int num_indents)
 
 }
 
-int Board::getPieceAtPosition(int**& board, int col, int row)
+char Board::getPieceAtPosition(char**& board, int col, int row)
 {
 	if(col<0 || col>size || row<0 || row>size)
-		return -1;
+		return ' ';
 
 	return board[col][row];
 }
 
-void Board::copyBoard(int**& board, int**& old_board)
+void Board::copyBoard(char**& board, char**& old_board)
 {
 	for(int x = 0; x < size; x++)
 	{

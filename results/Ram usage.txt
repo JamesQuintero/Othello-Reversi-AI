@@ -1,0 +1,23 @@
+
+Depth 5
+
+Control: 
+from 5.9GB to 9.7GB = 3.8GB
+from 5.9GB to 14.2GB = 8.3GB
+from 5.9GB to 14.5GB (max RAM) = 8.6GB
+
+
+Improvement by not having Board object in each node: 
+from 5.6GB to 8.6GB = 3.0GB
+from 5.6GB to 7.4GB = 1.8GB
+from 5.6GB to 9.8GB = 4.2GB
+from 5.6GB to 9.5GB = 3.9GB
+
+
+Improvement by board being char instead of int: 
+from 6.0GB to 9.0GB = 3.0GB
+from 6.0GB to 12.3GB = 6.3GB
+from 6.0GB to 10.3GB = 4.3GB
+from 6.0GB to 7.9GB = 1.9GB
+from 6.4GB to 10.4GB = 4.0GB
+

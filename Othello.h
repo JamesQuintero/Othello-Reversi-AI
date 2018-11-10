@@ -25,10 +25,10 @@ class Othello
 		//if true, player goes first. AI otherwise
 		bool turn;
 
-		//0, or O
-		int player_piece;
-		//1, or X
-		int AI_piece;
+		//2
+		char player_piece;
+		//1
+		char AI_piece;
 
 		//AI #1
 		Tree tree;
