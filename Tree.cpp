@@ -198,7 +198,9 @@ double Tree::calculateHeuristic(node* ptr)
 	// cout<<"Num player flips: "<<num_player_flips<<endl;
 	// cout<<"Num AI flips: "<<num_AI_flips<<endl;
 	double heuristic = weights[0]*(player_count-AI_count) + weights[1]*(num_player_flips - num_AI_flips);
-	
+
+	// double heuristic = num_player_flips - num_AI_flips;
+
 	return heuristic;
 
 	//reatio heuristic doesn't work very well, and crashes...

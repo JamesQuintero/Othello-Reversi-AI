@@ -16,6 +16,7 @@ Board::Board()
 	resetBoard();
 
 	srand(time(0));  // needed once per program run
+
 }
 
 void Board::resetBoard()
@@ -308,7 +309,8 @@ double Board::getPossibleMovesCount(int piece)
 				//if flipped any opponent's pieces
 				if(other_piece_count > new_other_piece_count)
 				{
-					num_moves++;
+					// num_moves++;
+					num_moves += weights[x][y];
 					num_flips += (new_piece_count-piece_count - 2);
 				}
 			}
@@ -317,9 +319,9 @@ double Board::getPossibleMovesCount(int piece)
 	}
 
 
-	// return (double)num_moves;
+	return (double)num_moves;
 	// return (double)num_flips;
-	return (double)num_flips/(double)num_moves;
+	// return (double)num_flips/(double)num_moves;
 }
 
 

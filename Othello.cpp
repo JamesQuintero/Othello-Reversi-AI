@@ -57,15 +57,16 @@ void Othello::run()
 
 				
 				//goes forever until someone has an unsuccessful move (board is full or no legal moves)
-				bool success = true;
-				while(success==true)
+				bool player_move_success = true;
+				bool AI_move_success = true;
+				while(player_move_success == true || AI_move_success == true)
 				{
 					//player moves
 					if(isPlayersTurn())
-						success = playersMove();
+						player_move_success = playersMove();
 					//AI moves
 					else
-						success = AIMove(1);
+						AI_move_success = AIMove(1);
 
 					changeTurn();
 				}
@@ -165,6 +166,7 @@ bool Othello::playersMove()
 		}
 
 
+		//// unncomment this if you want the player to move randomly ////
 		// int random_index = randNum(0, possible_moves.size());
 		// col = possible_moves[random_index][0];
 		// row = possible_moves[random_index][1];
