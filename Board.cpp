@@ -312,8 +312,8 @@ double Board::getPossibleMovesCount(int**& board, int piece)
 				//if flipped any opponent's pieces
 				if(other_piece_count > new_other_piece_count)
 				{
-					// num_moves++;
-					num_moves += weights[x][y];
+					num_moves++;
+					// num_moves += weights[x][y];
 					num_flips += (new_piece_count-piece_count - 2);
 				}
 			}
@@ -496,6 +496,12 @@ void Board::get_neighbors(int**& board, int* neighbors, int col, int row)
 	}
 }
 
+//returns the weight at specified coordinates
+double Board::getWeight(int col, int row)
+{
+	return weights[col][row];
+}
+
 
 
 //returns the count of piece on the board
@@ -528,6 +534,35 @@ bool Board::isEqual(int**& board, int**& other_board)
 	}
 
 	return matches;
+}
+
+//returns list of coordinates where the two boards differ
+vector<vector<int>> Board::getDifferenceCoordinates(int**& board, int**& board2)
+{
+	vector<vector<int>> coordinates;
+
+	try
+	{
+		for(int x = 0; x < size; x++)
+		{
+			for(int y = 0; y < size; y++)
+			{
+				// board[x][y] = old_board->getPieceAtPosition(x, y);
+				if(board[x][y] != board2[x][y])
+				{
+					vector<int> coordinate;
+					coordinate.push_back(x);
+					coordinate.push_back(y);
+					coordinates.push_back(coordinate);
+				}
+			}
+		}
+	} catch(exception &ex)
+	{
+		cout<<"Crashed in getDifferenceCoordinates()"<<endl;
+	}
+
+	return coordinates;
 }
 
 

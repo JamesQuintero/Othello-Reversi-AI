@@ -191,8 +191,25 @@ double Tree::calculateHeuristic(node* ptr)
 	int player_count = board_obj.countPieces(ptr->board, player_piece);
 	int AI_count = board_obj.countPieces(ptr->board, AI_piece);
 
-	double num_player_flips = board_obj.countPieces(ptr->board, player_piece);
-	double num_AI_flips =board_obj.countPieces(ptr->board, AI_piece);
+	double num_player_flips = board_obj.getPossibleMovesCount(ptr->board, player_piece);
+	double num_AI_flips = board_obj.getPossibleMovesCount(ptr->board, AI_piece);
+
+
+	//gets difference of this pointer's board, and its parent's board to determine where player moved
+	vector<vector<int>> coordinates = board_obj.getDifferenceCoordinates(ptr->board, ptr->prev->board);
+
+	double pos_weight = 0;
+	if(coordinates.size() > 0)
+	{
+		int col = coordinates[0][0];
+		int row = coordinates[0][1];
+		pos_weight = board_obj.getWeight(col, row);
+
+		// //negate weight if the AI is moving here
+		// if(ptr->board[col][row] == AI_piece)
+		// 	pos_weight *= -1;
+	}
+
 
 
 
@@ -206,17 +223,21 @@ double Tree::calculateHeuristic(node* ptr)
 	int* weights = new int[3];
 	weights[0] = 1;
 	weights[1] = 1;
+	weights[1] = 1;
 
 	// cout<<"Num player flips: "<<num_player_flips<<endl;
 	// cout<<"Num AI flips: "<<num_AI_flips<<endl;
-	double heuristic = weights[0]*(player_count-AI_count) + weights[1]*(num_player_flips - num_AI_flips);
 
-	// double heuristic = player_count - AI_count;
 
+	double heuristic = weights[0]*(player_count-AI_count) + weights[1]*pos_weight + weights[1]*(num_player_flips - num_AI_flips);
+
+	// double heuristic = (player_count - AI_count);
+	// double heuristic = num_player_flips - num_AI_flips;
+	// double heuristic = pos_weight;
 	return heuristic;
 
 	//reatio heuristic doesn't work very well, and crashes...
-	// return (player_count/(player_count+AI_count)) + (num_player_moves/(num_player_moves+num_AI_moves));
+	// return ((double)player_count/((double)player_count+(double)AI_count));
 }
 
 
