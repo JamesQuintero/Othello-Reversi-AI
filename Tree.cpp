@@ -205,9 +205,9 @@ double Tree::calculateHeuristic(node* ptr)
 		int row = coordinates[0][1];
 		pos_weight = board_obj.getWeight(col, row);
 
-		// //negate weight if the AI is moving here
-		// if(ptr->board[col][row] == AI_piece)
-		// 	pos_weight *= -1;
+		//negate weight if the AI is moving here
+		if(ptr->board[col][row] == AI_piece)
+			pos_weight *= -1;
 	}
 
 
@@ -222,7 +222,7 @@ double Tree::calculateHeuristic(node* ptr)
 
 	int* weights = new int[3];
 	weights[0] = 1;
-	weights[1] = 1;
+	weights[1] = 0.2;
 	weights[1] = 1;
 
 	// cout<<"Num player flips: "<<num_player_flips<<endl;

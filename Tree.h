@@ -30,13 +30,11 @@ class Tree
 
 			int piece = 0;
 
-
 			//heuristic
 			double h = 0;
 			
 			//indices for children
 			int next_index = 0;
-			// int prev_index = 0;
 
 			//children
 			// node** next = new node*[size*size];
@@ -61,7 +59,7 @@ class Tree
 		//current position in the tree
 		node * ptr;
 
-		int max_depth = 4;
+		int max_depth = 5;
 		int max_h_depth = 20;
 
 
