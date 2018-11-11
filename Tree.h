@@ -61,7 +61,7 @@ class Tree
 		//current position in the tree
 		node * ptr;
 
-		int max_depth = 4;
+		int max_depth = 5;
 		int max_h_depth = 20;
 
 
