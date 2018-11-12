@@ -93,14 +93,14 @@ char** Tree::getBoardMinHeuristic(node* ptr)
 
 //calculates heuristics for AI down to a certain depth
 //considers current node as the AI's move, and therefore will be minimizing heuristic
-double Tree::getMinHeuristic(node * ptr, int alpha /* starts as -INFINITY */, int beta /* starts as INFINITY */, int depth_left)
+double Tree::getMinHeuristic(node* start, node * ptr, int alpha /* starts as -INFINITY */, int beta /* starts as INFINITY */, int depth_left)
 {
 	double cur_heuristic = -1;
 
 	//if has no children
 	if(ptr->next_index == 0 || depth_left<=0)
 	{
-		cur_heuristic = calculateHeuristic(ptr);
+		cur_heuristic = calculateHeuristic(start, ptr);
 		ptr->h = cur_heuristic;
 
 		return cur_heuristic;
@@ -120,7 +120,7 @@ double Tree::getMinHeuristic(node * ptr, int alpha /* starts as -INFINITY */, in
 	double min_heuristic = (double)numeric_limits<int>::max(); // max value
 	for(int x = 0; x < ptr->next_index; x++)
 	{
-		double h = getMaxHeuristic(ptr->next[x], alpha, beta, depth_left--);
+		double h = getMaxHeuristic(start, ptr->next[x], alpha, beta, depth_left--);
 		if(h < min_heuristic)
 			min_heuristic = h;
 
@@ -140,14 +140,14 @@ double Tree::getMinHeuristic(node * ptr, int alpha /* starts as -INFINITY */, in
 
 }
 
-double Tree::getMaxHeuristic(node * ptr, int alpha /* starts as -INFINITY */, int beta /* starts as INFINITY */, int depth_left)
+double Tree::getMaxHeuristic(node* start, node * ptr, int alpha /* starts as -INFINITY */, int beta /* starts as INFINITY */, int depth_left)
 {
 	double cur_heuristic = -1;
 	
 	//if has no children
 	if(ptr->next_index == 0 || depth_left<=0)
 	{
-		cur_heuristic = calculateHeuristic(ptr);
+		cur_heuristic = calculateHeuristic(start, ptr);
 		ptr->h = cur_heuristic;
 
 		return cur_heuristic;
@@ -167,7 +167,7 @@ double Tree::getMaxHeuristic(node * ptr, int alpha /* starts as -INFINITY */, in
 	double max_heuristic = (double)numeric_limits<int>::min(); // minimum value
 	for(int x = 0; x < ptr->next_index; x++)
 	{
-		double h = getMinHeuristic(ptr->next[x], alpha, beta, depth_left--);
+		double h = getMinHeuristic(start, ptr->next[x], alpha, beta, depth_left--);
 		if(h > max_heuristic)
 			max_heuristic = h;
 
@@ -185,7 +185,7 @@ double Tree::getMaxHeuristic(node * ptr, int alpha /* starts as -INFINITY */, in
 }
 
 //returns heuristic for specified pointer
-double Tree::calculateHeuristic(node* ptr)
+double Tree::calculateHeuristic(node* start, node* ptr)
 {
 	
 	int player_count = board_obj.countPieces(ptr->board, player_piece);
@@ -196,8 +196,24 @@ double Tree::calculateHeuristic(node* ptr)
 	double AI_score = board_obj.countPositionWeights(ptr->board, AI_piece);
 
 
-	double num_player_flips = board_obj.getPossibleMovesCount(ptr->board, player_piece);
-	double num_AI_flips = board_obj.getPossibleMovesCount(ptr->board, AI_piece);
+	double total_player_moves = 0;
+	double total_AI_moves = 0;
+	double count = 0;
+	node* temp = ptr;
+	//traverses from current node to start node
+	//when traversing up counting possible moves for player and AI, try and average per level so that it's not a total. 
+	//A total would give a lower total for unvisited children, and therefore not be a good heuristic. 
+	while(temp!=start)
+	{
+		//maybe separate by other piece?
+		total_player_moves += board_obj.getPossibleMovesCount(temp->board, player_piece);
+		total_AI_moves += board_obj.getPossibleMovesCount(temp->board, AI_piece);
+		count++;
+
+		temp = temp->prev;
+	}
+	double player_moves = total_player_moves/count;
+	double AI_moves = total_AI_moves/count;
 
 
 	//gets difference of this pointer's board, and its parent's board to determine where player moved
@@ -210,9 +226,9 @@ double Tree::calculateHeuristic(node* ptr)
 		int row = coordinates[0][1];
 		pos_weight = board_obj.getWeight(col, row);
 
-		//negate weight if the AI is moving here
-		if(ptr->board[col][row] == AI_piece)
-			pos_weight *= -1;
+		// //negate weight if the AI is moving here
+		// if(ptr->board[col][row] == AI_piece)
+		// 	pos_weight *= -1;
 	}
 
 
@@ -228,25 +244,28 @@ double Tree::calculateHeuristic(node* ptr)
 	int* weights = new int[3];
 	weights[0] = 1;
 	weights[1] = 1;
-	weights[2] = 3;
+	weights[2] = 10;
 
 	// cout<<"Player score: "<<player_score<<endl;
 	// cout<<"AI score: "<<AI_score<<endl;
 	// cout<<"Difference: "<<(player_score - AI_score)<<endl;
 	// board_obj.printBoard(ptr->board);
-	// cout<<"Num player flips: "<<num_player_flips<<endl;
-	// cout<<"Num AI flips: "<<num_AI_flips<<endl;
-	// cout<<"Difference: "<<(num_player_flips - num_AI_flips)<<endl;
+	// cout<<"Num player possible moves: "<<player_moves<<endl;
+	// cout<<"Num AI possible moves: "<<AI_moves<<endl;
+	// cout<<"Difference: "<<(player_moves - AI_moves)<<endl;
 	// cout<<endl;
 
 
 	double heuristic =  weights[0]*(player_count-AI_count) + 
 						weights[1]*(player_score-AI_score) + 
-						weights[2]*(num_player_flips - num_AI_flips);
+						weights[2]*(player_moves-AI_moves);
 
 	// double heuristic = (player_count - AI_count);
 	// double heuristic = num_player_flips - num_AI_flips;
 	// double heuristic = pos_weight;
+	// cout<<"Heuristic: "<<heuristic<<endl;
+	// cout<<endl;
+
 	return heuristic;
 
 	//reatio heuristic doesn't work very well, and crashes...

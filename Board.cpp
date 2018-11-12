@@ -336,10 +336,10 @@ double Board::getPossibleMovesCount(char**& board, char piece)
 	}
 
 
-	return (double)num_moves;
-	// return num_moves_weighted;
+	// return (double)num_moves;
+	// return (double)num_moves_weighted;
 	// return num_moves_weighted/(double)num_moves;
-	// return (double)num_flips;
+	return (double)num_flips;
 	// return (double)num_flips/(double)num_moves;
 }
 

@@ -111,7 +111,10 @@ void Othello::run()
 //Player's turn to move. returns true if successful
 bool Othello::playersMove()
 {
-	// tree.getMaxHeuristic(tree.ptr, MIN, MAX, tree.max_depth+1);
+	//also traverse the tree in player so that if AI has to skip its move 
+	// tree.iterateTreeDepth(tree.ptr, tree.ptr, player_piece, 1, tree.max_depth);
+
+	// tree.getMaxHeuristic(tree.ptr, tree.ptr, MIN, MAX, tree.max_depth+1);
 
 	
 
@@ -201,7 +204,7 @@ bool Othello::AIMove(int AI_version)
 {
 	// tree.iterateTreeDepth(tree.ptr, player_piece, 1, tree.max_depth);
 	tree.iterateTreeDepth(tree.ptr, AI_piece, 1, tree.max_depth);
-	tree.getMinHeuristic(tree.ptr, MIN, MAX, tree.max_h_depth+1);
+	tree.getMinHeuristic(tree.ptr, tree.ptr, MIN, MAX, tree.max_h_depth+1);
 	//will get children from the tree
 
 	// //for testing, prints out tree
@@ -239,6 +242,12 @@ bool Othello::AIMove(int AI_version)
 
 	//add player's move to neural net
 	tree.move(new_board);
+
+	//get where AI moved: 
+	vector<vector<int>> coordinates = board_obj.getDifferenceCoordinates(tree.ptr->board, tree.ptr->prev->board);
+
+	cout<<"AI's move: "<<convert_to_notation(coordinates[0][0], coordinates[0][1])<<endl;
+	cout<<endl<<endl;
 
 	return true;
 }

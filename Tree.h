@@ -70,9 +70,9 @@ class Tree
 		void newNode(node * ptr, char**& new_board, char piece);
 
 		void determinePossibleMoves(node* ptr, char piece);
-		double getMinHeuristic(node * ptr, int alpha, int beta, int depth_left);
-		double getMaxHeuristic(node * ptr, int alpha, int beta, int depth_left);
-		double calculateHeuristic(node* ptr);
+		double getMinHeuristic(node* start, node * ptr, int alpha, int beta, int depth_left);
+		double getMaxHeuristic(node* start, node * ptr, int alpha, int beta, int depth_left);
+		double calculateHeuristic(node* start, node* ptr);
 
 		bool hasLegalMoves(node* ptr);
 		char** getBoardMinHeuristic(node* ptr);
