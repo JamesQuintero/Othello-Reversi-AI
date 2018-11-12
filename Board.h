@@ -76,6 +76,7 @@ class Board
 		//callbacks list of pieces surrounding specified position
 		void get_neighbors(char**& board, char* neighbors, int x, int y);
 		int countPieces(char**& board, char piece);
+		double countPositionWeights(char**& board, char piece);
 		double getWeight(int col, int row);
 		
 

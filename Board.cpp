@@ -244,8 +244,21 @@ bool Board::place_piece(char**& board, char piece, int col, int row)
 	return true;
 }
 
+//returns total of the weights that piece occupies
+double Board::countPositionWeights(char**& board, char piece)
+{
+	double total = 0;
+	for(int x = 0; x < size; x++)
+	{
+		for(int y = 0; y < size; y++)
+		{
+			if(board[x][y] == piece)
+				total += getWeight(x, y);
+		}
+	}
 
-
+	return total;
+}
 
 
 //returns list of coordinates of legal moves
@@ -262,6 +275,7 @@ double Board::getPossibleMovesCount(char**& board, char piece)
 
 
 	int num_moves = 0;
+	double num_moves_weighted = 0;
 	int num_flips = 0;
 	// Board board_copy;
 
@@ -313,7 +327,7 @@ double Board::getPossibleMovesCount(char**& board, char piece)
 				if(other_piece_count > new_other_piece_count)
 				{
 					num_moves++;
-					// num_moves += weights[x][y];
+					num_moves_weighted += weights[x][y];
 					num_flips += (new_piece_count-piece_count - 2);
 				}
 			}
@@ -323,6 +337,8 @@ double Board::getPossibleMovesCount(char**& board, char piece)
 
 
 	return (double)num_moves;
+	// return num_moves_weighted;
+	// return num_moves_weighted/(double)num_moves;
 	// return (double)num_flips;
 	// return (double)num_flips/(double)num_moves;
 }
@@ -551,7 +567,8 @@ vector<vector<int>> Board::getDifferenceCoordinates(char**& board, char**& board
 			for(int y = 0; y < size; y++)
 			{
 				// board[x][y] = old_board->getPieceAtPosition(x, y);
-				if(board[x][y] != board2[x][y])
+				// if(board[x][y] != board2[x][y])
+				if((board[x][y] != '0' && board2[x][y] == '0') || (board[x][y] == '0' && board2[x][y] != '0'))
 				{
 					vector<int> coordinate;
 					coordinate.push_back(x);

@@ -113,11 +113,17 @@ bool Othello::playersMove()
 {
 	// tree.getMaxHeuristic(tree.ptr, MIN, MAX, tree.max_depth+1);
 
-	// tree.printNet(tree.ptr);
+	
 
 	cout<<"Player's move. "<<endl;
 	// printBoard(board, size);
 	board_obj.printBoard(tree.ptr->board);
+
+	// //for testing, prints out tree
+	// cout<<"For testing"<<endl;
+	// tree.printNet(tree.ptr);
+	// string to_continue;
+	// cin>>to_continue;
 
 	string choice = "";
 	int col = -1;
@@ -179,7 +185,7 @@ bool Othello::playersMove()
 
 	//player places piece
 	// place_piece(board, player_piece, col, row);
-	board_obj.place_piece(tree.ptr->board, player_piece, col, row);
+	// board_obj.place_piece(tree.ptr->board, player_piece, col, row);
 
 	//add player's move to neural net
 	tree.playerMove(col, row);
@@ -198,7 +204,7 @@ bool Othello::AIMove(int AI_version)
 	tree.getMinHeuristic(tree.ptr, MIN, MAX, tree.max_h_depth+1);
 	//will get children from the tree
 
-	//for testing, prints out tree
+	// //for testing, prints out tree
 	// tree.printNet(tree.ptr);
 	// string to_continue;
 	// cin>>to_continue;

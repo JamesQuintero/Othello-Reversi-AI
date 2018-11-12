@@ -191,6 +191,11 @@ double Tree::calculateHeuristic(node* ptr)
 	int player_count = board_obj.countPieces(ptr->board, player_piece);
 	int AI_count = board_obj.countPieces(ptr->board, AI_piece);
 
+	//returns total of score where score = player_piece_position * weight_at_position. 
+	double player_score = board_obj.countPositionWeights(ptr->board, player_piece);
+	double AI_score = board_obj.countPositionWeights(ptr->board, AI_piece);
+
+
 	double num_player_flips = board_obj.getPossibleMovesCount(ptr->board, player_piece);
 	double num_AI_flips = board_obj.getPossibleMovesCount(ptr->board, AI_piece);
 
@@ -205,9 +210,9 @@ double Tree::calculateHeuristic(node* ptr)
 		int row = coordinates[0][1];
 		pos_weight = board_obj.getWeight(col, row);
 
-		// //negate weight if the AI is moving here
-		// if(ptr->board[col][row] == AI_piece)
-		// 	pos_weight *= -1;
+		//negate weight if the AI is moving here
+		if(ptr->board[col][row] == AI_piece)
+			pos_weight *= -1;
 	}
 
 
@@ -223,13 +228,21 @@ double Tree::calculateHeuristic(node* ptr)
 	int* weights = new int[3];
 	weights[0] = 1;
 	weights[1] = 1;
-	weights[1] = 3;
+	weights[2] = 3;
 
+	// cout<<"Player score: "<<player_score<<endl;
+	// cout<<"AI score: "<<AI_score<<endl;
+	// cout<<"Difference: "<<(player_score - AI_score)<<endl;
+	// board_obj.printBoard(ptr->board);
 	// cout<<"Num player flips: "<<num_player_flips<<endl;
 	// cout<<"Num AI flips: "<<num_AI_flips<<endl;
+	// cout<<"Difference: "<<(num_player_flips - num_AI_flips)<<endl;
+	// cout<<endl;
 
 
-	double heuristic = weights[0]*(player_count-AI_count) + weights[1]*pos_weight + weights[1]*(num_player_flips - num_AI_flips);
+	double heuristic =  weights[0]*(player_count-AI_count) + 
+						weights[1]*(player_score-AI_score) + 
+						weights[2]*(num_player_flips - num_AI_flips);
 
 	// double heuristic = (player_count - AI_count);
 	// double heuristic = num_player_flips - num_AI_flips;
@@ -251,7 +264,7 @@ void Tree::playerMove(int col, int row)
 
 
 		//if board matches by seeing if a piece has been placed in specified position
-		if(ptr->next[x]->board[col][row] != '0')
+		if(ptr->next[x]->board[col][row] == player_piece)
 		{
 			ptr = ptr->next[x];
 			break;
@@ -269,7 +282,7 @@ void Tree::AIMove(int col, int row)
 	{
 
 		//if board matches by seeing if a piece has been placed in specified position
-		if(ptr->next[x]->board[col][row] != '0')
+		if(ptr->next[x]->board[col][row] == AI_piece)
 		{
 			ptr = ptr->next[x];
 			break;
