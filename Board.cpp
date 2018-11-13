@@ -17,6 +17,8 @@ Board::Board()
 
 	// srand(time(0));  // needed once per program run
 
+
+
 }
 
 void Board::resetBoard(char**& board)
@@ -245,7 +247,7 @@ bool Board::place_piece(char**& board, char piece, int col, int row)
 }
 
 //returns total of the weights that piece occupies
-double Board::countPositionWeights(char**& board, char piece)
+double Board::countPositionWeights(char**& board, int level, char piece)
 {
 	double total = 0;
 	for(int x = 0; x < size; x++)
@@ -253,7 +255,7 @@ double Board::countPositionWeights(char**& board, char piece)
 		for(int y = 0; y < size; y++)
 		{
 			if(board[x][y] == piece)
-				total += getWeight(x, y);
+				total += getWeight(level, x, y);
 		}
 	}
 
@@ -327,7 +329,7 @@ double Board::getPossibleMovesCount(char**& board, char piece)
 				if(other_piece_count > new_other_piece_count)
 				{
 					num_moves++;
-					num_moves_weighted += weights[x][y];
+					num_moves_weighted += weights[0][x][y];
 					num_flips += (new_piece_count-piece_count - 2);
 				}
 			}
@@ -336,10 +338,10 @@ double Board::getPossibleMovesCount(char**& board, char piece)
 	}
 
 
-	// return (double)num_moves;
+	return (double)num_moves;
 	// return (double)num_moves_weighted;
 	// return num_moves_weighted/(double)num_moves;
-	return (double)num_flips;
+	// return (double)num_flips;
 	// return (double)num_flips/(double)num_moves;
 }
 
@@ -513,9 +515,14 @@ void Board::get_neighbors(char**& board, char* neighbors, int col, int row)
 }
 
 //returns the weight at specified coordinates
-double Board::getWeight(int col, int row)
+double Board::getWeight(int level, int col, int row)
 {
-	return weights[col][row];
+	if(level<=40)
+		return weights[0][col][row];
+	else if(level<=50)
+		return weights[1][col][row];
+	else
+		return weights[2][col][row];
 }
 
 

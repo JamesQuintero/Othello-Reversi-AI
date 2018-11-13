@@ -48,8 +48,9 @@ class Board
 	 //        {10 ,  1 ,  2 , 0.5, 0.5,  2 ,  1 , 10 }
 	 //    };
 
-	    double weights[size][size] =
-	    {
+		//Weights for first 0-20 levels or so
+	    double weights[3][size][size] =
+	    {{
 	        {150 ,  0 , 12 ,  3 ,  3 ,  12 ,  0 , 150 },
 	        {0  ,  0 , 0.5, 0.5, 0.5, 0.5,  0 ,  0 },
 	        { 12 , 0.5,  6 , 1.8, 1.8,  6 , 0.5,  12 },
@@ -58,7 +59,31 @@ class Board
 	        { 12 , 0.5,  6 , 1.8, 1.8,  6 , 0.5,  12 },
 	        {0  ,  0 , 0.5, 0.5, 0.5, 0.5,  0 ,  0 },
 	        {150 ,  0 , 12 ,  3 ,  3 ,  12 ,  0 , 150 }
-	    };
+	    }, 
+	    //Weights for levels 20-40 or so
+	    {
+	        {  75,    0,    6,  1.5,  1.5,    6,    0,  75},
+	        {   0,    0, 0.25, 0.25, 0.25, 0.25,    0,   0},
+	        {   6, 0.25,    3,  0.9,  0.9,    3, 0.25,   6},
+	        { 1.5, 0.25,  0.9,  0.9,  0.9,  0.9, 0.25, 1.5},
+	        { 1.5, 0.25,  0.9,  0.9,  0.9,  0.9, 0.25, 1.5},
+	        {   6, 0.25,    3,  0.9,  0.9,    3, 0.25,   6},
+	        {   0,    0, 0.25, 0.25, 0.25, 0.25,    0,   0},
+	        {  75,    0,    6,  1.5,  1.5,    6,    0,  75}
+	    },
+	    //weights for levels 40+ or so
+	    {
+	        {  30,    0,    3,  1.0,  1.0,    3,    0,  30},
+	        {   0,    0, 0.15, 0.15, 0.15, 0.15,    0,   0},
+	        {   3, 0.15,  1.5,  0.4,  0.4,  1.5, 0.15,   3},
+	        { 1.0, 0.15,  0.4,  0.4,  0.4,  0.4, 0.15, 1.0},
+	        { 1.0, 0.15,  0.4,  0.4,  0.4,  0.4, 0.15, 1.0},
+	        {   3, 0.15,  1.5,  0.4,  0.4,  1.5, 0.15,   3},
+	        {   0,    0, 0.15, 0.15, 0.15, 0.15,    0,   0},
+	        {  30,    0,    3,  1.0,  1.0,    3,    0,  30}
+	    }};
+
+		
 
 	public:
 		// int** board;
@@ -76,8 +101,8 @@ class Board
 		//callbacks list of pieces surrounding specified position
 		void get_neighbors(char**& board, char* neighbors, int x, int y);
 		int countPieces(char**& board, char piece);
-		double countPositionWeights(char**& board, char piece);
-		double getWeight(int col, int row);
+		double countPositionWeights(char**& board, int level, char piece);
+		double getWeight(int level, int col, int row);
 		
 
 		bool isEqual(char**& board, char**& other_board);

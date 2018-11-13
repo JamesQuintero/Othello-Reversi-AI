@@ -47,9 +47,9 @@ class Othello
 		//returns true if it's player's turn to move. false otherwise
 		bool isPlayersTurn();
 		//player's turn to move. returns true if successful
-		bool playersMove();
+		bool playersMove(int player_type);
 		//AI's turn to move. returns true if successful
-		bool AIMove(int AI_version);
+		bool AIMove(int AI_version, bool verbose=true);
 		//returns 1 if player won, -1 if AI won, and 0 if tie
 		int determineWinner();
 		
@@ -59,7 +59,7 @@ class Othello
 		string convert_to_notation(int col, int row);
 		
 		//reset's game
-		void resetGame();
+		void resetGame(bool reset_tree=false);
 
 		// int count_flips(vector<int> col_list, int piece, int other_piece);
 		// vector<int> get_column(int** board, int col);

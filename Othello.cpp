@@ -19,13 +19,10 @@ Othello::Othello()
 	tree.AI_piece = AI_piece;
 
 
-	resetGame();
+	resetGame(true);
 
 	//gets first possible moves for black
-	tree.determinePossibleMoves(&*tree.ptr, AI_piece);
-	// tree.iterateTreeDepth(tree.ptr, AI_piece, 1, tree.max_depth);
-
-	// tree.getMinHeuristic(tree.ptr, 2);
+	// tree.determinePossibleMoves(&*tree.ptr, AI_piece);
 }
 
 //runs the game
@@ -36,8 +33,9 @@ void Othello::run()
 		cout<<endl;
 		cout<<"Menu: "<<endl;
 		cout<<"1) Play against AI"<<endl;
+		cout<<"2) AI against AI"<<endl;
 		// cout<<"2) AI vs AI"<<endl;
-		cout<<"2) Print Game Tree"<<endl;
+		cout<<"3) Print Game Tree"<<endl;
 
 		cout<<"Choice: ";
 		int choice;
@@ -64,7 +62,7 @@ void Othello::run()
 				{
 					//player moves
 					if(isPlayersTurn())
-						player_move_success = playersMove();
+						player_move_success = playersMove(0);
 					//AI moves
 					else
 						AI_move_success = AIMove(1);
@@ -79,12 +77,18 @@ void Othello::run()
 					cout<<endl;
 					cout<<"Player WON"<<endl;
 					cout<<endl<<endl;
+
+					//gives bad reinforcement to tree
+					tree.reinforceGood(tree.ptr);
 				}
 				else if(player_won==-1)
 				{
 					cout<<endl;
 					cout<<"AI WON"<<endl;
 					cout<<endl<<endl;
+
+					//gives good reinforcement to tree
+					tree.reinforceBad(tree.ptr);
 				}
 				else
 				{
@@ -94,8 +98,106 @@ void Othello::run()
 				}
 
 		}
+		//AI vs AI
+		else if(choice==2)
+		{
+				tree.piece = AI_piece;
+
+				int num_games = 0;
+				cout<<"Num games: ";
+				cin>>num_games;
+
+				char verbose_choice;
+				cout<<"Want to print game states as they play? (y/n): ";
+				cin>>verbose_choice;
+
+				bool verbose = false;
+				if(verbose_choice=='y')
+					verbose = true;
+
+				char reset_tree_choice;
+				cout<<"Reset tree every time? (y/n): ";
+				cin>>reset_tree_choice;
+
+				bool reset_tree = false;
+				if(reset_tree_choice=='y')
+					reset_tree = true;
+
+
+
+				cout<<"New game AI vs AI"<<endl;
+				int total_player_pieces = 0;
+				int total_AI_pieces = 0;
+				int total_player_wins = 0;
+				int total_AI_wins = 0;
+				for(int x = 0; x < num_games; x++)
+				{
+					resetGame(reset_tree);
+
+					
+					//goes forever until someone has an unsuccessful move (board is full or no legal moves)
+					bool player_move_success = true;
+					bool AI_move_success = true;
+					while(player_move_success == true || AI_move_success == true)
+					{
+						//player moves
+						if(isPlayersTurn())
+							player_move_success = playersMove(1);
+						//AI moves
+						else
+							AI_move_success = AIMove(1, verbose);
+
+						changeTurn();
+					}
+
+					cout<<"Game "<<x<<" ";
+
+					//determines who won
+					int player_won = determineWinner();
+					if(player_won==1)
+					{
+						total_player_wins++;
+
+						cout<<"AI #1 Won ";
+
+						//gives bad reinforcement to tree
+						tree.reinforceGood(tree.ptr);
+					}
+					else if(player_won==-1)
+					{
+						total_AI_wins++;
+
+						cout<<"AI #2 Won ";
+
+						//gives good reinforcement to tree
+						tree.reinforceBad(tree.ptr);
+					}
+					else
+					{
+						cout<<"TIE ";
+					}
+
+					int num_player_pieces = board_obj.countPieces(tree.ptr->board, player_piece);
+					int num_AI_pieces = board_obj.countPieces(tree.ptr->board, AI_piece);
+					total_player_pieces += num_player_pieces;
+					total_AI_pieces += num_AI_pieces;
+
+					cout<<num_player_pieces<<" to "<<num_AI_pieces<<endl;
+
+					// cout<<endl;
+					// cout<<"End board: "<<endl;
+					// tree.printNode(tree.ptr);
+				}
+
+				cout<<endl<<endl;
+				cout<<"AI #1 wins: "<<total_player_wins<<endl;
+				cout<<"AI #2 wins: "<<total_AI_wins<<endl;
+				cout<<"Average AI #1 pieces: "<<((double)total_player_pieces/(double)num_games)<<endl;
+				cout<<"Average AI #2 pieces: "<<((double)total_AI_pieces/(double)num_games)<<endl;
+				cout<<endl;
+		}
 		//Prints the neural nets
-		else
+		else if(choice == 3)
 		{
 			tree.printNet(tree.root);
 			// tree.determinePossibleMoves(&*tree.ptr, AI_piece);
@@ -109,18 +211,25 @@ void Othello::run()
 
 
 //Player's turn to move. returns true if successful
-bool Othello::playersMove()
+bool Othello::playersMove(int player_type)
 {
+
+
 	//also traverse the tree in player so that if AI has to skip its move 
-	// tree.iterateTreeDepth(tree.ptr, tree.ptr, player_piece, 1, tree.max_depth);
+	tree.iterateTreeDepth(tree.ptr, player_piece, 1, tree.max_depth);
+	tree.getMaxHeuristic(tree.ptr, tree.ptr, MIN, MAX, tree.max_h_depth+1);
 
 	// tree.getMaxHeuristic(tree.ptr, tree.ptr, MIN, MAX, tree.max_depth+1);
 
 	
-
-	cout<<"Player's move. "<<endl;
-	// printBoard(board, size);
-	board_obj.printBoard(tree.ptr->board);
+	//print if player is playing
+	if(player_type == 0)
+	{
+		cout<<"Player's move. "<<endl;
+		// printBoard(board, size);
+		// board_obj.printBoard(tree.ptr->board);
+		tree.printNode(tree.ptr);
+	}
 
 	// //for testing, prints out tree
 	// cout<<"For testing"<<endl;
@@ -138,51 +247,63 @@ bool Othello::playersMove()
 		//returns array of possible move coordinates, with each index being an array of size 2: (col, row)
 		vector<vector<int>> possible_moves = board_obj.getPossibleMoveCoordinates(tree.ptr->board, player_piece);
 
-
-		cout<<"Legal moves: "<<endl;
-		for(int x = 0; x < possible_moves.size(); x++)
-		{
-			string notation = convert_to_notation(possible_moves[x][0], possible_moves[x][1]);
-			cout<<notation<<endl;	
-		}
-		cout<<endl;
-		
-
 		//no possible moves
 		if(possible_moves.size()==0)
 		{
-			cout<<"No legal moves"<<endl;
+			//print if player is playing, otherwise it's an AI
+			if(player_type==0)
+				cout<<"No legal moves"<<endl;
 			return false;
 		}
 
+		//print if player is playing, otherwise it's an AI
+		if(player_type == 0)
+		{
+			cout<<"Legal moves: "<<endl;
+			for(int x = 0; x < possible_moves.size(); x++)
+			{
+				string notation = convert_to_notation(possible_moves[x][0], possible_moves[x][1]);
+				cout<<notation<<endl;	
+			}
+			cout<<endl;
+		}
+	
+
 
 		//// Comment this if you want the player to move randomly ////
-		cout<<"Where to move? (ex: c3): ";
-		cin>>choice;
-
-		int* coordinates = new int[2];
-		convert_to_coordinates(choice, coordinates);
-
-		col = coordinates[0];
-		row = coordinates[1];
-
-
-		//determines if given move is a possible move
-		for(int x =0; x < possible_moves.size(); x++)
+		if(player_type==0)
 		{
-			if(possible_moves[x][0]==col && possible_moves[x][1]==row)
+			cout<<"Where to move? (ex: c3): ";
+			cin>>choice;
+
+			int* coordinates = new int[2];
+			convert_to_coordinates(choice, coordinates);
+
+			col = coordinates[0];
+			row = coordinates[1];
+
+
+			//determines if given move is a possible move
+			for(int x =0; x < possible_moves.size(); x++)
 			{
-				valid_move=true;
-				break;
+				if(possible_moves[x][0]==col && possible_moves[x][1]==row)
+				{
+					valid_move=true;
+					break;
+				}
 			}
 		}
 
-
 		//// unncomment this if you want the player to move randomly ////
-		// int random_index = randNum(0, possible_moves.size());
-		// col = possible_moves[random_index][0];
-		// row = possible_moves[random_index][1];
-		// valid_move = true;
+		if(player_type==1)
+		{
+			//Get MAX heuristic and move there. But pass in that it's a player requesting it so that it gets the worse heuristic. 
+
+			int random_index = randNum(0, possible_moves.size());
+			col = possible_moves[random_index][0];
+			row = possible_moves[random_index][1];
+			valid_move = true;
+		}
 
 	}
 
@@ -194,13 +315,16 @@ bool Othello::playersMove()
 	tree.playerMove(col, row);
 	// tree.iterateTreeDepth(tree.ptr, AI_piece, 1, tree.max_depth);
 
-	cout<<endl<<endl<<endl;
+
+	//print if player is playing
+	if(player_type==0)
+		cout<<endl<<endl<<endl;
 
 	return true;
 }
 
 //AI's turn to move. returns true if successful. 
-bool Othello::AIMove(int AI_version)
+bool Othello::AIMove(int AI_version, bool verbose)
 {
 	// tree.iterateTreeDepth(tree.ptr, player_piece, 1, tree.max_depth);
 	tree.iterateTreeDepth(tree.ptr, AI_piece, 1, tree.max_depth);
@@ -246,8 +370,11 @@ bool Othello::AIMove(int AI_version)
 	//get where AI moved: 
 	vector<vector<int>> coordinates = board_obj.getDifferenceCoordinates(tree.ptr->board, tree.ptr->prev->board);
 
-	cout<<"AI's move: "<<convert_to_notation(coordinates[0][0], coordinates[0][1])<<endl;
-	cout<<endl<<endl;
+	if(verbose == true)
+	{
+		cout<<"AI's move: "<<convert_to_notation(coordinates[0][0], coordinates[0][1])<<endl;
+		cout<<endl<<endl;
+	}
 
 	return true;
 }
@@ -257,10 +384,10 @@ bool Othello::AIMove(int AI_version)
 int Othello::determineWinner()
 {
 	int num_player_pieces = board_obj.countPieces(tree.ptr->board, player_piece);
-	cout<<"Num player pieces: "<<num_player_pieces<<endl;
+	// cout<<"Num player pieces: "<<num_player_pieces<<endl;
 
 	int num_AI_pieces = board_obj.countPieces(tree.ptr->board, AI_piece);
-	cout<<"Num AI pieces: "<<num_AI_pieces<<endl;
+	// cout<<"Num AI pieces: "<<num_AI_pieces<<endl;
 
 	if(num_player_pieces > num_AI_pieces)
 		return 1;
@@ -284,7 +411,7 @@ void Othello::changeTurn()
 }
 
 //resets the game
-void Othello::resetGame()
+void Othello::resetGame(bool reset_tree)
 {
 	// board_obj.resetBoard();
 
@@ -295,6 +422,14 @@ void Othello::resetGame()
 	tree.ptr = tree.root;
 
 	// board_obj.printBoard(tree.ptr->board);
+
+	if(reset_tree)
+	{
+		tree.resetTree();
+		//gets first possible moves for black
+		tree.determinePossibleMoves(&*tree.ptr, AI_piece);
+	}
+
 
 }
 

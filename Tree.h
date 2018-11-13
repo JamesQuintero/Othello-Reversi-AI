@@ -34,7 +34,12 @@ class Tree
 
 			//heuristic
 			double h = 0;
-			
+			int level = 0;
+
+			//weights for reinforement learning
+			double good = 0;
+			double bad = 0;
+
 			//indices for children
 			short next_index = 0;
 
@@ -56,16 +61,21 @@ class Tree
 		char player_piece = '0';
 
 		//root node of the tree
-		node * root;
+		node * root = NULL;
 
 		//current position in the tree
 		node * ptr;
 
-		int max_depth = 4;
+		int max_depth = 2;
 		int max_h_depth = 20;
+
+		int good_weight = 100;
 
 
 		Tree();
+
+		void resetTree();
+		void eraseTree(node * ptr);
 		//links a new node to ptr, with initialized board
 		void newNode(node * ptr, char**& new_board, char piece);
 
@@ -85,6 +95,11 @@ class Tree
 		void AIMove(int col, int row);
 		void playerMove(int col, int row);
 		void move(char**& board);
+
+		//reinforcement methods
+		void reinforceGood(node * ptr);
+		void reinforceBad(node * ptr);
+
 
 		void printNode(node * ptr, int indent=0);
 		void printNet(node * ptr, int indent=0);

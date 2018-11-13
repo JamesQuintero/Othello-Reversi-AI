@@ -12,17 +12,48 @@ using namespace std;
 
 Tree::Tree()
 {
+	resetTree();
+
+	srand(time(0));  // needed once per program run
+}
+
+void Tree::resetTree()
+{
+	eraseTree(root);
+
 	root = new node();
 	// root->board = createMatrix(size);
 	board_obj.resetBoard(root->board);
-	board_obj.printBoard(root->board);
+	// board_obj.printBoard(root->board);
 
 	// string something = "";
 	// cin>>something;
 
 	this->ptr = root;
+}
 
-	srand(time(0));  // needed once per program run
+void Tree::eraseTree(node * ptr)
+{
+	if(ptr != NULL)
+	{
+		for(int x = 0; x < ptr->next_index; x++)
+		{
+			eraseTree(ptr->next[x]);
+		}
+
+		// cout<<"Deleting"<<endl;
+		delete[] ptr->board;
+		delete[] ptr->next;
+
+		delete ptr;
+
+		// for(int x = 0; x < ptr->next_index; x++)
+		// {
+
+		// }
+		// if(ptr->next[x]!=NULL)
+		// 	ptr->next[x] = NULL;
+	}
 }
 
 //determines the possible moves by piece, then adds them as children to the current pointer
@@ -187,28 +218,40 @@ double Tree::getMaxHeuristic(node* start, node * ptr, int alpha /* starts as -IN
 //returns heuristic for specified pointer
 double Tree::calculateHeuristic(node* start, node* ptr)
 {
+	int level = ptr->level;
 	
 	int player_count = board_obj.countPieces(ptr->board, player_piece);
 	int AI_count = board_obj.countPieces(ptr->board, AI_piece);
 
 	//returns total of score where score = player_piece_position * weight_at_position. 
-	double player_score = board_obj.countPositionWeights(ptr->board, player_piece);
-	double AI_score = board_obj.countPositionWeights(ptr->board, AI_piece);
+	double player_score = board_obj.countPositionWeights(ptr->board, level, player_piece);
+	double AI_score = board_obj.countPositionWeights(ptr->board, level, AI_piece);
+
+
+	//count the number of lines a player has or has gotten
 
 
 	double total_player_moves = 0;
 	double total_AI_moves = 0;
 	double count = 0;
 	node* temp = ptr;
+	// cout<<"Start: "<<endl;
+	// board_obj.printBoard(start->board);
 	//traverses from current node to start node
 	//when traversing up counting possible moves for player and AI, try and average per level so that it's not a total. 
 	//A total would give a lower total for unvisited children, and therefore not be a good heuristic. 
 	while(temp!=start)
 	{
-		//maybe separate by other piece?
-		total_player_moves += board_obj.getPossibleMovesCount(temp->board, player_piece);
-		total_AI_moves += board_obj.getPossibleMovesCount(temp->board, AI_piece);
+		// cout<<"Temp: "<<endl;
+		// board_obj.printBoard(temp->board);
+
+		if(temp->piece == player_piece)
+			total_AI_moves += board_obj.getPossibleMovesCount(temp->board, AI_piece);
+		else if(temp->piece == AI_piece)
+			total_player_moves += board_obj.getPossibleMovesCount(temp->board, player_piece);
 		count++;
+
+		// cout<<"total moves: ("<<total_player_moves<<","<<total_AI_moves<<")"<<endl;
 
 		temp = temp->prev;
 	}
@@ -224,7 +267,7 @@ double Tree::calculateHeuristic(node* start, node* ptr)
 	{
 		int col = coordinates[0][0];
 		int row = coordinates[0][1];
-		pos_weight = board_obj.getWeight(col, row);
+		pos_weight = board_obj.getWeight(ptr->level, col, row);
 
 		// //negate weight if the AI is moving here
 		// if(ptr->board[col][row] == AI_piece)
@@ -232,6 +275,9 @@ double Tree::calculateHeuristic(node* start, node* ptr)
 	}
 
 
+	//// Reinforcement learning portion ////
+	double good = ptr->good;
+	double bad = ptr->bad;
 
 
 
@@ -245,6 +291,13 @@ double Tree::calculateHeuristic(node* start, node* ptr)
 	weights[0] = 1;
 	weights[1] = 1;
 	weights[2] = 10;
+	weights[3] = 1;
+
+	double heuristic =  weights[0]*(player_count-AI_count) + 
+						weights[1]*(player_score-AI_score) + 
+						weights[2]*(player_moves-AI_moves) + 
+						weights[3]*(good - bad);
+
 
 	// cout<<"Player score: "<<player_score<<endl;
 	// cout<<"AI score: "<<AI_score<<endl;
@@ -256,9 +309,6 @@ double Tree::calculateHeuristic(node* start, node* ptr)
 	// cout<<endl;
 
 
-	double heuristic =  weights[0]*(player_count-AI_count) + 
-						weights[1]*(player_score-AI_score) + 
-						weights[2]*(player_moves-AI_moves);
 
 	// double heuristic = (player_count - AI_count);
 	// double heuristic = num_player_flips - num_AI_flips;
@@ -270,6 +320,47 @@ double Tree::calculateHeuristic(node* start, node* ptr)
 
 	//reatio heuristic doesn't work very well, and crashes...
 	// return ((double)player_count/((double)player_count+(double)AI_count));
+}
+
+//reinforcement methods
+void Tree::reinforceGood(node * ptr)
+{
+	double increment = this->good_weight;
+	node * temp = ptr;
+
+	//iterate up the tree using parents until hit the root node
+	while(temp != root)
+	{
+
+		temp->good += increment;
+
+		//decreases increment by 1/20th of itself each time
+		increment *= 17.0/20.0;
+
+
+		// cout<<"Reinforcing Good"<<endl;
+		// printNode(temp);
+
+		//goes to parent
+		temp = temp->prev;
+	}
+}
+
+
+void Tree::reinforceBad(node * ptr)
+{
+	double increment = this->good_weight;
+	node * temp = ptr;
+
+	//iterate up the tree using parents until hit the root node
+	while(temp != root)
+	{
+		temp->bad += increment;
+
+		//decreases increment by 1/20th of itself each time
+		increment *= 17.0/20.0;
+		temp = temp->prev;
+	}
 }
 
 
@@ -376,6 +467,12 @@ void Tree::newNode(node * ptr, char**& new_board, char piece)
 	//copies new board into new node
 	board_obj.copyBoard(next->board, new_board);
 
+	//piece is the piece that is placed to get to this new board
+	next->piece = piece;
+
+	//increases level
+	next->level = ptr->level + 1;
+
 	//increments number of next nodes
 	ptr->next_index++;
 
@@ -389,8 +486,10 @@ void Tree::printNode(node * ptr, int indents /*default is 0 */)
 {
 	//prints tic-tac-toe board
 	board_obj.printBoard(ptr->board, indents);
+	cout<<"Level: "<<ptr->level<<endl;
 	cout<<"Num next nodes: "<<ptr->next_index<<endl;
 	cout<<"Heuristic: "<<ptr->h<<endl;
+	cout<<"Reinforcement: (Good: "<<ptr->good<<", Bad: "<<ptr->bad<<")"<<endl;
 }
 
 char Tree::getOtherPiece(char piece)
