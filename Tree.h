@@ -28,13 +28,13 @@ class Tree
 			// int** board;
 			// Board board;
 
-			char** board;
+			char** board = new char*[size];
 
 			char piece = '0';
 
 			//heuristic
 			double h = 0;
-			int level = 0;
+			short level = 0;
 
 			//weights for reinforement learning
 			double good = 0;
@@ -59,6 +59,8 @@ class Tree
 
 		char AI_piece = '0';
 		char player_piece = '0';
+		//the piece that will get the worse heuristic. 0 by default. 
+		char worse_heuristic_piece = '0';
 
 		//root node of the tree
 		node * root = NULL;
@@ -66,8 +68,8 @@ class Tree
 		//current position in the tree
 		node * ptr;
 
-		int max_depth = 2;
-		int max_h_depth = 20;
+		int max_depth = 4;
+		int max_h_depth = 10;
 
 		int good_weight = 100;
 
@@ -85,7 +87,10 @@ class Tree
 		double calculateHeuristic(node* start, node* ptr);
 
 		bool hasLegalMoves(node* ptr);
+		//returns the child board with the minimum heuristic. Uesd for AI
 		char** getBoardMinHeuristic(node* ptr);
+		//returns the child board with the maximum heuristic. Uesd for player
+		char** getBoardMaxHeuristic(node* ptr);
 
 		void iterateTreeDepth(node* ptr, char piece, int cur_depth, int max_depth);
 

@@ -36,6 +36,7 @@ void Othello::run()
 		cout<<"2) AI against AI"<<endl;
 		// cout<<"2) AI vs AI"<<endl;
 		cout<<"3) Print Game Tree"<<endl;
+		cout<<"4) Purge Game Tree"<<endl;
 
 		cout<<"Choice: ";
 		int choice;
@@ -102,6 +103,8 @@ void Othello::run()
 		else if(choice==2)
 		{
 				tree.piece = AI_piece;
+				//the player will be at a disadvantage
+				tree.worse_heuristic_piece = player_piece;
 
 				int num_games = 0;
 				cout<<"Num games: ";
@@ -175,6 +178,9 @@ void Othello::run()
 					else
 					{
 						cout<<"TIE ";
+
+						//gives good reinforcement to tree
+						tree.reinforceBad(tree.ptr);
 					}
 
 					int num_player_pieces = board_obj.countPieces(tree.ptr->board, player_piece);
@@ -203,6 +209,10 @@ void Othello::run()
 			// tree.determinePossibleMoves(&*tree.ptr, AI_piece);
 
 			cout<<endl<<endl<<endl;
+		}
+		else if(choice == 4)
+		{
+			tree.resetTree();
 		}
 	
 	}
@@ -294,15 +304,34 @@ bool Othello::playersMove(int player_type)
 			}
 		}
 
-		//// unncomment this if you want the player to move randomly ////
+		//if AI is playing for player
 		if(player_type==1)
 		{
-			//Get MAX heuristic and move there. But pass in that it's a player requesting it so that it gets the worse heuristic. 
+			// cout<<"Printing net"<<endl;
+			// tree.printNet(tree.ptr);
 
-			int random_index = randNum(0, possible_moves.size());
-			col = possible_moves[random_index][0];
-			row = possible_moves[random_index][1];
-			valid_move = true;
+			//Get MAX heuristic and move there. But pass in that it's a player requesting it so that it gets the worse heuristic. 
+			//returns board corresponding with the minimum heuristic
+			char** new_board = tree.getBoardMaxHeuristic(tree.ptr);
+
+			// cout<<"New board: "<<endl;
+			// board_obj.printBoard(new_board);
+
+			//add player's move to neural net
+			tree.move(new_board);
+
+
+
+
+
+			//// unncomment this if you want the player to move randomly ////
+			// int random_index = randNum(0, possible_moves.size());
+			// col = possible_moves[random_index][0];
+			// row = possible_moves[random_index][1];
+			// valid_move = true;
+
+			//stops the method so that the code after the loop doesn't run, thereby double moving
+			return true;
 		}
 
 	}
@@ -364,7 +393,7 @@ bool Othello::AIMove(int AI_version, bool verbose)
 	//AI places piece
 	// board.copyBoard(&new_board);
 
-	//add player's move to neural net
+	//add AI's move to neural net
 	tree.move(new_board);
 
 	//get where AI moved: 

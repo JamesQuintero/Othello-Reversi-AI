@@ -96,10 +96,10 @@ class Board
 		
 		double getPossibleMovesCount(char**& board, char piece);
 		vector<vector<int>> getPossibleMoveCoordinates(char**& board, char piece);
-		vector<char**> getPossibleMoveBoards(char**& board, char piece);
+		// void getPossibleMoveBoards(vector<char**>& boards, char**& board, char piece);
 
 		//callbacks list of pieces surrounding specified position
-		void get_neighbors(char**& board, char* neighbors, int x, int y);
+		void get_neighbors(char**& board, char*& neighbors, int x, int y);
 		int countPieces(char**& board, char piece);
 		double countPositionWeights(char**& board, int level, char piece);
 		double getWeight(int level, int col, int row);

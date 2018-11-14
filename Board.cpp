@@ -23,7 +23,8 @@ Board::Board()
 
 void Board::resetBoard(char**& board)
 {
-	board = createMatrix(this->size);
+	// board = new char*[size];
+	createMatrix(board, this->size);
 
 	//places initial pieces
 	place_piece(board, '2', 3, 3);
@@ -280,8 +281,12 @@ double Board::getPossibleMovesCount(char**& board, char piece)
 	double num_moves_weighted = 0;
 	int num_flips = 0;
 	// Board board_copy;
+	int num_neighbors = 0;
 
-	char** board_copy = createMatrix(this->size);
+	// char** board_copy = createMatrix(this->size);
+	char** board_copy = new char*[size];
+	createMatrix(board_copy, this->size);
+
 				
 
 	//iterates through entire board
@@ -298,19 +303,19 @@ double Board::getPossibleMovesCount(char**& board, char piece)
 			get_neighbors(board, neighbors, x, y);
 
 			//gets if other piece is around this spot
-			bool has_neighbors = false;
+			short neighbor_count;
 			for(int z = 0; z < 9; z++)
 			{
 				if(neighbors[z]==other_piece)
-				{
-					has_neighbors = true;
-					break;
-				}
+					neighbor_count++;
 			}
+
+			//garbage collection
+			delete[] neighbors;
 
 
 			//checks if this spot is a possible move by seeing if other pieces are flipped
-			if(has_neighbors)
+			if(neighbor_count > 0)
 			{
 				//gets copy of board to simulate what would happen if piece is placed
 				// int** board_copy = copyBoard(board, size);
@@ -330,19 +335,35 @@ double Board::getPossibleMovesCount(char**& board, char piece)
 				{
 					num_moves++;
 					num_moves_weighted += weights[0][x][y];
-					num_flips += (new_piece_count-piece_count - 2);
+					num_flips += (new_piece_count-piece_count - 1);
+					// num_flips += (new_piece_count - piece_count);
+
+					//add to num_neighbors separately in case want to get average
+					num_neighbors += neighbor_count;
 				}
 			}
 
 		}
 	}
 
+	//garbage collection
+	if(board_copy!=NULL)
+	{
+		for(int x = 0; x < size; x++)
+			delete[] board_copy[x];
+		delete[] board_copy;
+	}
 
-	return (double)num_moves;
+
+	// return (double)num_neighbors;
+	// return (double)num_moves;
 	// return (double)num_moves_weighted;
 	// return num_moves_weighted/(double)num_moves;
-	// return (double)num_flips;
-	// return (double)num_flips/(double)num_moves;
+	return (double)num_flips;
+	// if(num_moves > 0)
+	// 	return (double)num_flips/(double)num_moves;
+	// else
+	// 	return 0;
 }
 
 
@@ -362,7 +383,9 @@ vector<vector<int>> Board::getPossibleMoveCoordinates(char**& board, char piece)
 
 
 	// Board board_copy;
-	char** board_copy = createMatrix(this->size);
+	// char** board_copy = createMatrix(this->size);
+	char** board_copy = new char*[size];
+	createMatrix(board_copy, size);
 				
 
 	//iterates through entire board
@@ -380,19 +403,19 @@ vector<vector<int>> Board::getPossibleMoveCoordinates(char**& board, char piece)
 			get_neighbors(board, neighbors, x, y);
 
 			//gets if other piece is around this spot
-			bool has_neighbors = false;
+			short neighbor_count = 0;
 			for(int z = 0; z < 9; z++)
 			{
 				if(neighbors[z]==other_piece)
-				{
-					has_neighbors = true;
-					break;
-				}
+					neighbor_count++;
 			}
+
+			//garbage collection
+			delete[] neighbors;
 
 
 			//checks if this spot is a possible move by seeing if other pieces are flipped
-			if(has_neighbors)
+			if(neighbor_count > 0)
 			{
 				//gets copy of board to simulate what would happen if piece is placed
 				// int** board_copy = copyBoard(board, size);
@@ -419,82 +442,94 @@ vector<vector<int>> Board::getPossibleMoveCoordinates(char**& board, char piece)
 		}
 	}
 
+	//garbage collection
+	if(board_copy!=NULL)
+	{
+		for(int x = 0; x < size; x++)
+			delete[] board_copy[x];
+		delete[] board_copy;
+	}
+
 
 	return possible_moves;
 }
 
-//returns list of legal board states that are possible for piece
-vector<char**> Board::getPossibleMoveBoards(char**& board, char piece)
-{
+// //returns list of legal board states that are possible for piece
+// void Board::getPossibleMoveBoards(vector<char**>& possible_boards, char**& board, char piece)
+// {
 
-	vector<char**> possible_boards;
-
-	//gets opponent's piece
-	char other_piece = '0';
-	if(piece == white_piece)
-		other_piece = black_piece;
-	else
-		other_piece = white_piece;
+// 	//gets opponent's piece
+// 	char other_piece = '0';
+// 	if(piece == white_piece)
+// 		other_piece = black_piece;
+// 	else
+// 		other_piece = white_piece;
 				
 
-	//iterates through entire board
-	for(int x = 0; x < size; x++)
-	{
-		for(int y = 0; y < size; y++)
-		{
-			// cout<<"x,y: "<<x<<","<<y<<": "<<board[x][y]<<endl;
-			//if a piece already resides here, skip
-			if(board[x][y]!='0')
-				continue;
+// 	//iterates through entire board
+// 	for(int x = 0; x < size; x++)
+// 	{
+// 		for(int y = 0; y < size; y++)
+// 		{
+// 			// cout<<"x,y: "<<x<<","<<y<<": "<<board[x][y]<<endl;
+// 			//if a piece already resides here, skip
+// 			if(board[x][y]!='0')
+// 				continue;
 
-			//gets neighboring spots around current spot
-			char* neighbors = new char[9];
-			get_neighbors(board, neighbors, x, y);
+// 			//gets neighboring spots around current spot
+// 			char* neighbors = new char[9];
+// 			get_neighbors(board, neighbors, x, y);
 
-			//gets if other piece is around this spot
-			bool has_neighbors = false;
-			for(int z = 0; z < 9; z++)
-			{
-				if(neighbors[z]==other_piece)
-				{
-					has_neighbors = true;
-					break;
-				}
-			}
+// 			//gets if other piece is around this spot
+// 			bool has_neighbors = false;
+// 			for(int z = 0; z < 9; z++)
+// 			{
+// 				if(neighbors[z]==other_piece)
+// 				{
+// 					has_neighbors = true;
+// 					break;
+// 				}
+// 			}
+
+// 			//garbage collection
+// 			delete[] neighbors;
 
 
-			//checks if this spot is a possible move by seeing if other pieces are flipped
-			if(has_neighbors)
-			{
-				//gets copy of board to simulate what would happen if piece is placed
-				// Board board_copy;
-				// board_copy.copyBoard(this);
+// 			//checks if this spot is a possible move by seeing if other pieces are flipped
+// 			if(has_neighbors)
+// 			{
+// 				char** board_copy = new char*[this->size];
+// 				createMatrix(board_copy, size);
 
-				char** board_copy = createMatrix(this->size);
-				copyBoard(board_copy, board);
+// 				copyBoard(board_copy, board);
 
-				int piece_count = countPieces(board_copy, piece);
-				int other_piece_count = countPieces(board_copy, other_piece);
+// 				int piece_count = countPieces(board_copy, piece);
+// 				int other_piece_count = countPieces(board_copy, other_piece);
 
-				place_piece(board_copy, piece, x, y);
+// 				place_piece(board_copy, piece, x, y);
 
-				int new_piece_count = countPieces(board_copy, piece);
-				int new_other_piece_count = countPieces(board_copy, other_piece);
+// 				int new_piece_count = countPieces(board_copy, piece);
+// 				int new_other_piece_count = countPieces(board_copy, other_piece);
 
-				//if flipped any opponent's pieces
-				if(other_piece_count > new_other_piece_count)
-				{
-					possible_boards.push_back(board_copy);
-				}
-			}
+// 				//if flipped any opponent's pieces
+// 				if(other_piece_count > new_other_piece_count)
+// 				{
+// 					possible_boards.push_back(board_copy);
+// 				}
+// 				else
+// 				{
+// 					//garbage collection
+// 					for(int z = 0; z < this->size; z++)
+// 						delete[] board_copy[z];
+// 					delete[] board_copy;
+// 				}
+// 			}
 
-		}
-	}
+// 		}
+// 	}
+// }
 
-	return possible_boards;
-}
-
-void Board::get_neighbors(char**& board, char* neighbors, int col, int row)
+void Board::get_neighbors(char**& board, char*& neighbors, int col, int row)
 {
 
 	//iterates through all neighbors

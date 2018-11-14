@@ -24,7 +24,6 @@ void Tree::resetTree()
 	root = new node();
 	// root->board = createMatrix(size);
 	board_obj.resetBoard(root->board);
-	// board_obj.printBoard(root->board);
 
 	// string something = "";
 	// cin>>something;
@@ -42,17 +41,15 @@ void Tree::eraseTree(node * ptr)
 		}
 
 		// cout<<"Deleting"<<endl;
+		for(int x = 0; x < size; x++)
+			delete[] ptr->board[x];
 		delete[] ptr->board;
+
 		delete[] ptr->next;
 
 		delete ptr;
 
-		// for(int x = 0; x < ptr->next_index; x++)
-		// {
-
-		// }
-		// if(ptr->next[x]!=NULL)
-		// 	ptr->next[x] = NULL;
+		ptr = NULL;
 	}
 }
 
@@ -63,18 +60,23 @@ void Tree::determinePossibleMoves(node* ptr, char piece)
 	if(ptr->next_index>0)
 		return;
 
-	// cout<<"Board addr: "<<&ptr->board<<endl;
+	vector<vector<int>> coordinates = board_obj.getPossibleMoveCoordinates(ptr->board, piece);
 
-
-	vector<char**> possible_move_boards = board_obj.getPossibleMoveBoards(ptr->board, piece);
-
-	for(int x = 0; x < possible_move_boards.size(); x++)
+	for(int x = 0; x < coordinates.size(); x++)
 	{
-		// possible_move_boards[x].printBoard();
-		newNode(ptr, possible_move_boards[x], piece);
-		// cout<<"Added new board"<<endl;
-	}
+		char** new_board = new char*[size];
+		createMatrix(new_board, size);
+		board_obj.copyBoard(new_board, ptr->board);
+		board_obj.place_piece(new_board, piece, coordinates[x][0], coordinates[x][1]);
 
+
+		newNode(ptr, new_board, piece);
+
+		//garbage collection
+		for(int y = 0; y < size; y++)
+			delete[] new_board[y];
+		delete[] new_board;
+	}
 	
 }
 
@@ -104,9 +106,7 @@ char** Tree::getBoardMinHeuristic(node* ptr)
 			minimum_indices.clear();
 			minimum_indices.push_back(x);
 		}
-
-
-		if(h==min_heuristic)
+		else if(h==min_heuristic)
 		{
 			minimum_indices.push_back(x);
 		}
@@ -116,6 +116,43 @@ char** Tree::getBoardMinHeuristic(node* ptr)
 	//chooses randomly out of all the smallest heuristics
 	int random_index = randNum(0, minimum_indices.size());
 	int index = minimum_indices[random_index];
+
+	return ptr->next[index]->board;
+}
+
+
+//returns the node with the largest heuristic
+char** Tree::getBoardMaxHeuristic(node* ptr)
+{
+	vector<int> maximum_indices;
+
+	// int index = 0;
+	double max_heuristic = numeric_limits<double>::lowest();
+	// cout<<"Max h: "<<max_heuristic<<endl;
+	for(int x = 0; x < ptr->next_index; x++)
+	{
+		double h = ptr->next[x]->h;
+		// cout<<"h: "<<h<<endl;
+		if(h > max_heuristic)
+		{
+			// cout<<"New max: "<<endl;
+			max_heuristic = h;
+			maximum_indices.clear();
+			maximum_indices.push_back(x);
+		}
+		else if(h == max_heuristic)
+		{
+			// cout<<"Same max h"<<endl;
+			maximum_indices.push_back(x);
+		}
+
+	}
+
+	// cout<<"Size: "<<maximum_indices.size()<<endl;
+
+	//chooses randomly out of all the smallest heuristics
+	int random_index = randNum(0, maximum_indices.size());
+	int index = maximum_indices[random_index];
 
 	return ptr->next[index]->board;
 }
@@ -234,24 +271,69 @@ double Tree::calculateHeuristic(node* start, node* ptr)
 	double total_player_moves = 0;
 	double total_AI_moves = 0;
 	double count = 0;
+	double smallest_num_player_moves = 100000;
+	double smallest_num_AI_moves = 100000 ;
+	double largest_num_player_moves = 0;
+	double largest_num_AI_moves = 0 ;
 	node* temp = ptr;
 	// cout<<"Start: "<<endl;
 	// board_obj.printBoard(start->board);
 	//traverses from current node to start node
 	//when traversing up counting possible moves for player and AI, try and average per level so that it's not a total. 
 	//A total would give a lower total for unvisited children, and therefore not be a good heuristic. 
-	while(temp!=start)
+	while(true)
 	{
 		// cout<<"Temp: "<<endl;
 		// board_obj.printBoard(temp->board);
 
-		if(temp->piece == player_piece)
-			total_AI_moves += board_obj.getPossibleMovesCount(temp->board, AI_piece);
-		else if(temp->piece == AI_piece)
-			total_player_moves += board_obj.getPossibleMovesCount(temp->board, player_piece);
+		// if(temp->piece == player_piece)
+			double AI_moves = board_obj.getPossibleMovesCount(temp->board, AI_piece);
+		// else if(temp->piece == AI_piece)
+			double player_moves = board_obj.getPossibleMovesCount(temp->board, player_piece);
+
+		int count_AI = 0;
+		int count_player = 0;
+		for(int x = 0; x < temp->next_index; x++)
+		{
+			if(temp->piece == AI_piece)
+				count_AI++;
+			else if(temp->piece == player_piece)
+				count_player++;
+		}
+
+		// total_AI_moves += AI_moves;
+		// total_player_moves += player_moves;
+
+		if(count_AI>0 || count_player>0)
+		{
+			// cout<<"Original AI moves: "<<AI_moves<<endl;
+			// cout<<"Original player moves: "<<player_moves<<endl;
+			// cout<<"New AI moves: "<<count_AI<<endl;
+			// cout<<"New player moves: "<<count_player<<endl;
+			//cout<<endl;
+		}
+
+
+
+		// double AI_moves = board_obj.getPossibleMovesCount(temp->board, AI_piece);
+		// if(AI_moves < smallest_num_AI_moves)
+		// 	smallest_num_AI_moves = AI_moves;
+		// double player_moves = board_obj.getPossibleMovesCount(temp->board, player_piece);
+		// if(player_moves < smallest_num_player_moves)
+		// 	smallest_num_player_moves = player_moves;
+
+		// if(AI_moves > largest_num_AI_moves)
+		// 	largest_num_AI_moves = AI_moves;
+		// if(player_moves > largest_num_player_moves)
+		// 	largest_num_player_moves = player_moves;
+
 		count++;
 
 		// cout<<"total moves: ("<<total_player_moves<<","<<total_AI_moves<<")"<<endl;
+
+		//stop after processing start node
+		if(temp == start)
+			break;
 
 		temp = temp->prev;
 	}
@@ -259,20 +341,16 @@ double Tree::calculateHeuristic(node* start, node* ptr)
 	double AI_moves = total_AI_moves/count;
 
 
-	//gets difference of this pointer's board, and its parent's board to determine where player moved
-	vector<vector<int>> coordinates = board_obj.getDifferenceCoordinates(ptr->board, ptr->prev->board);
+	// //gets difference of this pointer's board, and its parent's board to determine where player moved
+	// vector<vector<int>> coordinates = board_obj.getDifferenceCoordinates(ptr->board, ptr->prev->board);
 
-	double pos_weight = 0;
-	if(coordinates.size() > 0)
-	{
-		int col = coordinates[0][0];
-		int row = coordinates[0][1];
-		pos_weight = board_obj.getWeight(ptr->level, col, row);
-
-		// //negate weight if the AI is moving here
-		// if(ptr->board[col][row] == AI_piece)
-		// 	pos_weight *= -1;
-	}
+	// double pos_weight = 0;
+	// if(coordinates.size() > 0)
+	// {
+	// 	int col = coordinates[0][0];
+	// 	int row = coordinates[0][1];
+	// 	pos_weight = board_obj.getWeight(ptr->level, col, row);
+	// }
 
 
 	//// Reinforcement learning portion ////
@@ -287,16 +365,43 @@ double Tree::calculateHeuristic(node* start, node* ptr)
 
 	// return (player_count - AI_count) + (num_player_flips - num_AI_flips);
 
-	int* weights = new int[3];
-	weights[0] = 1;
-	weights[1] = 1;
-	weights[2] = 10;
-	weights[3] = 1;
+	int weights[4] = {1, 1, 10, 1};
 
-	double heuristic =  weights[0]*(player_count-AI_count) + 
-						weights[1]*(player_score-AI_score) + 
-						weights[2]*(player_moves-AI_moves) + 
-						weights[3]*(good - bad);
+	double heuristic = 0;
+	//bad heuristic
+	if(getOtherPiece(start->piece) == worse_heuristic_piece)
+	{
+		// heuristic =  weights[0]*(player_count-AI_count);
+		// heuristic =  weights[1]*(player_score-AI_score);
+
+		//moves randomly
+		heuristic = 0;
+	}
+	//good heuristic
+	else
+	{
+		heuristic =  weights[0]*(player_count-AI_count) + 
+					 weights[1]*(player_score-AI_score) + 
+					 weights[2]*(player_moves-AI_moves) + 
+					 weights[3]*(good - bad);
+		
+		// heuristic =  weights[0]*(player_count-AI_count) + 
+		// 			 weights[1]*(player_score-AI_score) + 
+		// 			 weights[2]*(player_moves-AI_moves);
+		// heuristic =  weights[0]*(player_count-AI_count) + 
+		// 			 weights[1]*(player_score-AI_score);
+
+		// heuristic =  weights[0]*(player_count-AI_count);
+		// heuristic =  weights[1]*(player_score-AI_score);
+		// heuristic = weights[2]*(player_moves-AI_moves);
+		// heuristic = weights[2]*(smallest_num_player_moves - smallest_num_AI_moves);
+		// heuristic = weights[2]*(largest_num_player_moves - largest_num_AI_moves);
+		// heuristic = weights[3]*(good - bad);
+
+		//moves randomly
+		// heuristic = 0;
+	}
+	
 
 
 	// cout<<"Player score: "<<player_score<<endl;
@@ -462,7 +567,10 @@ void Tree::newNode(node * ptr, char**& new_board, char piece)
 
 	//ptr to new next node
 	node * next = ptr->next[ptr->next_index];
-	next->board = createMatrix(size);
+	// next->board = createMatrix(size);
+
+	// next->board = new char*[size];
+	createMatrix(next->board, size);
 
 	//copies new board into new node
 	board_obj.copyBoard(next->board, new_board);
