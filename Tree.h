@@ -72,8 +72,9 @@ class Tree
 		//current position in the tree
 		node * ptr;
 
-		int max_depth = 5;
-		int max_h_depth = 10;
+		//depth should be odd so as to not give advance to the side in minimax that wants to maximize or minimize. 
+		int max_depth = 3;
+		int max_h_depth = 3;
 
 		int good_weight = 100;
 
@@ -86,6 +87,7 @@ class Tree
 		void newNode(node * ptr, char**& new_board, char piece);
 
 		void determinePossibleMoves(node* ptr, char piece);
+		double negamax(node* start, node* ptr, int depth_left, double alpha, double beta, int is_maximizing);
 		double getMinHeuristic(node* start, node * ptr, double alpha, double beta, int depth_left);
 		double getMaxHeuristic(node* start, node * ptr, double alpha, double beta, int depth_left);
 		double calculateHeuristic(node* start, node* ptr);

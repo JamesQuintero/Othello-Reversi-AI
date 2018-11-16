@@ -163,6 +163,66 @@ char** Tree::getBoardMaxHeuristic(node* ptr)
 
 
 
+
+
+//different version of minimax
+//is_maximizing is {-1,1} if 
+double Tree::negamax(node* start, node* ptr, int depth_left, double alpha /* starts as -INFINITY */, double beta /* starts as INFINITY */, int is_maximizing)
+{
+	double cur_heuristic = -1;
+	//if has no children or reached max depth
+	if(ptr->next_index == 0 || depth_left <= 0)
+	{
+		cur_heuristic = calculateHeuristic(start, ptr) * is_maximizing;
+		ptr->h = cur_heuristic;
+
+		return cur_heuristic;
+	}
+
+
+	//Negamax. 
+	// function negamax(node, depth, α, β, color) is
+	//     if depth = 0 or node is a terminal node then
+	//         return color × the heuristic value of node
+
+	//     childNodes := generateMoves(node)
+	//     childNodes := orderMoves(childNodes)
+
+	//     value := −∞
+	//     foreach child in childNodes do
+	//         value := max(value, −negamax(child, depth − 1, −β, −α, −color))
+	//         α := max(α, value)
+	//         if α ≥ β then
+	//             break (* cut-off *)
+	//     return value
+
+
+	//iterates through all children
+	double max_h = numeric_limits<double>::lowest(); // min value
+	double h = max_h;
+	for(int x = 0; x < ptr->next_index; x++)
+	{
+		h = -negamax(start, ptr->next[x], depth_left--, -beta, -alpha, -is_maximizing);
+		if(h > max_h)
+			max_h = h;
+
+		if(max_h > alpha)
+			alpha = max_h;
+
+		//prunes
+		if(beta <= alpha)
+			break;
+
+	}
+
+	ptr->h = max_h;
+
+	return max_h;
+}
+
+
+
+//min version of Minimax
 //calculates heuristics for AI down to a certain depth
 //considers current node as the AI's move, and therefore will be minimizing heuristic
 double Tree::getMinHeuristic(node* start, node * ptr, double alpha /* starts as -INFINITY */, double beta /* starts as INFINITY */, int depth_left)
@@ -212,6 +272,7 @@ double Tree::getMinHeuristic(node* start, node * ptr, double alpha /* starts as 
 
 }
 
+//max portion of Minimax
 double Tree::getMaxHeuristic(node* start, node * ptr, double alpha /* starts as -INFINITY */, double beta /* starts as INFINITY */, int depth_left)
 {
 	double cur_heuristic = -1;
@@ -282,6 +343,7 @@ double Tree::calculateHeuristic(node* start, node* ptr)
 	double largest_num_player_moves = 0;
 	double largest_num_AI_moves = 0 ;
 	node* temp = ptr;
+	
 	// cout<<"Start: "<<endl;
 	// board_obj.printBoard(start->board);
 	//traverses from current node to start node
@@ -385,20 +447,22 @@ double Tree::calculateHeuristic(node* start, node* ptr)
 	if(getOtherPiece(start->piece) == worse_heuristic_piece)
 	{
 		// heuristic =  weights[0]*(player_count-AI_count);
-		// heuristic =  weights[1]*(player_score-AI_score);
+		heuristic =  weights[1]*(player_score-AI_score);
 
 		// heuristic =  weights[0]*(player_count-AI_count) + 
 		// 			 weights[1]*(player_score-AI_score);
 
 		//moves randomly
-		heuristic = 0;
+		// heuristic = 0;
 	}
 	//good heuristic
 	else
 	{
-		heuristic =  weights[0]*(player_count-AI_count) + 
-					 weights[1]*(player_score-AI_score) + 
-					 weights[2]*(smallest_num_player_moves - smallest_num_AI_moves);
+		// heuristic =  weights[0]*(player_count-AI_count) + 
+		// 			 weights[1]*(player_score-AI_score) + 
+		// 			 weights[2]*(smallest_num_player_moves - smallest_num_AI_moves);
+
+
 		
 		// heuristic =  weights[0]*(player_count-AI_count) + 
 		// 			 weights[1]*(player_score-AI_score) + 
@@ -407,7 +471,7 @@ double Tree::calculateHeuristic(node* start, node* ptr)
 		// 			 weights[1]*(player_score-AI_score);
 
 		// heuristic =  weights[0]*(player_count-AI_count);
-		// heuristic =  weights[1]*(player_score-AI_score);
+		heuristic =  weights[1]*(player_score-AI_score);
 		// heuristic = weights[2]*(player_moves-AI_moves);
 		// heuristic = weights[2]*(smallest_num_player_moves - smallest_num_AI_moves);
 		// heuristic = weights[2]*(largest_num_player_moves - largest_num_AI_moves);
@@ -629,11 +693,14 @@ void Tree::printNet(node * ptr, int indents /*default is 0 */)
 	printNode(ptr, indents);
 	cout<<endl;
 
+	// //prints 2nd level of tree
+	// for(int x = 0; x < ptr->next_index; x++)
+	// 	printNode(ptr->next[x], indents+1);
+
+	//prints whole tree
 	for(int x = 0; x < ptr->next_index; x++)
-	{
-		// printNet(ptr->next[x], indents+1);
-		printNode(ptr->next[x], indents+1);
-	}
+		printNet(ptr->next[x], indents+1);
+
 
 }
 

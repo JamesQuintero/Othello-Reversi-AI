@@ -237,9 +237,9 @@ bool Othello::playersMove(int player_type)
 
 	//also traverse the tree in player so that if AI has to skip its move 
 	tree.iterateTreeDepth(tree.ptr, player_piece, 1, tree.max_depth);
-	tree.getMaxHeuristic(tree.ptr, tree.ptr, MIN, MAX, tree.max_h_depth+1);
+	// tree.getMaxHeuristic(tree.ptr, tree.ptr, MIN, MAX, tree.max_h_depth+1);
+	tree.negamax(tree.ptr, tree.ptr, tree.max_h_depth+2, MIN, MAX, 1);
 
-	// tree.getMaxHeuristic(tree.ptr, tree.ptr, MIN, MAX, tree.max_depth+1);
 
 	
 	//print if player is playing
@@ -365,9 +365,10 @@ bool Othello::playersMove(int player_type)
 //AI's turn to move. returns true if successful. 
 bool Othello::AIMove(int AI_version, bool verbose)
 {
-	// tree.iterateTreeDepth(tree.ptr, player_piece, 1, tree.max_depth);
 	tree.iterateTreeDepth(tree.ptr, AI_piece, 1, tree.max_depth);
-	tree.getMinHeuristic(tree.ptr, tree.ptr, MIN, MAX, tree.max_h_depth+1);
+	// tree.getMinHeuristic(tree.ptr, tree.ptr, MIN, MAX, tree.max_h_depth+1);
+	tree.negamax(tree.ptr, tree.ptr, tree.max_h_depth+2, MIN, MAX, -1);
+
 	//will get children from the tree
 
 	// //for testing, prints out tree
