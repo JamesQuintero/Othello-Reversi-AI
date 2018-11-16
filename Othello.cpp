@@ -51,6 +51,8 @@ void Othello::run()
 		if(choice==1)
 		{
 				tree.piece = AI_piece;
+				//the player will be at a disadvantage
+				tree.worse_heuristic_piece = player_piece;
 
 				cout<<"New game Human vs AI"<<endl;
 				resetGame();
@@ -98,6 +100,10 @@ void Othello::run()
 					cout<<endl<<endl;
 				}
 
+				int num_player_pieces = board_obj.countPieces(tree.ptr->board, player_piece);
+				int num_AI_pieces = board_obj.countPieces(tree.ptr->board, AI_piece);
+				cout<<num_player_pieces<<" to "<<num_AI_pieces<<endl;
+
 		}
 		//AI vs AI
 		else if(choice==2)
@@ -135,6 +141,7 @@ void Othello::run()
 				int total_AI_wins = 0;
 				for(int x = 0; x < num_games; x++)
 				{
+					cout<<"Resetting game"<<endl;
 					resetGame(reset_tree);
 
 					
@@ -195,6 +202,8 @@ void Othello::run()
 					// tree.printNode(tree.ptr);
 				}
 
+				tree.printNode(tree.ptr);
+
 				cout<<endl<<endl;
 				cout<<"AI #1 wins: "<<total_player_wins<<endl;
 				cout<<"AI #2 wins: "<<total_AI_wins<<endl;
@@ -212,7 +221,7 @@ void Othello::run()
 		}
 		else if(choice == 4)
 		{
-			tree.resetTree();
+			resetGame(true);
 		}
 	
 	}
@@ -223,7 +232,8 @@ void Othello::run()
 //Player's turn to move. returns true if successful
 bool Othello::playersMove(int player_type)
 {
-
+	// cout<<"Player moving"<<endl;
+	// tree.printNode(tree.ptr);
 
 	//also traverse the tree in player so that if AI has to skip its move 
 	tree.iterateTreeDepth(tree.ptr, player_piece, 1, tree.max_depth);
@@ -236,9 +246,9 @@ bool Othello::playersMove(int player_type)
 	if(player_type == 0)
 	{
 		cout<<"Player's move. "<<endl;
-		// printBoard(board, size);
 		// board_obj.printBoard(tree.ptr->board);
 		tree.printNode(tree.ptr);
+		// tree.printNet(tree.ptr);
 	}
 
 	// //for testing, prints out tree
@@ -367,6 +377,7 @@ bool Othello::AIMove(int AI_version, bool verbose)
 
 
 	// cout<<"AI's move. "<<endl;
+	// tree.printNode(tree.ptr);
 	
 
 	string choice = "";

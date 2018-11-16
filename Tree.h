@@ -33,7 +33,11 @@ class Tree
 			char piece = '0';
 
 			//heuristic
+			double player_moves = -1.0;
+			double AI_moves = -1.0;
 			double h = 0;
+
+
 			short level = 0;
 
 			//weights for reinforement learning
@@ -68,7 +72,7 @@ class Tree
 		//current position in the tree
 		node * ptr;
 
-		int max_depth = 4;
+		int max_depth = 5;
 		int max_h_depth = 10;
 
 		int good_weight = 100;
@@ -82,8 +86,8 @@ class Tree
 		void newNode(node * ptr, char**& new_board, char piece);
 
 		void determinePossibleMoves(node* ptr, char piece);
-		double getMinHeuristic(node* start, node * ptr, int alpha, int beta, int depth_left);
-		double getMaxHeuristic(node* start, node * ptr, int alpha, int beta, int depth_left);
+		double getMinHeuristic(node* start, node * ptr, double alpha, double beta, int depth_left);
+		double getMaxHeuristic(node* start, node * ptr, double alpha, double beta, int depth_left);
 		double calculateHeuristic(node* start, node* ptr);
 
 		bool hasLegalMoves(node* ptr);
