@@ -141,7 +141,7 @@ void Othello::run()
 				int total_AI_wins = 0;
 				for(int x = 0; x < num_games; x++)
 				{
-					cout<<"Resetting game"<<endl;
+					// cout<<"Resetting game"<<endl;
 					resetGame(reset_tree);
 
 					
@@ -202,7 +202,7 @@ void Othello::run()
 					// tree.printNode(tree.ptr);
 				}
 
-				tree.printNode(tree.ptr);
+				// tree.printNode(tree.ptr);
 
 				cout<<endl<<endl;
 				cout<<"AI #1 wins: "<<total_player_wins<<endl;
@@ -322,7 +322,8 @@ bool Othello::playersMove(int player_type)
 
 			//Get MAX heuristic and move there. But pass in that it's a player requesting it so that it gets the worse heuristic. 
 			//returns board corresponding with the minimum heuristic
-			char** new_board = tree.getBoardMaxHeuristic(tree.ptr);
+			char** new_board = tree.getBoardMinHeuristic(tree.ptr);
+			// char** new_board = tree.getBoardMaxHeuristic(tree.ptr);
 
 			// cout<<"New board: "<<endl;
 			// board_obj.printBoard(new_board);
@@ -396,6 +397,7 @@ bool Othello::AIMove(int AI_version, bool verbose)
 
 		//returns board corresponding with the minimum heuristic
 		new_board = tree.getBoardMinHeuristic(tree.ptr);
+		// new_board = tree.getBoardMaxHeuristic(tree.ptr);
 		
 		
 

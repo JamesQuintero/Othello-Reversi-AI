@@ -94,7 +94,8 @@ class Board
 		//places specified piece on the specified board at the specified position, and flips the opponent's pieces
 		bool place_piece(char**& board, char piece, int col, int row);
 		
-		double getPossibleMovesCount(char**& board, char piece);
+		vector<double> getMobility(char**& board, char piece);
+		double getPieceStabilityScore(char**& board, char piece);
 		vector<vector<int>> getPossibleMoveCoordinates(char**& board, char piece);
 		// void getPossibleMoveBoards(vector<char**>& boards, char**& board, char piece);
 

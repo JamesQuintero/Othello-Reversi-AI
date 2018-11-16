@@ -264,8 +264,8 @@ double Board::countPositionWeights(char**& board, int level, char piece)
 }
 
 
-//returns list of coordinates of legal moves
-double Board::getPossibleMovesCount(char**& board, char piece)
+//returns values relating to mobility of piece
+vector<double> Board::getMobility(char**& board, char piece)
 {
 
 	char other_piece = '0';
@@ -279,9 +279,11 @@ double Board::getPossibleMovesCount(char**& board, char piece)
 
 	int num_moves = 0;
 	double num_moves_weighted = 0;
-	int num_flips = 0;
+	double num_flips = 0;
 	// Board board_copy;
 	int num_neighbors = 0;
+
+	int total_potential_mobility = 0;
 
 	// char** board_copy = createMatrix(this->size);
 	char** board_copy = new char*[size];
@@ -294,9 +296,45 @@ double Board::getPossibleMovesCount(char**& board, char piece)
 	{
 		for(int y = 0; y < size; y++)
 		{
-			//if a piece already resides here, skip
+			//if a piece already resides here, maybe count it's potential mobility, and skip counting regular mobility
 			if(board[x][y]!='0')
+			{
+				//if not dealing with opponent's piece, then skip
+				if(board[x][y] == piece)
+					continue;
+
+				//// determines potential mobility ////
+
+				//gets neighboring spots around current spot
+				char* neighbors = new char[9];
+				get_neighbors(board, neighbors, x, y);
+
+				//gets if other piece is around this spot
+				short empty_space_count = 0;
+				short piece_count = 0;
+				for(int z = 0; z < 9; z++)
+				{
+					if(neighbors[z]=='0')
+						empty_space_count++;
+					// else if(neighbors[z]==other_piece)
+					// 	piece_count++;
+				}
+
+				//garbage collection
+				delete[] neighbors;
+
+
+				total_potential_mobility += (empty_space_count);
+
+
+
+
+
 				continue;
+			}
+
+
+			//// determines mobility ////
 
 			//gets neighboring spots around current spot
 			char* neighbors = new char[9];
@@ -355,15 +393,82 @@ double Board::getPossibleMovesCount(char**& board, char piece)
 	}
 
 
+	vector<double> to_return;
+	to_return.push_back(num_flips); //returns mobility
+	to_return.push_back(total_potential_mobility); //returns potential mobility
+
+	return to_return;
+
 	// return (double)num_neighbors;
 	// return (double)num_moves;
 	// return (double)num_moves_weighted;
 	// return num_moves_weighted/(double)num_moves;
-	return (double)num_flips;
+	// return num_flips;
 	// if(num_moves > 0)
 	// 	return (double)num_flips/(double)num_moves;
 	// else
 	// 	return 0;
+}
+
+
+//returns a stability value based on current pieces
+double Board::getPieceStabilityScore(char**& board, char piece)
+{
+	char other_piece = '0';
+
+
+	if(piece == white_piece)
+		other_piece = black_piece;
+	else
+		other_piece = white_piece;
+
+
+	//counts number of stable, semi-stable, and unstable pieces
+	int* stabilities = new int[3];
+
+	int stability_score = 0;
+
+	int stability_weights[size][size] = {
+        { 4,-3, 2, 2, 2, 2,-3, 4},
+        {-3,-4,-1,-1,-1,-1,-4,-3},
+        { 2,-1, 1, 0, 0, 1,-1, 2},
+        { 2,-1, 0, 1, 1, 0,-1, 2},
+        { 2,-1, 0, 1, 1, 0,-1, 2},
+        { 2,-1, 1, 0, 0, 1,-1, 2},
+        {-3,-4,-1,-1,-1,-1,-4,-3},
+        {4 ,-3, 2, 2, 2, 2,-3, 4}
+	};
+
+	// char** board_copy = new char*[size];
+	// createMatrix(board_copy, this->size);
+
+				
+
+	//iterates through entire board
+	for(int x = 0; x < size; x++)
+	{
+		for(int y = 0; y < size; y++)
+		{
+			//if piece does not reside here, skip
+			if(board[x][y]==piece)
+			{
+				stability_score += stability_weights[x][y];
+			}
+
+
+		}
+	}
+
+	// //garbage collection
+	// if(board_copy!=NULL)
+	// {
+	// 	for(int x = 0; x < size; x++)
+	// 		delete[] board_copy[x];
+	// 	delete[] board_copy;
+	// }
+
+
+	return stability_score;
 }
 
 

@@ -19,15 +19,15 @@ Tree::Tree()
 
 void Tree::resetTree()
 {
-	cout<<"Erasing tree"<<endl;
+	// cout<<"Erasing tree"<<endl;
 	eraseTree(root);
 
-	cout<<"New root: "<<endl;
+	// cout<<"New root: "<<endl;
 	root = new node();
 	// root->board = createMatrix(size);
 	board_obj.resetBoard(root->board);
 
-	printNode(root);
+	// printNode(root);
 
 	// string something = "";
 	// cin>>something;
@@ -45,11 +45,17 @@ void Tree::eraseTree(node * ptr)
 		}
 
 		// cout<<"Deleting"<<endl;
-		for(int x = 0; x < size; x++)
-			delete[] ptr->board[x];
-		delete[] ptr->board;
+		if(ptr->board != NULL)
+		{
+			for(int x = 0; x < size; x++)
+				delete[] ptr->board[x];
+			delete[] ptr->board;
+		}
 
-		delete[] ptr->next;
+		if(ptr->next != NULL)
+		{
+			delete[] ptr->next;
+		}
 
 		delete ptr;
 
@@ -222,100 +228,100 @@ double Tree::negamax(node* start, node* ptr, int depth_left, double alpha /* sta
 
 
 
-//min version of Minimax
-//calculates heuristics for AI down to a certain depth
-//considers current node as the AI's move, and therefore will be minimizing heuristic
-double Tree::getMinHeuristic(node* start, node * ptr, double alpha /* starts as -INFINITY */, double beta /* starts as INFINITY */, int depth_left)
-{
-	double cur_heuristic = -1;
+// //min version of Minimax
+// //calculates heuristics for AI down to a certain depth
+// //considers current node as the AI's move, and therefore will be minimizing heuristic
+// double Tree::getMinHeuristic(node* start, node * ptr, double alpha /* starts as -INFINITY */, double beta /* starts as INFINITY */, int depth_left)
+// {
+// 	double cur_heuristic = -1;
 
-	//if has no children
-	if(ptr->next_index == 0 || depth_left<=0)
-	{
-		cur_heuristic = calculateHeuristic(start, ptr);
-		ptr->h = cur_heuristic;
+// 	//if has no children
+// 	if(ptr->next_index == 0 || depth_left<=0)
+// 	{
+// 		cur_heuristic = calculateHeuristic(start, ptr);
+// 		ptr->h = cur_heuristic;
 
-		return cur_heuristic;
-	}
+// 		return cur_heuristic;
+// 	}
 
-	// bestVal = +INFINITY 
- //    for each child node :
- //        value = minimax(node, depth+1, true, alpha, beta)
- //        bestVal = min( bestVal, value) 
- //        beta = min( beta, bestVal)
- //        if beta <= alpha:
- //            break
- //    return bestVal
-
-
-	//iterates through all children
-	double min_heuristic = numeric_limits<double>::max(); // max value
-	for(int x = 0; x < ptr->next_index; x++)
-	{
-		double h = getMaxHeuristic(start, ptr->next[x], alpha, beta, depth_left--);
-		if(h < min_heuristic)
-			min_heuristic = h;
-
-		if(min_heuristic < beta)
-			beta = min_heuristic;
-
-		//prunes
-		if(beta <= alpha)
-			break;
-
-	}
-
-	ptr->h = min_heuristic;
-
-	return min_heuristic;
+// 	// bestVal = +INFINITY 
+//  //    for each child node :
+//  //        value = minimax(node, depth+1, true, alpha, beta)
+//  //        bestVal = min( bestVal, value) 
+//  //        beta = min( beta, bestVal)
+//  //        if beta <= alpha:
+//  //            break
+//  //    return bestVal
 
 
-}
+// 	//iterates through all children
+// 	double min_heuristic = numeric_limits<double>::max(); // max value
+// 	for(int x = 0; x < ptr->next_index; x++)
+// 	{
+// 		double h = getMaxHeuristic(start, ptr->next[x], alpha, beta, depth_left--);
+// 		if(h < min_heuristic)
+// 			min_heuristic = h;
 
-//max portion of Minimax
-double Tree::getMaxHeuristic(node* start, node * ptr, double alpha /* starts as -INFINITY */, double beta /* starts as INFINITY */, int depth_left)
-{
-	double cur_heuristic = -1;
+// 		if(min_heuristic < beta)
+// 			beta = min_heuristic;
+
+// 		//prunes
+// 		if(beta <= alpha)
+// 			break;
+
+// 	}
+
+// 	ptr->h = min_heuristic;
+
+// 	return min_heuristic;
+
+
+// }
+
+// //max portion of Minimax
+// double Tree::getMaxHeuristic(node* start, node * ptr, double alpha /* starts as -INFINITY */, double beta /* starts as INFINITY */, int depth_left)
+// {
+// 	double cur_heuristic = -1;
 	
-	//if has no children
-	if(ptr->next_index == 0 || depth_left<=0)
-	{
-		cur_heuristic = calculateHeuristic(start, ptr);
-		ptr->h = cur_heuristic;
+// 	//if has no children
+// 	if(ptr->next_index == 0 || depth_left<=0)
+// 	{
+// 		cur_heuristic = calculateHeuristic(start, ptr);
+// 		ptr->h = cur_heuristic;
 
-		return cur_heuristic;
-	}
+// 		return cur_heuristic;
+// 	}
 
-	// bestVal = -INFINITY 
- //    for each child node :
- //        value = minimax(node, depth+1, false, alpha, beta)
- //        bestVal = max( bestVal, value) 
- //        alpha = max( alpha, bestVal)
- //        if beta <= alpha:
- //            break
- //    return bestVal
+// 	// bestVal = -INFINITY 
+//  //    for each child node :
+//  //        value = minimax(node, depth+1, false, alpha, beta)
+//  //        bestVal = max( bestVal, value) 
+//  //        alpha = max( alpha, bestVal)
+//  //        if beta <= alpha:
+//  //            break
+//  //    return bestVal
 
 
-	//iterates through all children
-	double max_heuristic = numeric_limits<double>::lowest(); // minimum value
-	for(int x = 0; x < ptr->next_index; x++)
-	{
-		double h = getMinHeuristic(start, ptr->next[x], alpha, beta, depth_left--);
-		if(h > max_heuristic)
-			max_heuristic = h;
+// 	//iterates through all children
+// 	double max_heuristic = numeric_limits<double>::lowest(); // minimum value
+// 	for(int x = 0; x < ptr->next_index; x++)
+// 	{
+// 		double h = getMinHeuristic(start, ptr->next[x], alpha, beta, depth_left--);
+// 		if(h > max_heuristic)
+// 			max_heuristic = h;
 
-		if(max_heuristic > alpha)
-			alpha = max_heuristic;
+// 		if(max_heuristic > alpha)
+// 			alpha = max_heuristic;
 
-		//prune the rest
-		if(beta <= alpha)
-			break;
+// 		//prune the rest
+// 		if(beta <= alpha)
+// 			break;
 
-	}
-	ptr->h = max_heuristic;
+// 	}
+// 	ptr->h = max_heuristic;
 
-	return max_heuristic;
-}
+// 	return max_heuristic;
+// }
 
 //returns heuristic for specified pointer
 double Tree::calculateHeuristic(node* start, node* ptr)
@@ -329,21 +335,28 @@ double Tree::calculateHeuristic(node* start, node* ptr)
 	double player_score = board_obj.countPositionWeights(ptr->board, level, player_piece);
 	double AI_score = board_obj.countPositionWeights(ptr->board, level, AI_piece);
 
+	double player_stability_score = board_obj.getPieceStabilityScore(ptr->board, player_piece);
+	double AI_stability_score = board_obj.getPieceStabilityScore(ptr->board, AI_piece);
+
 
 	//count the number of lines a player has or has gotten
 
-	double AI_moves = 0;
-	double player_moves = 0;
+	double AI_mobility = 0;
+	double AI_potential_mobility = 0;
+	double player_mobility = 0;
+	double player_potential_mobility = 0;
 
-	double total_player_moves = 0;
-	double total_AI_moves = 0;
+	double total_player_mobility = 0;
+	double total_player_potential_mobility = 0;
+	double total_AI_mobility = 0;
+	double total_AI_potential_mobility = 0;
 	double count = 0;
 	double smallest_num_player_moves = 100000;
 	double smallest_num_AI_moves = 100000 ;
 	double largest_num_player_moves = 0;
 	double largest_num_AI_moves = 0 ;
 	node* temp = ptr;
-	
+
 	// cout<<"Start: "<<endl;
 	// board_obj.printBoard(start->board);
 	//traverses from current node to start node
@@ -383,19 +396,25 @@ double Tree::calculateHeuristic(node* start, node* ptr)
 
 
 		//if haven't calculated this node's mobility yet
-		if(temp->AI_moves < 0)
+		if(temp->AI_mobility < 0)
 		{
-			AI_moves = board_obj.getPossibleMovesCount(temp->board, AI_piece);
-			temp->AI_moves = AI_moves;
+			vector<double> AI_mobility = board_obj.getMobility(temp->board, AI_piece);
+			temp->AI_mobility = AI_mobility[0];
+			temp->AI_potential_mobility = AI_mobility[1];
 
-			player_moves = board_obj.getPossibleMovesCount(temp->board, player_piece);
-			temp->player_moves = player_moves;
+			vector<double> player_mobility = board_obj.getMobility(temp->board, player_piece);
+			temp->player_mobility = player_mobility[0];
+			temp->player_potential_mobility = player_mobility[1];
 		}
 
-		if(temp->AI_moves < smallest_num_AI_moves)
-			smallest_num_AI_moves = AI_moves;
-		if(temp->player_moves < smallest_num_player_moves)
-			smallest_num_player_moves = player_moves;
+		if(temp->AI_mobility < smallest_num_AI_moves)
+			smallest_num_AI_moves = temp->AI_mobility;
+		if(temp->player_mobility < smallest_num_player_moves)
+			smallest_num_player_moves = temp->player_mobility;
+		total_AI_mobility += temp->AI_mobility;
+		total_AI_potential_mobility += temp->AI_potential_mobility;
+		total_player_mobility += temp->player_mobility;
+		total_player_potential_mobility += temp->player_potential_mobility;
 
 		// if(AI_moves > largest_num_AI_moves)
 		// 	largest_num_AI_moves = AI_moves;
@@ -412,8 +431,10 @@ double Tree::calculateHeuristic(node* start, node* ptr)
 
 		temp = temp->prev;
 	}
-	// double player_moves = total_player_moves/count;
-	// double AI_moves = total_AI_moves/count;
+	player_mobility = total_player_mobility/count;
+	player_potential_mobility = total_player_potential_mobility/count;
+	AI_mobility = total_AI_mobility/count;
+	AI_potential_mobility = total_AI_potential_mobility/count;
 
 
 	// //gets difference of this pointer's board, and its parent's board to determine where player moved
@@ -440,27 +461,78 @@ double Tree::calculateHeuristic(node* start, node* ptr)
 
 	// return (player_count - AI_count) + (num_player_flips - num_AI_flips);
 
-	int weights[4] = {1, 1, 10, 1};
+	
 
 	double heuristic = 0;
 	//bad heuristic
 	if(getOtherPiece(start->piece) == worse_heuristic_piece)
 	{
+		int weights[6] = {  1, //piece count
+							1, //scores
+							10, //mobility
+							1, //potential mobility
+							3, //stability
+							0 //reinforcement
+						};
+		// heuristic =  weights[0]*(player_count - AI_count) + 
+		// 			 weights[1]*(player_score - AI_score) + 
+		// 			 weights[2]*(smallest_num_player_moves - smallest_num_AI_moves);
+		// 			 weights[3]*(good - bad);
+
+		 heuristic =  weights[0]*(player_count - AI_count) + 
+					 weights[1]*(player_score - AI_score) + 
+					 weights[2]*(player_mobility - AI_mobility) + 
+					 weights[3]*(player_potential_mobility - AI_potential_mobility) + 
+					 weights[4]*(player_stability_score - AI_stability_score) + 
+					 weights[5]*(good - bad);
+
+					 
 		// heuristic =  weights[0]*(player_count-AI_count);
-		heuristic =  weights[1]*(player_score-AI_score);
+		// heuristic =  weights[1]*(player_score-AI_score);
 
 		// heuristic =  weights[0]*(player_count-AI_count) + 
-		// 			 weights[1]*(player_score-AI_score);
+		// 			 weights[1]*(player_score-AI_score) + 
+		// 			 // weights[2]*(smallest_num_player_moves - smallest_num_AI_moves);
+		// 			 weights[2]*(player_mobility - AI_mobility) + 
+		// 			 weights[3]*(player_potential_mobility - AI_potential_mobility);
+		// // 			 weights[4]*(good - bad);
 
-		//moves randomly
+		// heuristic = weights[2]*(player_mobility - AI_mobility)+
+					// weights[3]*(player_potential_mobility - AI_potential_mobility);
+
+		// heuristic = weights[3]*(player_potential_mobility - AI_potential_mobility);
+
+		// heuristic = (player_stability_score - AI_stability_score);
+
+		// moves randomly
 		// heuristic = 0;
 	}
 	//good heuristic
 	else
 	{
-		// heuristic =  weights[0]*(player_count-AI_count) + 
-		// 			 weights[1]*(player_score-AI_score) + 
+		int weights[6] = {  1, //piece count
+							1, //scores
+							10, //mobility
+							1, //potential mobility
+							3, //stability
+							0 //reinforcement
+						};
+		// heuristic =  weights[0]*(player_count - AI_count) + 
+		// 			 weights[1]*(player_score - AI_score) + 
 		// 			 weights[2]*(smallest_num_player_moves - smallest_num_AI_moves);
+		// 			 weights[3]*(good - bad);
+
+		 heuristic =  weights[0]*(player_count - AI_count) + 
+					 weights[1]*(player_score - AI_score) + 
+					 weights[2]*(player_mobility - AI_mobility) + 
+					 weights[3]*(player_potential_mobility - AI_potential_mobility) + 
+					 weights[4]*(player_stability_score - AI_stability_score) + 
+					 weights[5]*(good - bad);
+
+		// heuristic = 0;
+
+		// heuristic = (player_stability_score - AI_stability_score);
+
 
 
 		
@@ -471,7 +543,7 @@ double Tree::calculateHeuristic(node* start, node* ptr)
 		// 			 weights[1]*(player_score-AI_score);
 
 		// heuristic =  weights[0]*(player_count-AI_count);
-		heuristic =  weights[1]*(player_score-AI_score);
+		// heuristic =  weights[1]*(player_score-AI_score);
 		// heuristic = weights[2]*(player_moves-AI_moves);
 		// heuristic = weights[2]*(smallest_num_player_moves - smallest_num_AI_moves);
 		// heuristic = weights[2]*(largest_num_player_moves - largest_num_AI_moves);

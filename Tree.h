@@ -33,8 +33,10 @@ class Tree
 			char piece = '0';
 
 			//heuristic
-			double player_moves = -1.0;
-			double AI_moves = -1.0;
+			double player_mobility = -1.0;
+			double player_potential_mobility = -1.0;
+			double AI_mobility = -1.0;
+			double AI_potential_mobility = -1.0;
 			double h = 0;
 
 
@@ -74,7 +76,7 @@ class Tree
 
 		//depth should be odd so as to not give advance to the side in minimax that wants to maximize or minimize. 
 		int max_depth = 3;
-		int max_h_depth = 3;
+		int max_h_depth = 10;
 
 		int good_weight = 100;
 
