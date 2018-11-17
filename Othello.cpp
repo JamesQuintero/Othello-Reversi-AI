@@ -245,10 +245,9 @@ bool Othello::playersMove(int player_type)
 	//print if player is playing
 	if(player_type == 0)
 	{
-		cout<<"Player's move. "<<endl;
-		// board_obj.printBoard(tree.ptr->board);
-		tree.printNode(tree.ptr);
+		// cout<<"Player's move. "<<endl;
 		// tree.printNet(tree.ptr);
+		// tree.printNode(tree.ptr);
 	}
 
 	// //for testing, prints out tree
@@ -374,12 +373,10 @@ bool Othello::AIMove(int AI_version, bool verbose)
 
 	// //for testing, prints out tree
 	// tree.printNet(tree.ptr);
-	// string to_continue;
-	// cin>>to_continue;
-
-
 	// cout<<"AI's move. "<<endl;
 	// tree.printNode(tree.ptr);
+	// string to_continue;
+	// cin>>to_continue;
 	
 
 	string choice = "";
@@ -403,9 +400,6 @@ bool Othello::AIMove(int AI_version, bool verbose)
 
 		valid_move = true;
 	}
-
-	//AI places piece
-	// board.copyBoard(&new_board);
 
 	//add AI's move to neural net
 	tree.move(new_board);

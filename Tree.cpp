@@ -339,7 +339,6 @@ double Tree::calculateHeuristic(node* start, node* ptr)
 	double AI_stability_score = board_obj.getPieceStabilityScore(ptr->board, AI_piece);
 
 
-	//count the number of lines a player has or has gotten
 
 	double AI_mobility = 0;
 	double AI_potential_mobility = 0;
@@ -357,8 +356,7 @@ double Tree::calculateHeuristic(node* start, node* ptr)
 	double largest_num_AI_moves = 0 ;
 	node* temp = ptr;
 
-	// cout<<"Start: "<<endl;
-	// board_obj.printBoard(start->board);
+
 	//traverses from current node to start node
 	//when traversing up counting possible moves for player and AI, try and average per level so that it's not a total. 
 	//A total would give a lower total for unvisited children, and therefore not be a good heuristic. 
@@ -416,14 +414,7 @@ double Tree::calculateHeuristic(node* start, node* ptr)
 		total_player_mobility += temp->player_mobility;
 		total_player_potential_mobility += temp->player_potential_mobility;
 
-		// if(AI_moves > largest_num_AI_moves)
-		// 	largest_num_AI_moves = AI_moves;
-		// if(player_moves > largest_num_player_moves)
-		// 	largest_num_player_moves = player_moves;
-
 		count++;
-
-		// cout<<"total moves: ("<<total_player_moves<<","<<total_AI_moves<<")"<<endl;
 
 		//stop after processing start node
 		if(temp == start)
@@ -456,39 +447,70 @@ double Tree::calculateHeuristic(node* start, node* ptr)
 
 
 
-	//Looks at opponent's moves vs player's moves
-	// return player_count-AI_count;
-
-	// return (player_count - AI_count) + (num_player_flips - num_AI_flips);
-
-	
+	/// Dynamic weighting ///
 
 	double heuristic = 0;
 	//bad heuristic
 	if(getOtherPiece(start->piece) == worse_heuristic_piece)
 	{
-		int weights[6] = {  1, //piece count
-							1, //scores
-							10, //mobility
-							1, //potential mobility
-							3, //stability
-							0 //reinforcement
-						};
+		double weights[3][6] = {
+			//levels 0-40
+			{	1 /*piece count*/, 
+				1 /*scores*/, 
+				10 /*mobility*/, 
+				1 /*potential mobility*/, 
+				3 /*stability*/,
+				1 /*reinforcement*/
+			},
+			//levels 40-50
+			{	1 /*piece count*/, 
+				1 /*scores*/, 
+				10 /*mobility*/, 
+				1 /*potential mobility*/, 
+				3 /*stability*/,
+				1 /*reinforcement*/
+			},
+			//levels 50-60
+			{	1 /*piece count*/, 
+				1 /*scores*/, 
+				10 /*mobility*/, 
+				1 /*potential mobility*/, 
+				3 /*stability*/,
+				1 /*reinforcement*/
+			}
+		};
+
+		int weight_index = 0;
+		if(level <= 40)
+			weight_index = 0;
+		else if(level<=50)
+			weight_index = 1;
+		else
+			weight_index = 2;
+
+
+		 heuristic =  weights[weight_index][0]*(player_count - AI_count) + 
+					 weights[weight_index][1]*(player_score - AI_score) + 
+					 weights[weight_index][2]*(player_mobility - AI_mobility) + 
+					 weights[weight_index][3]*(player_potential_mobility - AI_potential_mobility) + 
+					 weights[weight_index][4]*(player_stability_score - AI_stability_score) + 
+					 weights[weight_index][5]*(good - bad);
+
 		// heuristic =  weights[0]*(player_count - AI_count) + 
 		// 			 weights[1]*(player_score - AI_score) + 
 		// 			 weights[2]*(smallest_num_player_moves - smallest_num_AI_moves);
 		// 			 weights[3]*(good - bad);
 
-		 heuristic =  weights[0]*(player_count - AI_count) + 
-					 weights[1]*(player_score - AI_score) + 
-					 weights[2]*(player_mobility - AI_mobility) + 
-					 weights[3]*(player_potential_mobility - AI_potential_mobility) + 
-					 weights[4]*(player_stability_score - AI_stability_score) + 
-					 weights[5]*(good - bad);
+		 // heuristic =  weights[0]*(player_count - AI_count) + 
+			// 		 weights[1]*(player_score - AI_score) + 
+			// 		 weights[2]*(player_mobility - AI_mobility) + 
+			// 		 weights[3]*(player_potential_mobility - AI_potential_mobility) + 
+			// 		 weights[4]*(player_stability_score - AI_stability_score) + 
+			// 		 weights[5]*(good - bad);
 
-					 
+
 		// heuristic =  weights[0]*(player_count-AI_count);
-		// heuristic =  weights[1]*(player_score-AI_score);
+		// heuristic =  weights[0][1]*(player_score-AI_score);
 
 		// heuristic =  weights[0]*(player_count-AI_count) + 
 		// 			 weights[1]*(player_score-AI_score) + 
@@ -510,24 +532,53 @@ double Tree::calculateHeuristic(node* start, node* ptr)
 	//good heuristic
 	else
 	{
-		int weights[6] = {  1, //piece count
-							1, //scores
-							10, //mobility
-							1, //potential mobility
-							3, //stability
-							0 //reinforcement
-						};
+		double weights[3][6] = {
+			//levels 0-40
+			{	0 /*piece count*/, 
+				3 /*scores*/, 
+				10 /*mobility*/, 
+				0 /*potential mobility*/, 
+				3 /*stability*/,
+				1 /*reinforcement*/
+			},
+			//levels 40-50
+			{	0 /*piece count*/, 
+				2 /*scores*/, 
+				10 /*mobility*/, 
+				0 /*potential mobility*/, 
+				1.5 /*stability*/,
+				1 /*reinforcement*/
+			},
+			//levels 50-60
+			{	0 /*piece count*/, 
+				1 /*scores*/, 
+				20 /*mobility*/, 
+				0 /*potential mobility*/, 
+				0 /*stability*/,
+				1 /*reinforcement*/
+			}
+		};
+
 		// heuristic =  weights[0]*(player_count - AI_count) + 
 		// 			 weights[1]*(player_score - AI_score) + 
 		// 			 weights[2]*(smallest_num_player_moves - smallest_num_AI_moves);
 		// 			 weights[3]*(good - bad);
 
-		 heuristic =  weights[0]*(player_count - AI_count) + 
-					 weights[1]*(player_score - AI_score) + 
-					 weights[2]*(player_mobility - AI_mobility) + 
-					 weights[3]*(player_potential_mobility - AI_potential_mobility) + 
-					 weights[4]*(player_stability_score - AI_stability_score) + 
-					 weights[5]*(good - bad);
+		int weight_index = 0;
+		if(level <= 40)
+			weight_index = 0;
+		else if(level<=50)
+			weight_index = 1;
+		else
+			weight_index = 2;
+
+
+		 heuristic =  weights[weight_index][0]*(player_count - AI_count) + 
+					 weights[weight_index][1]*(player_score - AI_score) + 
+					 weights[weight_index][2]*(player_mobility - AI_mobility) + 
+					 weights[weight_index][3]*(player_potential_mobility - AI_potential_mobility) + 
+					 weights[weight_index][4]*(player_stability_score - AI_stability_score) + 
+					 weights[weight_index][5]*(good - bad);
 
 		// heuristic = 0;
 
@@ -552,25 +603,6 @@ double Tree::calculateHeuristic(node* start, node* ptr)
 		//moves randomly
 		// heuristic = 0;
 	}
-	
-
-
-	// cout<<"Player score: "<<player_score<<endl;
-	// cout<<"AI score: "<<AI_score<<endl;
-	// cout<<"Difference: "<<(player_score - AI_score)<<endl;
-	// board_obj.printBoard(ptr->board);
-	// cout<<"Num player possible moves: "<<player_moves<<endl;
-	// cout<<"Num AI possible moves: "<<AI_moves<<endl;
-	// cout<<"Difference: "<<(player_moves - AI_moves)<<endl;
-	// cout<<endl;
-
-
-
-	// double heuristic = (player_count - AI_count);
-	// double heuristic = num_player_flips - num_AI_flips;
-	// double heuristic = pos_weight;
-	// cout<<"Heuristic: "<<heuristic<<endl;
-	// cout<<endl;
 
 	return heuristic;
 

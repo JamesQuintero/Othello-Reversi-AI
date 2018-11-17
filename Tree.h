@@ -75,7 +75,7 @@ class Tree
 		node * ptr;
 
 		//depth should be odd so as to not give advance to the side in minimax that wants to maximize or minimize. 
-		int max_depth = 3;
+		int max_depth = 2;
 		int max_h_depth = 10;
 
 		int good_weight = 100;

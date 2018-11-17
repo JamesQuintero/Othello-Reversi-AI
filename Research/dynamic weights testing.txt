@@ -1,0 +1,817 @@
+
+
+
+1, 1, 10, 1
+32, 168, 27.39, 36.61
+
+1, 1, 10, 2
+42, 158, 28.83, 35.17
+
+1, 1, 10, 2
+79, 421, 27.236, 36.764
+
+1, 1, 10, 3
+75, 425, 27.036, 36.964
+
+1, 1, 10, 5
+87, 413, 27.744, 36.256
+
+
+
+
+
+
+1, 1, 10, 1
+188, 10, 45.89, 18.09
+
+1, 1, 10, 5
+188, 12, 46.8, 17.18
+
+1, 1, 10, 1
+183, 13, 45.605, 18.03
+
+1, 1, 10, 5
+187, 11, 46.2, 17.8
+
+
+
+
+1, 1, [10], 1, 1
+139, 58, 39.05, 24.88
+
+1, 1, 10, [1], 1
+121, 72, 36.035, 27.415
+
+1, 1, [10, 1], 1
+139, 53, 39.81, 24.125
+
+1, 1, [10, 5], 1
+140, 53, 38.64, 25.34
+
+
+Stability
+173, 24, 39.915, 24.085
+
+
+
+
+
+
+double weights[3][6] = {
+			//levels 0-40
+			{	1 /*piece count*/, 
+				1 /*scores*/, 
+				10 /*mobility*/, 
+				1 /*potential mobility*/, 
+				3 /*stability*/,
+				1 /*reinforcement*/
+			},
+			//levels 40-50
+			{	1 /*piece count*/, 
+				1 /*scores*/, 
+				10 /*mobility*/, 
+				1 /*potential mobility*/, 
+				3 /*stability*/,
+				1 /*reinforcement*/
+			},
+			//levels 50-60
+			{	1 /*piece count*/, 
+				1 /*scores*/, 
+				10 /*mobility*/, 
+				1 /*potential mobility*/, 
+				3 /*stability*/,
+				1 /*reinforcement*/
+			}
+		};
+Runs: 200
+18, 178, 19.325, 44.61
+
+
+double weights[3][6] = {
+			//levels 0-40
+			{	1 /*piece count*/, 
+				1 /*scores*/, 
+				10 /*mobility*/, 
+				1 /*potential mobility*/, 
+				3 /*stability*/,
+				1 /*reinforcement*/
+			},
+			//levels 40-50
+			{	1 /*piece count*/, 
+				1 /*scores*/, 
+				10 /*mobility*/, 
+				1 /*potential mobility*/, 
+				3 /*stability*/,
+				1 /*reinforcement*/
+			},
+			//levels 50-60
+			{	1 /*piece count*/, 
+				1 /*scores*/, 
+				10 /*mobility*/, 
+				1 /*potential mobility*/, 
+				0 /*stability*/,
+				1 /*reinforcement*/
+			}
+		};
+Runs: 200
+14, 184, 17.52, 46.34
+
+
+
+double weights[3][6] = {
+			//levels 0-40
+			{	1 /*piece count*/, 
+				1 /*scores*/, 
+				10 /*mobility*/, 
+				1 /*potential mobility*/, 
+				3 /*stability*/,
+				1 /*reinforcement*/
+			},
+			//levels 40-50
+			{	1 /*piece count*/, 
+				1 /*scores*/, 
+				10 /*mobility*/, 
+				1 /*potential mobility*/, 
+				1.5 /*stability*/,
+				1 /*reinforcement*/
+			},
+			//levels 50-60
+			{	1 /*piece count*/, 
+				1 /*scores*/, 
+				10 /*mobility*/, 
+				1 /*potential mobility*/, 
+				0 /*stability*/,
+				1 /*reinforcement*/
+			}
+		};
+Runs: 200
+12, 186, 17.5, 46.335
+
+
+double weights[3][6] = {
+			//levels 0-40
+			{	1 /*piece count*/, 
+				1 /*scores*/, 
+				10 /*mobility*/, 
+				1 /*potential mobility*/, 
+				3 /*stability*/,
+				1 /*reinforcement*/
+			},
+			//levels 40-50
+			{	1 /*piece count*/, 
+				1 /*scores*/, 
+				10 /*mobility*/, 
+				1 /*potential mobility*/, 
+				1.5 /*stability*/,
+				1 /*reinforcement*/
+			},
+			//levels 50-60
+			{	1 /*piece count*/, 
+				1 /*scores*/, 
+				20 /*mobility*/, 
+				1 /*potential mobility*/, 
+				0 /*stability*/,
+				1 /*reinforcement*/
+			}
+		};
+Runs: 500
+31, 462, 18.70, 45.24
+
+
+double weights[3][6] = {
+			//levels 0-40
+			{	1 /*piece count*/, 
+				1 /*scores*/, 
+				10 /*mobility*/, 
+				1 /*potential mobility*/, 
+				3 /*stability*/,
+				1 /*reinforcement*/
+			},
+			//levels 40-50
+			{	1 /*piece count*/, 
+				1 /*scores*/, 
+				10 /*mobility*/, 
+				1 /*potential mobility*/, 
+				1.5 /*stability*/,
+				1 /*reinforcement*/
+			},
+			//levels 50-60
+			{	1 /*piece count*/, 
+				0.5 /*scores*/, 
+				20 /*mobility*/, 
+				1 /*potential mobility*/, 
+				0 /*stability*/,
+				1 /*reinforcement*/
+			}
+		};
+Runs: 200
+16, 182, 18.61, 45.145
+
+
+
+double weights[3][6] = {
+			//levels 0-40
+			{	1 /*piece count*/, 
+				1 /*scores*/, 
+				10 /*mobility*/, 
+				1 /*potential mobility*/, 
+				3 /*stability*/,
+				1 /*reinforcement*/
+			},
+			//levels 40-50
+			{	1 /*piece count*/, 
+				1 /*scores*/, 
+				20 /*mobility*/, 
+				1 /*potential mobility*/, 
+				1.5 /*stability*/,
+				1 /*reinforcement*/
+			},
+			//levels 50-60
+			{	1 /*piece count*/, 
+				1 /*scores*/, 
+				30 /*mobility*/, 
+				1 /*potential mobility*/, 
+				0 /*stability*/,
+				1 /*reinforcement*/
+			}
+		};
+Runs: 200
+13, 184, 17.56, 46.395
+
+double weights[3][6] = {
+			//levels 0-40
+			{	1 /*piece count*/, 
+				1 /*scores*/, 
+				5 /*mobility*/, 
+				1 /*potential mobility*/, 
+				3 /*stability*/,
+				1 /*reinforcement*/
+			},
+			//levels 40-50
+			{	1 /*piece count*/, 
+				1 /*scores*/, 
+				10 /*mobility*/, 
+				1 /*potential mobility*/, 
+				1.5 /*stability*/,
+				1 /*reinforcement*/
+			},
+			//levels 50-60
+			{	1 /*piece count*/, 
+				1 /*scores*/, 
+				20 /*mobility*/, 
+				1 /*potential mobility*/, 
+				0 /*stability*/,
+				1 /*reinforcement*/
+			}
+		};
+Runs: 200
+10, 188, 18.45, 45.51
+
+
+double weights[3][6] = {
+			//levels 0-40
+			{	1 /*piece count*/, 
+				1 /*scores*/, 
+				10 /*mobility*/, 
+				1 /*potential mobility*/, 
+				3 /*stability*/,
+				1 /*reinforcement*/
+			},
+			//levels 40-50
+			{	1 /*piece count*/, 
+				1 /*scores*/, 
+				10 /*mobility*/, 
+				1 /*potential mobility*/, 
+				1.5 /*stability*/,
+				1 /*reinforcement*/
+			},
+			//levels 50-60
+			{	2 /*piece count*/, 
+				1 /*scores*/, 
+				20 /*mobility*/, 
+				1 /*potential mobility*/, 
+				0 /*stability*/,
+				1 /*reinforcement*/
+			}
+		};
+Runs: 200
+15, 182, 18.17, 45.73
+
+
+
+
+
+
+
+
+
+
+
+---- Going against default ----
+double weights[3][6] = {
+			//levels 0-40
+			{	1 /*piece count*/, 
+				1 /*scores*/, 
+				10 /*mobility*/, 
+				1 /*potential mobility*/, 
+				3 /*stability*/,
+				1 /*reinforcement*/
+			},
+			//levels 40-50
+			{	1 /*piece count*/, 
+				1 /*scores*/, 
+				10 /*mobility*/, 
+				1 /*potential mobility*/, 
+				3 /*stability*/,
+				1 /*reinforcement*/
+			},
+			//levels 50-60
+			{	1 /*piece count*/, 
+				1 /*scores*/, 
+				10 /*mobility*/, 
+				1 /*potential mobility*/, 
+				3 /*stability*/,
+				1 /*reinforcement*/
+			}
+		};
+Runs: 1000
+673, 302, 37.473, 26.474
+
+
+double weights[3][6] = {
+			//levels 0-40
+			{	1 /*piece count*/, 
+				1 /*scores*/, 
+				10 /*mobility*/, 
+				1 /*potential mobility*/, 
+				3 /*stability*/,
+				1 /*reinforcement*/
+			},
+			//levels 40-50
+			{	1 /*piece count*/, 
+				1 /*scores*/, 
+				10 /*mobility*/, 
+				1 /*potential mobility*/, 
+				3 /*stability*/,
+				1 /*reinforcement*/
+			},
+			//levels 50-60
+			{	1 /*piece count*/, 
+				1 /*scores*/, 
+				10 /*mobility*/, 
+				1 /*potential mobility*/, 
+				0 /*stability*/,
+				1 /*reinforcement*/
+			}
+		};
+Runs: 1000
+684, 274, 37.63, 26.28
+
+
+double weights[3][6] = {
+			//levels 0-40
+			{	1 /*piece count*/, 
+				1 /*scores*/, 
+				10 /*mobility*/, 
+				1 /*potential mobility*/, 
+				3 /*stability*/,
+				1 /*reinforcement*/
+			},
+			//levels 40-50
+			{	1 /*piece count*/, 
+				1 /*scores*/, 
+				10 /*mobility*/, 
+				1 /*potential mobility*/, 
+				1.5 /*stability*/,
+				1 /*reinforcement*/
+			},
+			//levels 50-60
+			{	1 /*piece count*/, 
+				1 /*scores*/, 
+				10 /*mobility*/, 
+				1 /*potential mobility*/, 
+				0 /*stability*/,
+				1 /*reinforcement*/
+			}
+		};
+Runs: 1000, 
+605, 355, 35.733, 28.16
+
+
+double weights[3][6] = {
+			//levels 0-40
+			{	1 /*piece count*/, 
+				1 /*scores*/, 
+				10 /*mobility*/, 
+				1 /*potential mobility*/, 
+				3 /*stability*/,
+				1 /*reinforcement*/
+			},
+			//levels 40-50
+			{	1 /*piece count*/, 
+				1 /*scores*/, 
+				10 /*mobility*/, 
+				1 /*potential mobility*/, 
+				1.5 /*stability*/,
+				1 /*reinforcement*/
+			},
+			//levels 50-60
+			{	1 /*piece count*/, 
+				1 /*scores*/, 
+				20 /*mobility*/, 
+				1 /*potential mobility*/, 
+				0 /*stability*/,
+				1 /*reinforcement*/
+			}
+		};
+Runs: 1000
+620, 333, 35.594, 28.308
+
+double weights[3][6] = {
+			//levels 0-40
+			{	1 /*piece count*/, 
+				1 /*scores*/, 
+				10 /*mobility*/, 
+				1 /*potential mobility*/, 
+				3 /*stability*/,
+				1 /*reinforcement*/
+			},
+			//levels 40-50
+			{	1 /*piece count*/, 
+				1 /*scores*/, 
+				20 /*mobility*/, 
+				1 /*potential mobility*/, 
+				1.5 /*stability*/,
+				1 /*reinforcement*/
+			},
+			//levels 50-60
+			{	1 /*piece count*/, 
+				1 /*scores*/, 
+				20 /*mobility*/, 
+				1 /*potential mobility*/, 
+				0 /*stability*/,
+				1 /*reinforcement*/
+			}
+		};
+Runs: 1000
+616, 348, 35.872, 28.04
+
+
+double weights[3][6] = {
+			//levels 0-40
+			{	1 /*piece count*/, 
+				1 /*scores*/, 
+				10 /*mobility*/, 
+				1 /*potential mobility*/, 
+				5 /*stability*/,
+				1 /*reinforcement*/
+			},
+			//levels 40-50
+			{	1 /*piece count*/, 
+				1 /*scores*/, 
+				10 /*mobility*/, 
+				1 /*potential mobility*/, 
+				1.5 /*stability*/,
+				1 /*reinforcement*/
+			},
+			//levels 50-60
+			{	1 /*piece count*/, 
+				1 /*scores*/, 
+				20 /*mobility*/, 
+				1 /*potential mobility*/, 
+				0 /*stability*/,
+				1 /*reinforcement*/
+			}
+		};
+Runs: 1000
+656, 282, 36.1, 27.87
+
+
+double weights[3][6] = {
+			//levels 0-40
+			{	1 /*piece count*/, 
+				2 /*scores*/, 
+				10 /*mobility*/, 
+				1 /*potential mobility*/, 
+				3 /*stability*/,
+				1 /*reinforcement*/
+			},
+			//levels 40-50
+			{	1 /*piece count*/, 
+				1 /*scores*/, 
+				10 /*mobility*/, 
+				1 /*potential mobility*/, 
+				1.5 /*stability*/,
+				1 /*reinforcement*/
+			},
+			//levels 50-60
+			{	1 /*piece count*/, 
+				1 /*scores*/, 
+				20 /*mobility*/, 
+				1 /*potential mobility*/, 
+				0 /*stability*/,
+				1 /*reinforcement*/
+			}
+		};
+Runs: 1000
+582, 375, 35.171, 28.79
+
+double weights[3][6] = {
+			//levels 0-40
+			{	1 /*piece count*/, 
+				2 /*scores*/, 
+				10 /*mobility*/, 
+				1 /*potential mobility*/, 
+				3 /*stability*/,
+				1 /*reinforcement*/
+			},
+			//levels 40-50
+			{	1 /*piece count*/, 
+				1 /*scores*/, 
+				10 /*mobility*/, 
+				1 /*potential mobility*/, 
+				1.5 /*stability*/,
+				1 /*reinforcement*/
+			},
+			//levels 50-60
+			{	1 /*piece count*/, 
+				0.5 /*scores*/, 
+				20 /*mobility*/, 
+				1 /*potential mobility*/, 
+				0 /*stability*/,
+				1 /*reinforcement*/
+			}
+		};
+Runs: 1000
+601, 356, 35.60, 28.37
+
+
+double weights[3][6] = {
+			//levels 0-40
+			{	1 /*piece count*/, 
+				3 /*scores*/, 
+				10 /*mobility*/, 
+				1 /*potential mobility*/, 
+				3 /*stability*/,
+				1 /*reinforcement*/
+			},
+			//levels 40-50
+			{	1 /*piece count*/, 
+				1 /*scores*/, 
+				10 /*mobility*/, 
+				1 /*potential mobility*/, 
+				1.5 /*stability*/,
+				1 /*reinforcement*/
+			},
+			//levels 50-60
+			{	1 /*piece count*/, 
+				1 /*scores*/, 
+				20 /*mobility*/, 
+				1 /*potential mobility*/, 
+				0 /*stability*/,
+				1 /*reinforcement*/
+			}
+		};
+Runs: 1000
+585, 375, 33.415, 30.535
+
+
+
+double weights[3][6] = {
+			//levels 0-40
+			{	0 /*piece count*/, 
+				3 /*scores*/, 
+				10 /*mobility*/, 
+				1 /*potential mobility*/, 
+				3 /*stability*/,
+				1 /*reinforcement*/
+			},
+			//levels 40-50
+			{	1 /*piece count*/, 
+				1 /*scores*/, 
+				10 /*mobility*/, 
+				1 /*potential mobility*/, 
+				1.5 /*stability*/,
+				1 /*reinforcement*/
+			},
+			//levels 50-60
+			{	1 /*piece count*/, 
+				1 /*scores*/, 
+				20 /*mobility*/, 
+				1 /*potential mobility*/, 
+				0 /*stability*/,
+				1 /*reinforcement*/
+			}
+		};
+Runs: 1000
+570, 379, 33.53, 30.45
+
+
+double weights[3][6] = {
+			//levels 0-40
+			{	0 /*piece count*/, 
+				3 /*scores*/, 
+				10 /*mobility*/, 
+				1 /*potential mobility*/, 
+				3 /*stability*/,
+				1 /*reinforcement*/
+			},
+			//levels 40-50
+			{	0 /*piece count*/, 
+				1 /*scores*/, 
+				10 /*mobility*/, 
+				1 /*potential mobility*/, 
+				1.5 /*stability*/,
+				1 /*reinforcement*/
+			},
+			//levels 50-60
+			{	0 /*piece count*/, 
+				1 /*scores*/, 
+				20 /*mobility*/, 
+				1 /*potential mobility*/, 
+				0 /*stability*/,
+				1 /*reinforcement*/
+			}
+		};
+Runs: 1000
+574, 384, 33.87, 30.11
+
+
+double weights[3][6] = {
+			//levels 0-40
+			{	0 /*piece count*/, 
+				3 /*scores*/, 
+				10 /*mobility*/, 
+				1 /*potential mobility*/, 
+				3 /*stability*/,
+				1 /*reinforcement*/
+			},
+			//levels 40-50
+			{	0 /*piece count*/, 
+				2 /*scores*/, 
+				10 /*mobility*/, 
+				1 /*potential mobility*/, 
+				1.5 /*stability*/,
+				1 /*reinforcement*/
+			},
+			//levels 50-60
+			{	0 /*piece count*/, 
+				1 /*scores*/, 
+				20 /*mobility*/, 
+				1 /*potential mobility*/, 
+				0 /*stability*/,
+				1 /*reinforcement*/
+			}
+		};
+Runs: 1000
+590, 364, 34.24, 29.73
+
+
+double weights[3][6] = {
+			//levels 0-50
+			{	0 /*piece count*/, 
+				3 /*scores*/, 
+				10 /*mobility*/, 
+				1 /*potential mobility*/, 
+				3 /*stability*/,
+				1 /*reinforcement*/
+			},
+			//levels 50-55
+			{	0 /*piece count*/, 
+				2 /*scores*/, 
+				10 /*mobility*/, 
+				1 /*potential mobility*/, 
+				1.5 /*stability*/,
+				1 /*reinforcement*/
+			},
+			//levels 55-60
+			{	0 /*piece count*/, 
+				1 /*scores*/, 
+				20 /*mobility*/, 
+				1 /*potential mobility*/, 
+				0 /*stability*/,
+				1 /*reinforcement*/
+			}
+		};
+Runs: 1000
+559, 390, 33.845, 30.117
+
+
+double weights[3][6] = {
+			//levels 0-40
+			{	0 /*piece count*/, 
+				4 /*scores*/, 
+				10 /*mobility*/, 
+				1 /*potential mobility*/, 
+				3 /*stability*/,
+				1 /*reinforcement*/
+			},
+			//levels 40-50
+			{	0 /*piece count*/, 
+				2 /*scores*/, 
+				10 /*mobility*/, 
+				1 /*potential mobility*/, 
+				1.5 /*stability*/,
+				1 /*reinforcement*/
+			},
+			//levels 50-60
+			{	0 /*piece count*/, 
+				1 /*scores*/, 
+				20 /*mobility*/, 
+				1 /*potential mobility*/, 
+				0 /*stability*/,
+				1 /*reinforcement*/
+			}
+		};
+Runs: 1000
+549, 400, 34.033, 29.948
+
+
+double weights[3][6] = {
+			//levels 0-40
+			{	0 /*piece count*/, 
+				5 /*scores*/, 
+				10 /*mobility*/, 
+				1 /*potential mobility*/, 
+				3 /*stability*/,
+				1 /*reinforcement*/
+			},
+			//levels 40-50
+			{	0 /*piece count*/, 
+				2 /*scores*/, 
+				10 /*mobility*/, 
+				1 /*potential mobility*/, 
+				1.5 /*stability*/,
+				1 /*reinforcement*/
+			},
+			//levels 50-60
+			{	0 /*piece count*/, 
+				1 /*scores*/, 
+				20 /*mobility*/, 
+				1 /*potential mobility*/, 
+				0 /*stability*/,
+				1 /*reinforcement*/
+			}
+		};
+Runs: 1000
+588, 381, 34.364, 29.591
+
+
+double weights[3][6] = {
+			//levels 0-40
+			{	0 /*piece count*/, 
+				3 /*scores*/, 
+				10 /*mobility*/, 
+				3 /*potential mobility*/, 
+				3 /*stability*/,
+				1 /*reinforcement*/
+			},
+			//levels 40-50
+			{	0 /*piece count*/, 
+				2 /*scores*/, 
+				10 /*mobility*/, 
+				1 /*potential mobility*/, 
+				1.5 /*stability*/,
+				1 /*reinforcement*/
+			},
+			//levels 50-60
+			{	0 /*piece count*/, 
+				1 /*scores*/, 
+				20 /*mobility*/, 
+				1 /*potential mobility*/, 
+				0 /*stability*/,
+				1 /*reinforcement*/
+			}
+		};
+Runs: 1000
+755, 222, 37.94, 26.03
+
+
+double weights[3][6] = {
+			//levels 0-40
+			{	0 /*piece count*/, 
+				3 /*scores*/, 
+				10 /*mobility*/, 
+				0 /*potential mobility*/, 
+				3 /*stability*/,
+				1 /*reinforcement*/
+			},
+			//levels 40-50
+			{	0 /*piece count*/, 
+				2 /*scores*/, 
+				10 /*mobility*/, 
+				0 /*potential mobility*/, 
+				1.5 /*stability*/,
+				1 /*reinforcement*/
+			},
+			//levels 50-60
+			{	0 /*piece count*/, 
+				1 /*scores*/, 
+				20 /*mobility*/, 
+				0 /*potential mobility*/, 
+				0 /*stability*/,
+				1 /*reinforcement*/
+			}
+		};
+Runs: 1000
+500, 426, 32.073, 31.91
