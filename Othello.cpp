@@ -237,14 +237,15 @@ bool Othello::playersMove(int player_type)
 	// tree.printNode(tree.ptr);
 
 	// tree.eraseParentNodes(tree.ptr);
-	// cout<<"Player START iterating depth"<<endl;
+	cout<<"Player START iterating depth"<<endl;
 	//also traverse the tree in player so that if AI has to skip its move 
 	tree.iterateTreeDepth(tree.ptr, player_piece, 1, tree.max_depth);
-	// cout<<"Player END iterating depth"<<endl;
-	// cout<<"Player START Negamax"<<endl;
+	cout<<"Player END iterating depth"<<endl;
+	cout<<"Player START Negamax"<<endl;
 	// tree.getMaxHeuristic(tree.ptr, tree.ptr, MIN, MAX, tree.max_h_depth+1);
 	tree.negamax(tree.ptr, tree.ptr, tree.max_h_depth+2, MIN, MAX, 1);
-	// cout<<"Player END Negamax"<<endl;
+	cout<<"Player END Negamax"<<endl;
+	cout<<"Number of nodes expanded: "<<tree.num_nodes<<endl;
 
 
 	
@@ -372,13 +373,14 @@ bool Othello::playersMove(int player_type)
 bool Othello::AIMove(int AI_version, bool verbose)
 {
 	// tree.eraseParentNodes(tree.ptr);
-	// cout<<"AI START iterating depth"<<endl;
+	cout<<"AI START iterating depth"<<endl;
 	tree.iterateTreeDepth(tree.ptr, AI_piece, 1, tree.max_depth);
-	// cout<<"AI END iterating depth"<<endl;
-	// cout<<"AI START Negamax"<<endl;
+	cout<<"AI END iterating depth"<<endl;
+	cout<<"AI START Negamax"<<endl;
 	// tree.getMinHeuristic(tree.ptr, tree.ptr, MIN, MAX, tree.max_h_depth+1);
 	tree.negamax(tree.ptr, tree.ptr, tree.max_h_depth+2, MIN, MAX, -1);
-	// cout<<"AI END Negamax"<<endl;
+	cout<<"AI END Negamax"<<endl;
+	cout<<"Number of nodes expanded: "<<tree.num_nodes<<endl;
 
 	//will get children from the tree
 

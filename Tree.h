@@ -29,6 +29,14 @@ class Tree
 			// Board board;
 
 			char** board = new char*[size];
+			// char board[size][size] = {	"00000000",
+			// 							"00000000",
+			// 							"00000000",
+			// 							"00000000",
+			// 							"00000000",
+			// 							"00000000",
+			// 							"00000000",
+			// 							"00000000"};
 
 			char piece = '0';
 
@@ -75,10 +83,12 @@ class Tree
 		node * ptr;
 
 		//depth should be odd so as to not give advance to the side in minimax that wants to maximize or minimize. 
-		int max_depth = 2;
-		int max_h_depth = 2;
+		int max_depth = 6;
+		int max_h_depth = 6;
 
 		int good_weight = 100;
+
+		int num_nodes = 0;
 
 
 		Tree();

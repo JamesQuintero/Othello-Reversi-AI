@@ -848,6 +848,8 @@ void Tree::newNode(node * ptr, char**& new_board, char piece)
 
 	//pointer to parent
 	next->prev = ptr;
+
+	num_nodes++;
 }
 
 
