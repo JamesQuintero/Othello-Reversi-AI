@@ -327,15 +327,11 @@ bool Othello::playersMove(int player_type)
 			// tree.printNet(tree.ptr);
 
 			//Get MAX heuristic and move there. But pass in that it's a player requesting it so that it gets the worse heuristic. 
-			//returns board corresponding with the minimum heuristic
-			char** new_board = tree.getBoardMinHeuristic(tree.ptr);
-			// char** new_board = tree.getBoardMaxHeuristic(tree.ptr);
-
-			// cout<<"New board: "<<endl;
-			// board_obj.printBoard(new_board);
+			//returns child index corresponding with the minimum heuristic
+			int child_index = tree.getIndexMinHeuristic(tree.ptr);
 
 			//add player's move to neural net
-			tree.move(new_board);
+			tree.move(child_index);
 
 
 
@@ -392,30 +388,17 @@ bool Othello::AIMove(int AI_version, bool verbose)
 	// cin>>to_continue;
 	
 
-	string choice = "";
-	int col = -1;
-	int row = -1;
+	//if no boards
+	if(tree.hasLegalMoves(tree.ptr) == false)
+		return false;
 
-	// Board new_board;
-	char** new_board; 
-	bool valid_move = false;
-	while (valid_move == false)
-	{
-		//if no boards
-		if(tree.hasLegalMoves(tree.ptr) == false)
-			return false;
-
-		//returns board corresponding with the minimum heuristic
-		new_board = tree.getBoardMinHeuristic(tree.ptr);
-		// new_board = tree.getBoardMaxHeuristic(tree.ptr);
+	//returns board corresponding with the minimum heuristic
+	int child_index = tree.getIndexMinHeuristic(tree.ptr);
+	// int child_index = tree.getIndexMaxHeuristic(tree.ptr);
 		
-		
-
-		valid_move = true;
-	}
 
 	//add AI's move to neural net
-	tree.move(new_board);
+	tree.move(child_index);
 
 	//get where AI moved: 
 	vector<vector<int>> coordinates = board_obj.getDifferenceCoordinates(tree.ptr->board, tree.ptr->prev->board);

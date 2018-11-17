@@ -23,28 +23,26 @@ class Tree
 		
 		struct node
 		{
-			//matrix of board state
-			//acts like the ID of the node
-			// int** board;
-			// Board board;
+			// //matrix of board state 
+			// char** board = new char*[size];
 
-			char** board = new char*[size];
-			// char board[size][size] = {	"00000000",
-			// 							"00000000",
-			// 							"00000000",
-			// 							"00000000",
-			// 							"00000000",
-			// 							"00000000",
-			// 							"00000000",
-			// 							"00000000"};
+			//uses 2D char array instead of 2D char pointer array, because pointer arrays take up 4 times as much space as char arrays. 
+			char board[size+1][size+1] = {"00000000",
+										"00000000",
+										"00000000",
+										"00000000",
+										"00000000",
+										"00000000",
+										"00000000",
+										"00000000"};
 
 			char piece = '0';
 
 			//heuristic
-			float player_mobility = -1.0;
-			float player_potential_mobility = -1.0;
-			float AI_mobility = -1.0;
-			float AI_potential_mobility = -1.0;
+			// float player_mobility = -1.0;
+			// float player_potential_mobility = -1.0;
+			// float AI_mobility = -1.0;
+			// float AI_potential_mobility = -1.0;
 			float h = 0;
 
 
@@ -98,7 +96,7 @@ class Tree
 		void resetTree();
 		void eraseTree(node * ptr);
 		//links a new node to ptr, with initialized board
-		void newNode(node * ptr, char**& new_board, char piece);
+		void newNode(node * ptr, char (&new_board)[size+1][size+1], char piece);
 
 		void determinePossibleMoves(node* ptr, char piece);
 		double negamax(node* start, node* ptr, int depth_left, double alpha, double beta, int is_maximizing);
@@ -107,10 +105,14 @@ class Tree
 		double calculateHeuristic(node* start, node* ptr);
 
 		bool hasLegalMoves(node* ptr);
-		//returns the child board with the minimum heuristic. Uesd for AI
-		char** getBoardMinHeuristic(node* ptr);
-		//returns the child board with the maximum heuristic. Uesd for player
-		char** getBoardMaxHeuristic(node* ptr);
+		// //returns the child board with the minimum heuristic. Uesd for AI
+		// char getBoardMinHeuristic(node* ptr);
+		// //returns the child board with the maximum heuristic. Uesd for player
+		// char getBoardMaxHeuristic(node* ptr);
+
+		//returns index of child with min heuristic
+		int getIndexMinHeuristic(node* ptr);
+		int getIndexMaxHeuristic(node* ptr);
 
 		void iterateTreeDepth(node* ptr, char piece, int cur_depth, int max_depth);
 
@@ -119,7 +121,10 @@ class Tree
 		// int** AIMove(int** board, int** possible_moves);
 		void AIMove(int col, int row);
 		void playerMove(int col, int row);
-		void move(char**& board);
+
+		//moves to child located at child_index of ptr
+		void move(int child_index);
+		// void move(char (&board)[size+1][size+1]);
 
 		//reinforcement methods
 		void reinforceGood(node * ptr);

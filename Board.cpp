@@ -21,10 +21,13 @@ Board::Board()
 
 }
 
-void Board::resetBoard(char**& board)
+void Board::resetBoard(char (&board)[size+1][size+1])
 {
 	// board = new char*[size];
-	createMatrix(board, this->size);
+	// createMatrix(board, this->size);
+	for(int x = 0; x < size; x++)
+		for(int y = 0; y < size; y++)
+			board[x][y] = '0';
 
 	//places initial pieces
 	place_piece(board, '2', 3, 3);
@@ -35,7 +38,7 @@ void Board::resetBoard(char**& board)
 
 
 //places piece down at specified position
-bool Board::place_piece(char**& board, char piece, int col, int row)
+bool Board::place_piece(char (&board)[size+1][size+1], char piece, int col, int row)
 {
 
 	try{
@@ -248,7 +251,7 @@ bool Board::place_piece(char**& board, char piece, int col, int row)
 }
 
 //Count the number of other pieces flipped if piece placed at (col,row)
-int Board::countFlips(char**& board, char piece, int col, int row)
+int Board::countFlips(char (&board)[size+1][size+1], char piece, int col, int row)
 {
 
 	char other_piece = '0';
@@ -453,7 +456,7 @@ int Board::countFlips(char**& board, char piece, int col, int row)
 }
 
 //returns total of the weights that piece occupies
-double Board::countPositionWeights(char**& board, int level, char piece)
+double Board::countPositionWeights(char (&board)[size+1][size+1], int level, char piece)
 {
 	double total = 0;
 	for(int x = 0; x < size; x++)
@@ -470,7 +473,7 @@ double Board::countPositionWeights(char**& board, int level, char piece)
 
 
 //returns values relating to mobility of piece
-vector<double> Board::getMobility(char**& board, char piece)
+vector<double> Board::getMobility(char (&board)[size+1][size+1], char piece)
 {
 
 	char other_piece = '0';
@@ -485,13 +488,8 @@ vector<double> Board::getMobility(char**& board, char piece)
 	int num_moves = 0;
 	double num_moves_weighted = 0;
 	double num_flips = 0;
-	// Board board_copy;
-	int num_neighbors = 0;
 
 	int total_potential_mobility = 0;
-
-	// char** board_copy = new char*[size];
-	// createMatrix(board_copy, this->size);
 
 				
 
@@ -539,61 +537,18 @@ vector<double> Board::getMobility(char**& board, char piece)
 
 
 			//// determines mobility ////
+			int flips = countFlips(board, piece, x, y);
 
-			//gets neighboring spots around current spot
-			char* neighbors = new char[9];
-			get_neighbors(board, neighbors, x, y);
-
-			//gets if other piece is around this spot
-			short neighbor_count;
-			for(int z = 0; z < 9; z++)
+			//if flipped any opponent's pieces
+			if(flips > 0)
 			{
-				if(neighbors[z]==other_piece)
-					neighbor_count++;
-			}
-
-			//garbage collection
-			delete[] neighbors;
-
-
-			//checks if this spot is a possible move by seeing if other pieces are flipped
-			if(neighbor_count > 0)
-			{
-				//gets copy of board to simulate what would happen if piece is placed
-				// copyBoard(board_copy, board);
-
-				// int piece_count = countPieces(board_copy, piece);
-				// int other_piece_count = countPieces(board_copy, other_piece);
-
-				// place_piece(board_copy, piece, x, y);
-
-				// int new_piece_count = countPieces(board_copy, piece);
-				// int new_other_piece_count = countPieces(board_copy, other_piece);
-
-				int flips = countFlips(board, piece, x, y);
-
-				//if flipped any opponent's pieces
-				if(flips > 0)
-				{
-					num_moves++;
-					num_moves_weighted += weights[0][x][y];
-					num_flips += flips;
-
-					//add to num_neighbors separately in case want to get average
-					num_neighbors += neighbor_count;
-				}
+				num_moves++;
+				num_moves_weighted += weights[0][x][y];
+				num_flips += flips;
 			}
 
 		}
 	}
-
-	// //garbage collection
-	// if(board_copy!=NULL)
-	// {
-	// 	for(int x = 0; x < size; x++)
-	// 		delete[] board_copy[x];
-	// 	delete[] board_copy;
-	// }
 
 
 	vector<double> to_return;
@@ -615,7 +570,7 @@ vector<double> Board::getMobility(char**& board, char piece)
 
 
 //returns a stability value based on current pieces
-double Board::getPieceStabilityScore(char**& board, char piece)
+double Board::getPieceStabilityScore(char (&board)[size+1][size+1], char piece)
 {
 	char other_piece = '0';
 
@@ -642,9 +597,6 @@ double Board::getPieceStabilityScore(char**& board, char piece)
         {4 ,-3, 2, 2, 2, 2,-3, 4}
 	};
 
-	// char** board_copy = new char*[size];
-	// createMatrix(board_copy, this->size);
-
 				
 
 	//iterates through entire board
@@ -654,29 +606,16 @@ double Board::getPieceStabilityScore(char**& board, char piece)
 		{
 			//if piece does not reside here, skip
 			if(board[x][y]==piece)
-			{
 				stability_score += stability_weights[x][y];
-			}
-
-
 		}
 	}
-
-	// //garbage collection
-	// if(board_copy!=NULL)
-	// {
-	// 	for(int x = 0; x < size; x++)
-	// 		delete[] board_copy[x];
-	// 	delete[] board_copy;
-	// }
-
 
 	return stability_score;
 }
 
 
 //returns list of coordinates of legal moves
-vector<vector<int>> Board::getPossibleMoveCoordinates(char**& board, char piece)
+vector<vector<int>> Board::getPossibleMoveCoordinates(char (&board)[size+1][size+1], char piece)
 {
 
 	vector<vector<int>> possible_moves;
@@ -689,10 +628,6 @@ vector<vector<int>> Board::getPossibleMoveCoordinates(char**& board, char piece)
 	else
 		other_piece = white_piece;
 
-
-	// char** board_copy = new char*[size];
-	// createMatrix(board_copy, size);
-				
 
 	//iterates through entire board
 	for(int x = 0; x < size; x++)
@@ -757,14 +692,6 @@ vector<vector<int>> Board::getPossibleMoveCoordinates(char**& board, char piece)
 
 		}
 	}
-
-	// //garbage collection
-	// if(board_copy!=NULL)
-	// {
-	// 	for(int x = 0; x < size; x++)
-	// 		delete[] board_copy[x];
-	// 	delete[] board_copy;
-	// }
 
 
 	return possible_moves;
@@ -845,7 +772,7 @@ vector<vector<int>> Board::getPossibleMoveCoordinates(char**& board, char piece)
 // 	}
 // }
 
-void Board::get_neighbors(char**& board, char*& neighbors, int col, int row)
+void Board::get_neighbors(char (&board)[size+1][size+1], char*& neighbors, int col, int row)
 {
 
 	//iterates through all neighbors
@@ -879,7 +806,7 @@ double Board::getWeight(int level, int col, int row)
 
 
 //returns the count of piece on the board
-int Board::countPieces(char**& board, char piece)
+int Board::countPieces(char (&board)[size+1][size+1], char piece)
 {
 	int count = 0;
 	for(int x = 0; x < size; x++)
@@ -895,7 +822,7 @@ int Board::countPieces(char**& board, char piece)
 }
 
 //compares boards
-bool Board::isEqual(char**& board, char**& other_board)
+bool Board::isEqual(char (&board)[size+1][size+1], char (&other_board)[size+1][size+1])
 {
 	bool matches = true;
 	for(int x = 0; x < size; x++)
@@ -914,7 +841,7 @@ bool Board::isEqual(char**& board, char**& other_board)
 }
 
 //returns list of coordinates where the two boards differ
-vector<vector<int>> Board::getDifferenceCoordinates(char**& board, char**& board2)
+vector<vector<int>> Board::getDifferenceCoordinates(char (&board)[size+1][size+1], char (&board2)[size+1][size+1])
 {
 	vector<vector<int>> coordinates;
 
@@ -944,7 +871,7 @@ vector<vector<int>> Board::getDifferenceCoordinates(char**& board, char**& board
 }
 
 
-void Board::printBoard(char**& board, int num_indents)
+void Board::printBoard(char (&board)[size+1][size+1], int num_indents)
 {
 
 	// cout<<"printBoard()"<<endl;
@@ -993,7 +920,7 @@ void Board::printBoard(char**& board, int num_indents)
 
 }
 
-char Board::getPieceAtPosition(char**& board, int col, int row)
+char Board::getPieceAtPosition(char (&board)[size+1][size+1], int col, int row)
 {
 	if(col<0 || col>size || row<0 || row>size)
 		return ' ';
@@ -1001,7 +928,7 @@ char Board::getPieceAtPosition(char**& board, int col, int row)
 	return board[col][row];
 }
 
-void Board::copyBoard(char**& board, char**& old_board)
+void Board::copyBoard(char (&board)[size+1][size+1], char (&old_board)[size+1][size+1])
 {
 	for(int x = 0; x < size; x++)
 	{
