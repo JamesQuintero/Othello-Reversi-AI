@@ -53,11 +53,12 @@ class Tree
 			float bad = 0;
 
 			//indices for children
-			short next_index = 0;
+			// short next_index = 0;
 
 			//children
 			// node** next = new node*[size*size];
-			node** next = new node*[4*(size-2)];
+			// node** next = new node*[4*(size-2)];
+			vector<node*> next;
 
 			//parent
 			node* prev;
@@ -135,6 +136,7 @@ class Tree
 		void printNet(node * ptr, int indent=0);
 
 		char getOtherPiece(char piece);
+		int numChildren(node * ptr);
 
 
 

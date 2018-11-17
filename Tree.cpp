@@ -30,17 +30,17 @@ void Tree::eraseBranch(node * ptr, node * ptr_to_keep)
 {
 	if(ptr != NULL && ptr!=ptr_to_keep)
 	{
-		for(int x = 0; x < ptr->next_index; x++)
+		for(int x = 0; x < numChildren(ptr); x++)
 		{
 			eraseBranch(ptr->next[x], ptr_to_keep);
 		}
 
-		if(ptr->next != NULL)
-		{
 			// for(int x = 0; x < ptr->next_index; x++)
 			// 	delete[] ptr->next[x];
-			delete[] ptr->next;
-		}
+			// delete[] ptr->next;
+
+		for(int x = 0; x < numChildren(ptr); x++)
+			delete ptr->next[x];
 
 		delete ptr;
 
@@ -67,20 +67,23 @@ void Tree::eraseTree(node * ptr)
 {
 	if(ptr != NULL)
 	{
-		for(int x = 0; x < ptr->next_index; x++)
+		for(int x = 0; x < numChildren(ptr); x++)
 		{
 			eraseTree(ptr->next[x]);
 		}
 
-		if(ptr->next != NULL)
-		{
 			// for(int x = 0; x < ptr->next_index; x++)
 			// 	delete[] ptr->next[x];
-			delete[] ptr->next;
-		}
+			// delete[] ptr->next;
+
+
+		// cout<<"Num children: "<<numChildren(ptr)<<endl;
+
+		// delete ptr->next;
+		for(int x = 0; x < numChildren(ptr); x++)
+			ptr->next[x] = NULL;
 
 		delete ptr;
-
 		ptr = NULL;
 	}
 }
@@ -89,7 +92,7 @@ void Tree::eraseTree(node * ptr)
 void Tree::determinePossibleMoves(node* ptr, char piece)
 {
 	//stop if has children, meaning it's already been expanded
-	if(ptr->next_index>0)
+	if(numChildren(ptr)>0)
 		return;
 
 	vector<vector<int>> coordinates = board_obj.getPossibleMoveCoordinates(ptr->board, piece);
@@ -99,7 +102,7 @@ void Tree::determinePossibleMoves(node* ptr, char piece)
 		//creates new node with current board
 		newNode(ptr, ptr->board, piece);
 		//places piece at new location of new board
-		board_obj.place_piece(ptr->next[ptr->next_index-1]->board, piece, coordinates[x][0], coordinates[x][1]);
+		board_obj.place_piece(ptr->next[numChildren(ptr)-1]->board, piece, coordinates[x][0], coordinates[x][1]);
 	}
 	
 }
@@ -107,7 +110,7 @@ void Tree::determinePossibleMoves(node* ptr, char piece)
 //returns tree if there are legal moves, i.e. if there are children to specified node
 bool Tree::hasLegalMoves(node* ptr)
 {
-	if(ptr->next_index>0)
+	if(numChildren(ptr)>0)
 		return true;
 	else
 		return false;
@@ -188,7 +191,7 @@ int Tree::getIndexMinHeuristic(node* ptr)
 
 	// int index = 0;
 	double min_heuristic = numeric_limits<double>::max();
-	for(int x = 0; x < ptr->next_index; x++)
+	for(int x = 0; x < numChildren(ptr); x++)
 	{
 		double h = ptr->next[x]->h;
 		if(h < min_heuristic)
@@ -221,7 +224,7 @@ int Tree::getIndexMaxHeuristic(node* ptr)
 	// int index = 0;
 	double max_heuristic = numeric_limits<double>::lowest();
 	// cout<<"Max h: "<<max_heuristic<<endl;
-	for(int x = 0; x < ptr->next_index; x++)
+	for(int x = 0; x < numChildren(ptr); x++)
 	{
 		double h = ptr->next[x]->h;
 		// cout<<"h: "<<h<<endl;
@@ -259,7 +262,7 @@ double Tree::negamax(node* start, node* ptr, int depth_left, double alpha /* sta
 {
 	double cur_heuristic = -1;
 	//if has no children or reached max depth
-	if(ptr->next_index == 0 || depth_left <= 0)
+	if(numChildren(ptr) == 0 || depth_left <= 0)
 	{
 		cur_heuristic = calculateHeuristic(start, ptr) * is_maximizing;
 		ptr->h = cur_heuristic;
@@ -288,7 +291,7 @@ double Tree::negamax(node* start, node* ptr, int depth_left, double alpha /* sta
 	//iterates through all children
 	double max_h = numeric_limits<double>::lowest(); // min value
 	double h = max_h;
-	for(int x = 0; x < ptr->next_index; x++)
+	for(int x = 0; x < numChildren(ptr); x++)
 	{
 		h = -negamax(start, ptr->next[x], depth_left--, -beta, -alpha, -is_maximizing);
 		if(h > max_h)
@@ -318,7 +321,7 @@ double Tree::negamax(node* start, node* ptr, int depth_left, double alpha /* sta
 // 	double cur_heuristic = -1;
 
 // 	//if has no children
-// 	if(ptr->next_index == 0 || depth_left<=0)
+// 	if(ptr->next.size() == 0 || depth_left<=0)
 // 	{
 // 		cur_heuristic = calculateHeuristic(start, ptr);
 // 		ptr->h = cur_heuristic;
@@ -791,7 +794,7 @@ void Tree::reinforceBad(node * ptr)
 void Tree::playerMove(int col, int row)
 {
 	//iterates through current ptrs children
-	for(int x = 0; x < ptr->next_index; x++)
+	for(int x = 0; x < numChildren(ptr); x++)
 	{
 		// Board temp_board = ptr->next[x]->board_obj;
 
@@ -811,7 +814,7 @@ void Tree::AIMove(int col, int row)
 {
 
 	//iterates through current ptrs children
-	for(int x = 0; x < ptr->next_index; x++)
+	for(int x = 0; x < numChildren(ptr); x++)
 	{
 
 		//if board matches by seeing if a piece has been placed in specified position
@@ -852,7 +855,7 @@ void Tree::iterateTreeDepth(node* ptr, char piece, int cur_depth, int max_depth)
 	int new_cur_depth = cur_depth;
 
 	//if has no children, then create the children
-	if(ptr->next_index == 0)
+	if(numChildren(ptr) == 0)
 	{
 		determinePossibleMoves(ptr, piece);
 		new_cur_depth++;
@@ -868,7 +871,7 @@ void Tree::iterateTreeDepth(node* ptr, char piece, int cur_depth, int max_depth)
 
 
 	//iterates through all children
-	for(int x = 0; x < ptr->next_index; x++)
+	for(int x = 0; x <  numChildren(ptr); x++)
 		iterateTreeDepth(ptr->next[x], getOtherPiece(piece), new_cur_depth, max_depth);
 	
 }
@@ -877,11 +880,13 @@ void Tree::iterateTreeDepth(node* ptr, char piece, int cur_depth, int max_depth)
 //links a new node to ptr, with initialized board
 void Tree::newNode(node * ptr, char (&new_board)[size+1][size+1], char piece)
 {
-	ptr->next[ptr->next_index] = new node();
+	// ptr->next[ptr->next_index] = new node();
+	ptr->next.push_back(new node());
 	// ptr->next.push_back(new node());
 
 	//ptr to new next node
-	node * next = ptr->next[ptr->next_index];
+	// node * next = ptr->next[ptr->next_index];
+	node* next = ptr->next[numChildren(ptr)-1];
 
 	// createMatrix(next->board, size);
 
@@ -895,7 +900,7 @@ void Tree::newNode(node * ptr, char (&new_board)[size+1][size+1], char piece)
 	next->level = ptr->level + 1;
 
 	//increments number of next nodes
-	ptr->next_index++;
+	// ptr->next_index++;
 
 	//pointer to parent
 	next->prev = ptr;
@@ -910,7 +915,8 @@ void Tree::printNode(node * ptr, int indents /*default is 0 */)
 	//prints tic-tac-toe board
 	board_obj.printBoard(ptr->board, indents);
 	cout<<"Level: "<<ptr->level<<endl;
-	cout<<"Num next nodes: "<<ptr->next_index<<endl;
+	// cout<<"Num next nodes: "<<ptr->next_index<<endl;
+	cout<<"Num next nodes: "<<numChildren(ptr)<<endl;
 	cout<<"Heuristic: "<<ptr->h<<endl;
 	cout<<"Reinforcement: (Good: "<<ptr->good<<", Bad: "<<ptr->bad<<")"<<endl;
 }
@@ -923,6 +929,11 @@ char Tree::getOtherPiece(char piece)
 		return AI_piece;
 }
 
+int Tree::numChildren(node* ptr)
+{
+	return ptr->next.size();
+}
+
 //prints the neural network in one long output.
 void Tree::printNet(node * ptr, int indents /*default is 0 */)
 {
@@ -930,11 +941,12 @@ void Tree::printNet(node * ptr, int indents /*default is 0 */)
 	cout<<endl;
 
 	//prints 2nd level of tree
-	for(int x = 0; x < ptr->next_index; x++)
+	// for(int x = 0; x < ptr->next_index; x++)
+	for(int x = 0; x < numChildren(ptr); x++)
 		printNode(ptr->next[x], indents+1);
 
 	// //prints whole tree
-	// for(int x = 0; x < ptr->next_index; x++)
+	// for(int x = 0; x < ptr->next.size(); x++)
 	// 	printNet(ptr->next[x], indents+1);
 
 
