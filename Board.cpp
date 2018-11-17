@@ -247,6 +247,211 @@ bool Board::place_piece(char**& board, char piece, int col, int row)
 	return true;
 }
 
+//Count the number of other pieces flipped if piece placed at (col,row)
+int Board::countFlips(char**& board, char piece, int col, int row)
+{
+
+	char other_piece = '0';
+
+
+	if(piece == white_piece)
+		other_piece = black_piece;
+	else
+		other_piece = white_piece;
+
+	int num_flips = 0;
+
+
+	//flips pieces down the column
+	for(int x = row+1; x < size; x++)
+	{
+		//if encountered my piece, traverse back and flip previous pieces
+		if(board[col][x] == piece)
+		{
+			//reverses back over previous squares and flips the pieces
+			for(int temp_x = x-1; temp_x >= row+1; temp_x--)
+				num_flips++;
+
+			break;
+		}
+		//if encountered blank space, stop
+		else if(board[col][x] == '0')
+			break;
+	}
+
+	//flips pieces up the column
+	for(int x = row-1; x >= 0; x--)
+	{
+		//if encountered my piece, traverse back and flip previous pieces
+		if(board[col][x] == piece)
+		{
+			//reverses back over previous squares and flips the pieces
+			for(int temp_x = x+1; temp_x <= row-1; temp_x++)
+				num_flips++;
+
+			break;
+		}
+		//if encountered blank space, stop
+		else if(board[col][x] == '0')
+			break;
+	}
+
+	//flips pieces right the row
+	for(int x = col+1; x < size; x++)
+	{
+		//if encountered my piece, traverse back and flip previous pieces
+		if(board[x][row] == piece)
+		{
+			//reverses back over previous squares and flips the pieces
+			for(int temp_x = x-1; temp_x >= col+1; temp_x--)
+				num_flips++;
+
+			break;
+		}
+		//if encountered blank space, stop
+		else if(board[x][row] == '0')
+			break;
+	}
+
+	//flips pieces left the row
+	for(int x = col-1; x >= 0; x--)
+	{
+		//if encountered my piece, traverse back and flip previous pieces
+		if(board[x][row] == piece)
+		{
+			//reverses back over previous squares and flips the pieces
+			for(int temp_x = x+1; temp_x <= col-1; temp_x++)
+				num_flips++;
+
+			break;
+		}
+		//if encountered blank space, stop
+		else if(board[x][row] == '0')
+			break;
+	}
+
+
+	//flips pieces up the positive slope diagonal
+	int temp_col = col+1;
+	int temp_row = row-1;
+	while(temp_col < size && temp_row >= 0)
+	{
+		//if encountered my piece, traverse back and flip previous pieces
+		if(board[temp_col][temp_row] == piece)
+		{
+			//reverses back over previous squares and flips the pieces
+			temp_col = temp_col-1;
+			temp_row = temp_row+1;
+			while(temp_col >= col+1 && temp_row <= row-1)
+			{
+				num_flips++;
+
+				temp_col--;
+				temp_row++;
+			}
+
+			break;
+		}
+		//if encountered blank space, stop
+		else if(board[temp_col][temp_row] == '0')
+			break;
+
+		temp_col++;
+		temp_row--;
+	}
+
+
+	//flips pieces down the positive slope diagonal
+	temp_col = col-1;
+	temp_row = row+1;
+	while(temp_col >= 0 && temp_row < size)
+	{
+		//if encountered my piece, traverse back and flip previous pieces
+		if(board[temp_col][temp_row] == piece)
+		{
+			//reverses back over previous squares and flips the pieces
+			temp_col = temp_col+1;
+			temp_row = temp_row-1;
+			while(temp_col <= col-1 && temp_row >= row+1)
+			{
+				num_flips++;
+
+				temp_col++;
+				temp_row--;
+			}
+
+			break;
+		}
+		//if encountered blank space, stop
+		else if(board[temp_col][temp_row] == '0')
+			break;
+
+		temp_col--;
+		temp_row++;
+	}
+
+	//flips pieces up the negative slope diagonal
+	temp_col = col+1;
+	temp_row = row+1;
+	while(temp_col < size && temp_row < size)
+	{
+		//if encountered my piece, traverse back and flip previous pieces
+		if(board[temp_col][temp_row] == piece)
+		{
+			//reverses back over previous squares and flips the pieces
+			temp_col = temp_col-1;
+			temp_row = temp_row-1;
+			while(temp_col >= col+1 && temp_row >= row+1)
+			{
+				num_flips++;
+
+				temp_col--;
+				temp_row--;
+			}
+
+			break;
+		}
+		//if encountered blank space, stop
+		else if(board[temp_col][temp_row] == '0')
+			break;
+
+		temp_col++;
+		temp_row++;
+	}
+
+	//flips pieces down the negative slope diagonal
+	temp_col = col-1;
+	temp_row = row-1;
+	while(temp_col >= 0 && temp_row >= 0)
+	{
+		//if encountered my piece, traverse back and flip previous pieces
+		if(board[temp_col][temp_row] == piece)
+		{
+			//reverses back over previous squares and flips the pieces
+			temp_col = temp_col+1;
+			temp_row = temp_row+1;
+			while(temp_col <= col-1 && temp_row <= row-1)
+			{
+				num_flips++;
+
+				temp_col++;
+				temp_row++;
+			}
+
+			break;
+		}
+		//if encountered blank space, stop
+		else if(board[temp_col][temp_row] == '0')
+			break;
+
+		temp_col--;
+		temp_row--;
+	}
+
+
+	return num_flips;
+}
+
 //returns total of the weights that piece occupies
 double Board::countPositionWeights(char**& board, int level, char piece)
 {
@@ -285,9 +490,8 @@ vector<double> Board::getMobility(char**& board, char piece)
 
 	int total_potential_mobility = 0;
 
-	// char** board_copy = createMatrix(this->size);
-	char** board_copy = new char*[size];
-	createMatrix(board_copy, this->size);
+	// char** board_copy = new char*[size];
+	// createMatrix(board_copy, this->size);
 
 				
 
@@ -356,25 +560,24 @@ vector<double> Board::getMobility(char**& board, char piece)
 			if(neighbor_count > 0)
 			{
 				//gets copy of board to simulate what would happen if piece is placed
-				// int** board_copy = copyBoard(board, size);
-				// board_copy.copyBoard(this);
-				copyBoard(board_copy, board);
+				// copyBoard(board_copy, board);
 
-				int piece_count = countPieces(board_copy, piece);
-				int other_piece_count = countPieces(board_copy, other_piece);
+				// int piece_count = countPieces(board_copy, piece);
+				// int other_piece_count = countPieces(board_copy, other_piece);
 
-				place_piece(board_copy, piece, x, y);
+				// place_piece(board_copy, piece, x, y);
 
-				int new_piece_count = countPieces(board_copy, piece);
-				int new_other_piece_count = countPieces(board_copy, other_piece);
+				// int new_piece_count = countPieces(board_copy, piece);
+				// int new_other_piece_count = countPieces(board_copy, other_piece);
+
+				int flips = countFlips(board, piece, x, y);
 
 				//if flipped any opponent's pieces
-				if(other_piece_count > new_other_piece_count)
+				if(flips > 0)
 				{
 					num_moves++;
 					num_moves_weighted += weights[0][x][y];
-					num_flips += (new_piece_count-piece_count - 1);
-					// num_flips += (new_piece_count - piece_count);
+					num_flips += flips;
 
 					//add to num_neighbors separately in case want to get average
 					num_neighbors += neighbor_count;
@@ -384,13 +587,13 @@ vector<double> Board::getMobility(char**& board, char piece)
 		}
 	}
 
-	//garbage collection
-	if(board_copy!=NULL)
-	{
-		for(int x = 0; x < size; x++)
-			delete[] board_copy[x];
-		delete[] board_copy;
-	}
+	// //garbage collection
+	// if(board_copy!=NULL)
+	// {
+	// 	for(int x = 0; x < size; x++)
+	// 		delete[] board_copy[x];
+	// 	delete[] board_copy;
+	// }
 
 
 	vector<double> to_return;
@@ -487,10 +690,8 @@ vector<vector<int>> Board::getPossibleMoveCoordinates(char**& board, char piece)
 		other_piece = white_piece;
 
 
-	// Board board_copy;
-	// char** board_copy = createMatrix(this->size);
-	char** board_copy = new char*[size];
-	createMatrix(board_copy, size);
+	// char** board_copy = new char*[size];
+	// createMatrix(board_copy, size);
 				
 
 	//iterates through entire board
@@ -503,57 +704,67 @@ vector<vector<int>> Board::getPossibleMoveCoordinates(char**& board, char piece)
 			if(board[x][y]!='0')
 				continue;
 
-			//gets neighboring spots around current spot
-			char* neighbors = new char[9];
-			get_neighbors(board, neighbors, x, y);
-
-			//gets if other piece is around this spot
-			short neighbor_count = 0;
-			for(int z = 0; z < 9; z++)
+			if(countFlips(board, piece, x, y) > 0)
 			{
-				if(neighbors[z]==other_piece)
-					neighbor_count++;
+				vector<int> pair;
+				pair.push_back(x);
+				pair.push_back(y);
+				possible_moves.push_back(pair);
 			}
 
-			//garbage collection
-			delete[] neighbors;
+			// //gets neighboring spots around current spot
+			// char* neighbors = new char[9];
+			// get_neighbors(board, neighbors, x, y);
+
+			// //gets if other piece is around this spot
+			// short neighbor_count = 0;
+			// for(int z = 0; z < 9; z++)
+			// {
+			// 	if(neighbors[z]==other_piece)
+			// 		neighbor_count++;
+			// }
+
+			// //garbage collection
+			// delete[] neighbors;
 
 
-			//checks if this spot is a possible move by seeing if other pieces are flipped
-			if(neighbor_count > 0)
-			{
-				//gets copy of board to simulate what would happen if piece is placed
-				// int** board_copy = copyBoard(board, size);
-				copyBoard(board_copy, board);
+			// //checks if this spot is a possible move by seeing if other pieces are flipped
+			// if(neighbor_count > 0)
+			// {
+			// 	// //gets copy of board to simulate what would happen if piece is placed
+			// 	// copyBoard(board_copy, board);
 
-				int piece_count = countPieces(board_copy, piece);
-				int other_piece_count = countPieces(board_copy, other_piece);
+			// 	// int piece_count = countPieces(board_copy, piece);
+			// 	// int other_piece_count = countPieces(board_copy, other_piece);
 
-				place_piece(board_copy, piece, x, y);
+			// 	// place_piece(board_copy, piece, x, y);
 
-				int new_piece_count = countPieces(board_copy, piece);
-				int new_other_piece_count = countPieces(board_copy, other_piece);
+			// 	// int new_piece_count = countPieces(board_copy, piece);
+			// 	// int new_other_piece_count = countPieces(board_copy, other_piece);
 
-				//if flipped any opponent's pieces
-				if(other_piece_count > new_other_piece_count)
-				{
-					vector<int> pair;
-					pair.push_back(x);
-					pair.push_back(y);
-					possible_moves.push_back(pair);
-				}
-			}
+
+
+
+			// 	//if flipped any opponent's pieces
+			// 	// if(other_piece_count > new_other_piece_count)
+			// 	// {
+			// 	// 	vector<int> pair;
+			// 	// 	pair.push_back(x);
+			// 	// 	pair.push_back(y);
+			// 	// 	possible_moves.push_back(pair);
+			// 	// }
+			// }
 
 		}
 	}
 
-	//garbage collection
-	if(board_copy!=NULL)
-	{
-		for(int x = 0; x < size; x++)
-			delete[] board_copy[x];
-		delete[] board_copy;
-	}
+	// //garbage collection
+	// if(board_copy!=NULL)
+	// {
+	// 	for(int x = 0; x < size; x++)
+	// 		delete[] board_copy[x];
+	// 	delete[] board_copy;
+	// }
 
 
 	return possible_moves;

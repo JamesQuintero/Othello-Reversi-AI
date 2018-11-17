@@ -33,18 +33,18 @@ class Tree
 			char piece = '0';
 
 			//heuristic
-			double player_mobility = -1.0;
-			double player_potential_mobility = -1.0;
-			double AI_mobility = -1.0;
-			double AI_potential_mobility = -1.0;
-			double h = 0;
+			float player_mobility = -1.0;
+			float player_potential_mobility = -1.0;
+			float AI_mobility = -1.0;
+			float AI_potential_mobility = -1.0;
+			float h = 0;
 
 
 			short level = 0;
 
 			//weights for reinforement learning
-			double good = 0;
-			double bad = 0;
+			float good = 0;
+			float bad = 0;
 
 			//indices for children
 			short next_index = 0;
@@ -76,13 +76,15 @@ class Tree
 
 		//depth should be odd so as to not give advance to the side in minimax that wants to maximize or minimize. 
 		int max_depth = 2;
-		int max_h_depth = 10;
+		int max_h_depth = 2;
 
 		int good_weight = 100;
 
 
 		Tree();
 
+		void eraseParentNodes(node * ptr);
+		void eraseBranch(node * ptr, node * ptr_to_keep);
 		void resetTree();
 		void eraseTree(node * ptr);
 		//links a new node to ptr, with initialized board

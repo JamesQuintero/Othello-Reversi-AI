@@ -17,17 +17,54 @@ Tree::Tree()
 	srand(time(0));  // needed once per program run
 }
 
+void Tree::eraseParentNodes(node * ptr)
+{
+	eraseBranch(root, ptr);
+
+	this->root = ptr;
+	this->ptr = ptr;
+}
+
+//erases ptr and its children, as long as it's not ptr_to_keep
+void Tree::eraseBranch(node * ptr, node * ptr_to_keep)
+{
+	if(ptr != NULL && ptr!=ptr_to_keep)
+	{
+		for(int x = 0; x < ptr->next_index; x++)
+		{
+			eraseBranch(ptr->next[x], ptr_to_keep);
+		}
+
+		// cout<<"Deleting"<<endl;
+		if(ptr->board != NULL)
+		{
+			for(int x = 0; x < size; x++)
+				delete[] ptr->board[x];
+			delete[] ptr->board;
+		}
+
+		if(ptr->next != NULL)
+		{
+			delete[] ptr->next;
+		}
+
+		delete ptr;
+
+		ptr = NULL;
+	}
+}
+
 void Tree::resetTree()
 {
-	// cout<<"Erasing tree"<<endl;
+	cout<<"Erasing tree"<<endl;
 	eraseTree(root);
 
-	// cout<<"New root: "<<endl;
+	cout<<"New root: "<<endl;
 	root = new node();
 	// root->board = createMatrix(size);
 	board_obj.resetBoard(root->board);
 
-	// printNode(root);
+	printNode(root);
 
 	// string something = "";
 	// cin>>something;
@@ -74,18 +111,25 @@ void Tree::determinePossibleMoves(node* ptr, char piece)
 
 	for(int x = 0; x < coordinates.size(); x++)
 	{
-		char** new_board = new char*[size];
-		createMatrix(new_board, size);
-		board_obj.copyBoard(new_board, ptr->board);
-		board_obj.place_piece(new_board, piece, coordinates[x][0], coordinates[x][1]);
+		// char** new_board = new char*[size];
+		// createMatrix(new_board, size);
+		// board_obj.copyBoard(new_board, ptr->board);
+		// board_obj.place_piece(new_board, piece, coordinates[x][0], coordinates[x][1]);
 
 
-		newNode(ptr, new_board, piece);
+		// newNode(ptr, new_board, piece);
 
-		//garbage collection
-		for(int y = 0; y < size; y++)
-			delete[] new_board[y];
-		delete[] new_board;
+		// //garbage collection
+		// for(int y = 0; y < size; y++)
+		// 	delete[] new_board[y];
+		// delete[] new_board;
+
+
+
+		//creates new node with current board
+		newNode(ptr, ptr->board, piece);
+		//places piece at new location of new board
+		board_obj.place_piece(ptr->next[ptr->next_index-1]->board, piece, coordinates[x][0], coordinates[x][1]);
 	}
 	
 }
@@ -532,29 +576,56 @@ double Tree::calculateHeuristic(node* start, node* ptr)
 	//good heuristic
 	else
 	{
+		// double weights[3][6] = {
+		// 	//levels 0-40
+		// 	{	0 /*piece count*/, 
+		// 		3 /*scores*/, 
+		// 		10 /*mobility*/, 
+		// 		0 /*potential mobility*/, 
+		// 		3 /*stability*/,
+		// 		1 /*reinforcement*/
+		// 	},
+		// 	//levels 40-50
+		// 	{	0 /*piece count*/, 
+		// 		2 /*scores*/, 
+		// 		10 mobility, 
+		// 		0 /*potential mobility*/, 
+		// 		1.5 /*stability*/,
+		// 		1 /*reinforcement*/
+		// 	},
+		// 	//levels 50-60
+		// 	{	0 /*piece count*/, 
+		// 		1 /*scores*/, 
+		// 		20 /*mobility*/, 
+		// 		0 /*potential mobility*/, 
+		// 		0 /*stability*/,
+		// 		1 /*reinforcement*/
+		// 	}
+		// };
+
 		double weights[3][6] = {
 			//levels 0-40
-			{	0 /*piece count*/, 
-				3 /*scores*/, 
+			{	1 /*piece count*/, 
+				1 /*scores*/, 
 				10 /*mobility*/, 
-				0 /*potential mobility*/, 
+				1 /*potential mobility*/, 
 				3 /*stability*/,
 				1 /*reinforcement*/
 			},
 			//levels 40-50
-			{	0 /*piece count*/, 
-				2 /*scores*/, 
+			{	1 /*piece count*/, 
+				1 /*scores*/, 
 				10 /*mobility*/, 
-				0 /*potential mobility*/, 
-				1.5 /*stability*/,
+				1 /*potential mobility*/, 
+				3 /*stability*/,
 				1 /*reinforcement*/
 			},
 			//levels 50-60
-			{	0 /*piece count*/, 
+			{	1 /*piece count*/, 
 				1 /*scores*/, 
-				20 /*mobility*/, 
-				0 /*potential mobility*/, 
-				0 /*stability*/,
+				10 /*mobility*/, 
+				1 /*potential mobility*/, 
+				3 /*stability*/,
 				1 /*reinforcement*/
 			}
 		};
@@ -573,12 +644,20 @@ double Tree::calculateHeuristic(node* start, node* ptr)
 			weight_index = 2;
 
 
+		 // heuristic =  weights[weight_index][0]*(player_count - AI_count) + 
+			// 		 weights[weight_index][1]*(player_score - AI_score) + 
+			// 		 weights[weight_index][2]*(player_mobility - AI_mobility) + 
+			// 		 weights[weight_index][3]*(player_potential_mobility - AI_potential_mobility) + 
+			// 		 weights[weight_index][4]*(player_stability_score - AI_stability_score) + 
+			// 		 weights[weight_index][5]*(good - bad);
+
 		 heuristic =  weights[weight_index][0]*(player_count - AI_count) + 
 					 weights[weight_index][1]*(player_score - AI_score) + 
 					 weights[weight_index][2]*(player_mobility - AI_mobility) + 
 					 weights[weight_index][3]*(player_potential_mobility - AI_potential_mobility) + 
-					 weights[weight_index][4]*(player_stability_score - AI_stability_score) + 
-					 weights[weight_index][5]*(good - bad);
+					 weights[weight_index][4]*(player_stability_score - AI_stability_score); 
+					 // weights[weight_index][5]*(good - bad);
+
 
 		// heuristic = 0;
 
@@ -797,13 +876,13 @@ void Tree::printNet(node * ptr, int indents /*default is 0 */)
 	printNode(ptr, indents);
 	cout<<endl;
 
-	// //prints 2nd level of tree
-	// for(int x = 0; x < ptr->next_index; x++)
-	// 	printNode(ptr->next[x], indents+1);
-
-	//prints whole tree
+	//prints 2nd level of tree
 	for(int x = 0; x < ptr->next_index; x++)
-		printNet(ptr->next[x], indents+1);
+		printNode(ptr->next[x], indents+1);
+
+	// //prints whole tree
+	// for(int x = 0; x < ptr->next_index; x++)
+	// 	printNet(ptr->next[x], indents+1);
 
 
 }
