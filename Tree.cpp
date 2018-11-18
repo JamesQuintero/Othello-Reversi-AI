@@ -50,15 +50,15 @@ void Tree::eraseBranch(node * ptr, node * ptr_to_keep)
 
 void Tree::resetTree()
 {
-	cout<<"Erasing tree"<<endl;
+	// cout<<"Erasing tree"<<endl;
 	eraseTree(root);
 
-	cout<<"New root: "<<endl;
+	// cout<<"New root: "<<endl;
 	root = new node();
 
 	board_obj.resetBoard(root->board);
 
-	printNode(root);
+	// printNode(root);
 
 	this->ptr = root;
 }
@@ -80,8 +80,8 @@ void Tree::eraseTree(node * ptr)
 		// cout<<"Num children: "<<numChildren(ptr)<<endl;
 
 		// delete ptr->next;
-		for(int x = 0; x < numChildren(ptr); x++)
-			ptr->next[x] = NULL;
+		// for(int x = 0; x < numChildren(ptr); x++)
+		// 	ptr->next[x] = NULL;
 
 		delete ptr;
 		ptr = NULL;
@@ -264,6 +264,9 @@ double Tree::negamax(node* start, node* ptr, int depth_left, double alpha /* sta
 	//if has no children or reached max depth
 	if(numChildren(ptr) == 0 || depth_left <= 0)
 	{
+		// cout<<"Num children: "<<numChildren(ptr)<<", depth left: "<<depth_left<<endl;
+		// printNode(ptr);
+		// cout<<endl;
 		cur_heuristic = calculateHeuristic(start, ptr) * is_maximizing;
 		ptr->h = cur_heuristic;
 
@@ -293,7 +296,8 @@ double Tree::negamax(node* start, node* ptr, int depth_left, double alpha /* sta
 	double h = max_h;
 	for(int x = 0; x < numChildren(ptr); x++)
 	{
-		h = -negamax(start, ptr->next[x], depth_left--, -beta, -alpha, -is_maximizing);
+		//have depth_left-1 instead of depth_left--, because then that actually decrements depth_left
+		h = -negamax(start, ptr->next[x], depth_left-1, -beta, -alpha, -is_maximizing);
 		if(h > max_h)
 			max_h = h;
 
@@ -556,29 +560,56 @@ double Tree::calculateHeuristic(node* start, node* ptr)
 	//bad heuristic
 	if(getOtherPiece(start->piece) == worse_heuristic_piece)
 	{
+		// double weights[3][6] = {
+		// 	//levels 0-40
+		// 	{	1 /*piece count*/, 
+		// 		1 /*scores*/, 
+		// 		10 /*mobility*/, 
+		// 		1 /*potential mobility*/, 
+		// 		3 /*stability*/,
+		// 		1 /*reinforcement*/
+		// 	},
+		// 	//levels 40-50
+		// 	{	1 /*piece count*/, 
+		// 		1 /*scores*/, 
+		// 		10 mobility, 
+		// 		1 /*potential mobility*/, 
+		// 		3 /*stability*/,
+		// 		1 /*reinforcement*/
+		// 	},
+		// 	//levels 50-60
+		// 	{	1 /*piece count*/, 
+		// 		1 /*scores*/, 
+		// 		10 /*mobility*/, 
+		// 		1 /*potential mobility*/, 
+		// 		3 /*stability*/,
+		// 		1 /*reinforcement*/
+		// 	}
+		// };
+
 		double weights[3][6] = {
 			//levels 0-40
-			{	1 /*piece count*/, 
-				1 /*scores*/, 
+			{	0 /*piece count*/, 
+				3 /*scores*/, 
 				10 /*mobility*/, 
-				1 /*potential mobility*/, 
+				0 /*potential mobility*/, 
 				3 /*stability*/,
 				1 /*reinforcement*/
 			},
 			//levels 40-50
-			{	1 /*piece count*/, 
-				1 /*scores*/, 
+			{	0 /*piece count*/, 
+				2 /*scores*/, 
 				10 /*mobility*/, 
-				1 /*potential mobility*/, 
-				3 /*stability*/,
+				0 /*potential mobility*/, 
+				1.5 /*stability*/,
 				1 /*reinforcement*/
 			},
 			//levels 50-60
-			{	1 /*piece count*/, 
+			{	0 /*piece count*/, 
 				1 /*scores*/, 
-				10 /*mobility*/, 
-				1 /*potential mobility*/, 
-				3 /*stability*/,
+				20 /*mobility*/, 
+				0 /*potential mobility*/, 
+				0 /*stability*/,
 				1 /*reinforcement*/
 			}
 		};
@@ -630,64 +661,65 @@ double Tree::calculateHeuristic(node* start, node* ptr)
 		// heuristic = (player_stability_score - AI_stability_score);
 
 		// moves randomly
-		// heuristic = 0;
+		heuristic = 0;
 	}
 	//good heuristic
 	else
 	{
-		// double weights[3][6] = {
-		// 	//levels 0-40
-		// 	{	0 /*piece count*/, 
-		// 		3 /*scores*/, 
-		// 		10 /*mobility*/, 
-		// 		0 /*potential mobility*/, 
-		// 		3 /*stability*/,
-		// 		1 /*reinforcement*/
-		// 	},
-		// 	//levels 40-50
-		// 	{	0 /*piece count*/, 
-		// 		2 /*scores*/, 
-		// 		10 mobility, 
-		// 		0 /*potential mobility*/, 
-		// 		1.5 /*stability*/,
-		// 		1 /*reinforcement*/
-		// 	},
-		// 	//levels 50-60
-		// 	{	0 /*piece count*/, 
-		// 		1 /*scores*/, 
-		// 		20 /*mobility*/, 
-		// 		0 /*potential mobility*/, 
-		// 		0 /*stability*/,
-		// 		1 /*reinforcement*/
-		// 	}
-		// };
-
 		double weights[3][6] = {
 			//levels 0-40
-			{	1 /*piece count*/, 
-				1 /*scores*/, 
+			{	0 /*piece count*/, 
+				3 /*scores*/, 
 				10 /*mobility*/, 
-				1 /*potential mobility*/, 
+				0 /*potential mobility*/, 
 				3 /*stability*/,
 				1 /*reinforcement*/
 			},
 			//levels 40-50
-			{	1 /*piece count*/, 
-				1 /*scores*/, 
+			{	0 /*piece count*/, 
+				2 /*scores*/, 
 				10 /*mobility*/, 
-				1 /*potential mobility*/, 
-				3 /*stability*/,
+				0 /*potential mobility*/, 
+				1.5 /*stability*/,
 				1 /*reinforcement*/
 			},
 			//levels 50-60
-			{	1 /*piece count*/, 
+			{	0 /*piece count*/, 
 				1 /*scores*/, 
-				10 /*mobility*/, 
-				1 /*potential mobility*/, 
-				3 /*stability*/,
+				20 /*mobility*/, 
+				0 /*potential mobility*/, 
+				0 /*stability*/,
 				1 /*reinforcement*/
 			}
 		};
+
+		// double weights[3][6] = {
+		// 	//levels 0-40
+		// 	{	1 /*piece count*/, 
+		// 		1 /*scores*/, 
+		// 		10 /*mobility*/, 
+		// 		1 /*potential mobility*/, 
+		// 		3 /*stability*/,
+		// 		1 /*reinforcement*/
+		// 	},
+		// 	//levels 40-50
+		// 	{	1 /*piece count*/, 
+		// 		1 /*scores*/, 
+		// 		10 mobility, 
+		// 		1 /*potential mobility*/, 
+		// 		3 /*stability*/,
+		// 		1 /*reinforcement*/
+		// 	},
+		// 	//levels 50-60
+		// 	{	1 /*piece count*/, 
+		// 		1 /*scores*/, 
+		// 		10 /*mobility*/, 
+		// 		1 /*potential mobility*/, 
+		// 		3 /*stability*/,
+		// 		1 /*reinforcement*/
+		// 	}
+		// };
+
 
 		// heuristic =  weights[0]*(player_count - AI_count) + 
 		// 			 weights[1]*(player_score - AI_score) + 
@@ -940,14 +972,13 @@ void Tree::printNet(node * ptr, int indents /*default is 0 */)
 	printNode(ptr, indents);
 	cout<<endl;
 
-	//prints 2nd level of tree
-	// for(int x = 0; x < ptr->next_index; x++)
-	for(int x = 0; x < numChildren(ptr); x++)
-		printNode(ptr->next[x], indents+1);
+	// //prints 2nd level of tree
+	// for(int x = 0; x < numChildren(ptr); x++)
+	// 	printNode(ptr->next[x], indents+1);
 
-	// //prints whole tree
-	// for(int x = 0; x < ptr->next.size(); x++)
-	// 	printNet(ptr->next[x], indents+1);
+	//prints whole tree
+	for(int x = 0; x < numChildren(ptr); x++)
+		printNet(ptr->next[x], indents+1);
 
 
 }
