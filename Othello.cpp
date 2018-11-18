@@ -256,8 +256,8 @@ bool Othello::playersMove(int player_type)
 	tree.iterateTreeDepth(tree.ptr, player_piece, 1, tree.max_depth);
 	// cout<<"Player END iterating depth"<<endl;
 	// cout<<"Player START Negamax"<<endl;
-	// tree.getMaxHeuristic(tree.ptr, tree.ptr, MIN, MAX, tree.max_h_depth+1);
-	tree.negamax(tree.ptr, tree.ptr, tree.max_h_depth+2, MIN, MAX, 1);
+	tree.getMaxHeuristic(tree.ptr, tree.ptr, MIN, MAX, tree.max_h_depth+2);
+	// tree.negamax(tree.ptr, tree.ptr, tree.max_h_depth+2, MIN, MAX, 1);
 	// cout<<"Player END Negamax"<<endl;
 	// cout<<"Number of nodes expanded: "<<tree.num_nodes<<endl;
 
@@ -342,7 +342,8 @@ bool Othello::playersMove(int player_type)
 
 			//Get MAX heuristic and move there. But pass in that it's a player requesting it so that it gets the worse heuristic. 
 			//returns child index corresponding with the minimum heuristic
-			int child_index = tree.getIndexMinHeuristic(tree.ptr);
+			// int child_index = tree.getIndexMinHeuristic(tree.ptr);
+			int child_index = tree.getIndexMaxHeuristic(tree.ptr);
 
 			//add player's move to neural net
 			tree.move(child_index);
@@ -387,8 +388,8 @@ bool Othello::AIMove(int AI_version, bool verbose)
 	tree.iterateTreeDepth(tree.ptr, AI_piece, 1, tree.max_depth);
 	// cout<<"AI END iterating depth"<<endl;
 	// cout<<"AI START Negamax"<<endl;
-	// tree.getMinHeuristic(tree.ptr, tree.ptr, MIN, MAX, tree.max_h_depth+1);
-	tree.negamax(tree.ptr, tree.ptr, tree.max_h_depth+2, MIN, MAX, -1);
+	tree.getMinHeuristic(tree.ptr, tree.ptr, MIN, MAX, tree.max_h_depth+2);
+	// tree.negamax(tree.ptr, tree.ptr, tree.max_h_depth+2, MIN, MAX, -1);
 	// cout<<"AI END Negamax"<<endl;
 	// cout<<"Number of nodes expanded: "<<tree.num_nodes<<endl;
 

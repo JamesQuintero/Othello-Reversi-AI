@@ -20,8 +20,7 @@ using namespace std;
 //returns random int from start to end
 inline extern int randNum(int start, int end)
 {
-	int max = end-start;
-	return rand() % max + start;
+	return rand() % (end-start) + start;
 }
 
 

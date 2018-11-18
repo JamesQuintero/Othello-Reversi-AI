@@ -116,80 +116,11 @@ bool Tree::hasLegalMoves(node* ptr)
 		return false;
 }
 
-// //returns the node with the smallest heuristic
-// char Tree::getBoardMinHeuristic(node* ptr)
-// {
-// 	vector<int> minimum_indices;
-
-// 	// int index = 0;
-// 	double min_heuristic = numeric_limits<double>::max();
-// 	for(int x = 0; x < ptr->next_index; x++)
-// 	{
-// 		double h = ptr->next[x]->h;
-// 		if(h < min_heuristic)
-// 		{
-// 			min_heuristic = h;
-// 			// index = x;
-// 			minimum_indices.clear();
-// 			minimum_indices.push_back(x);
-// 		}
-// 		else if(h==min_heuristic)
-// 		{
-// 			minimum_indices.push_back(x);
-// 		}
-
-// 	}
-
-// 	//chooses randomly out of all the smallest heuristics
-// 	int random_index = randNum(0, minimum_indices.size());
-// 	int index = minimum_indices[random_index];
-
-// 	return ptr->next[index]->board;
-// }
-
-
-// //returns the node with the largest heuristic
-// char Tree::getBoardMaxHeuristic(node* ptr)
-// {
-// 	vector<int> maximum_indices;
-
-// 	// int index = 0;
-// 	double max_heuristic = numeric_limits<double>::lowest();
-// 	// cout<<"Max h: "<<max_heuristic<<endl;
-// 	for(int x = 0; x < ptr->next_index; x++)
-// 	{
-// 		double h = ptr->next[x]->h;
-// 		// cout<<"h: "<<h<<endl;
-// 		if(h > max_heuristic)
-// 		{
-// 			// cout<<"New max: "<<endl;
-// 			max_heuristic = h;
-// 			maximum_indices.clear();
-// 			maximum_indices.push_back(x);
-// 		}
-// 		else if(h == max_heuristic)
-// 		{
-// 			// cout<<"Same max h"<<endl;
-// 			maximum_indices.push_back(x);
-// 		}
-
-// 	}
-
-// 	// cout<<"Size: "<<maximum_indices.size()<<endl;
-
-// 	//chooses randomly out of all the smallest heuristics
-// 	int random_index = randNum(0, maximum_indices.size());
-// 	int index = maximum_indices[random_index];
-
-// 	return ptr->next[index]->board;
-// }
-
 //returns the node with the smallest heuristic
 int Tree::getIndexMinHeuristic(node* ptr)
 {
 	vector<int> minimum_indices;
 
-	// int index = 0;
 	double min_heuristic = numeric_limits<double>::max();
 	for(int x = 0; x < numChildren(ptr); x++)
 	{
@@ -197,14 +128,11 @@ int Tree::getIndexMinHeuristic(node* ptr)
 		if(h < min_heuristic)
 		{
 			min_heuristic = h;
-			// index = x;
 			minimum_indices.clear();
 			minimum_indices.push_back(x);
 		}
 		else if(h==min_heuristic)
-		{
 			minimum_indices.push_back(x);
-		}
 
 	}
 
@@ -221,29 +149,21 @@ int Tree::getIndexMaxHeuristic(node* ptr)
 {
 	vector<int> maximum_indices;
 
-	// int index = 0;
 	double max_heuristic = numeric_limits<double>::lowest();
-	// cout<<"Max h: "<<max_heuristic<<endl;
 	for(int x = 0; x < numChildren(ptr); x++)
 	{
 		double h = ptr->next[x]->h;
-		// cout<<"h: "<<h<<endl;
+
 		if(h > max_heuristic)
 		{
-			// cout<<"New max: "<<endl;
 			max_heuristic = h;
 			maximum_indices.clear();
 			maximum_indices.push_back(x);
 		}
 		else if(h == max_heuristic)
-		{
-			// cout<<"Same max h"<<endl;
 			maximum_indices.push_back(x);
-		}
 
 	}
-
-	// cout<<"Size: "<<maximum_indices.size()<<endl;
 
 	//chooses randomly out of all the smallest heuristics
 	int random_index = randNum(0, maximum_indices.size());
@@ -253,6 +173,101 @@ int Tree::getIndexMaxHeuristic(node* ptr)
 }
 
 
+//runs monte carlo 
+void Tree::monteCarlo(node* ptr, int num_runs)
+{
+	//initializes temporary board
+	char board[size+1][size+1] = {"00000000",
+								"00000000",
+								"00000000",
+								"00000000",
+								"00000000",
+								"00000000",
+								"00000000",
+								"00000000"};
+
+	
+	//performs num_runs number of runs for Monte Carlo tree search
+	for(int i = 0; i < num_runs; i++)
+	{
+		//resets temporary board
+		board_obj.copyBoard(board, ptr->board);
+
+		// cout<<"Player piece: "<<this->player_piece<<endl;
+		// cout<<"Piece: "<<ptr->piece<<endl;
+
+		char piece_to_go = getOtherPiece(ptr->piece);
+		short failed_attempts = 0;
+		vector<int> x_moves;
+		vector<int> y_moves;
+
+		//goes until haven't moved successfully for 2 times, which means neither player can move, therefore stop the random moves
+		while(failed_attempts < 2)
+		{
+
+			//gets possible moves
+			for(int x = 0; x < size; x++)
+			{
+				for(int y = 0; y < size; y++)
+				{
+					if(board[x][y]=='0')
+					{
+						if(board_obj.countFlips(board, piece_to_go, x, y) > 0)
+						{
+							x_moves.push_back(x);
+							y_moves.push_back(y);
+						}
+					}
+				}
+			}
+
+			//if there is a legal move
+			if(x_moves.size() > 0)
+			{
+				//chooses randomly out of all the smallest heuristics
+				int random_index = randNum(0, x_moves.size());
+
+				//places piece on temporary board
+				board_obj.place_piece(board, piece_to_go, x_moves[random_index], y_moves[random_index]);
+
+				// cout<<"MCTS board: "<<endl;
+				// board_obj.printBoard(board);
+
+				x_moves.clear();
+				y_moves.clear();
+			}
+			//increments number of failed attempts
+			else
+				failed_attempts++;
+
+			//changes turn
+			piece_to_go = getOtherPiece(piece_to_go);
+		}
+
+		// cout<<"Final board: "<<endl;
+		// board_obj.printBoard(board);
+
+		//counts number of pieces for each player to determine the winner
+		int num_piece = board_obj.countPieces(board, ptr->piece);
+		int num_other_piece = board_obj.countPieces(board, getOtherPiece(ptr->piece));
+
+		// cout<<"Num pieces: "<<num_piece<<endl;
+		// cout<<"Num other pieces: "<<num_other_piece<<endl;
+
+		//// Back propogation ////
+		node* temp = ptr;
+		while(temp != root)
+		{
+			//if this node's piece won
+			if( (temp->piece == ptr->piece && num_piece > num_other_piece) || (temp->piece != ptr->piece && num_piece < num_other_piece))
+				temp->num_wins++;
+
+			temp->num_plays++;
+
+			temp = temp->prev;
+		}
+	}
+}
 
 
 
@@ -317,100 +332,100 @@ double Tree::negamax(node* start, node* ptr, int depth_left, double alpha /* sta
 
 
 
-// //min version of Minimax
-// //calculates heuristics for AI down to a certain depth
-// //considers current node as the AI's move, and therefore will be minimizing heuristic
-// double Tree::getMinHeuristic(node* start, node * ptr, double alpha /* starts as -INFINITY */, double beta /* starts as INFINITY */, int depth_left)
-// {
-// 	double cur_heuristic = -1;
+//min version of Minimax
+//calculates heuristics for AI down to a certain depth
+//considers current node as the AI's move, and therefore will be minimizing heuristic
+double Tree::getMinHeuristic(node* start, node * ptr, double alpha /* starts as -INFINITY */, double beta /* starts as INFINITY */, int depth_left)
+{
+	double cur_heuristic = -1;
 
-// 	//if has no children
-// 	if(ptr->next.size() == 0 || depth_left<=0)
-// 	{
-// 		cur_heuristic = calculateHeuristic(start, ptr);
-// 		ptr->h = cur_heuristic;
+	//if has no children
+	if(numChildren(ptr) == 0 || depth_left<=0)
+	{
+		cur_heuristic = calculateHeuristic(start, ptr);
+		ptr->h = cur_heuristic;
 
-// 		return cur_heuristic;
-// 	}
+		return cur_heuristic;
+	}
 
-// 	// bestVal = +INFINITY 
-//  //    for each child node :
-//  //        value = minimax(node, depth+1, true, alpha, beta)
-//  //        bestVal = min( bestVal, value) 
-//  //        beta = min( beta, bestVal)
-//  //        if beta <= alpha:
-//  //            break
-//  //    return bestVal
-
-
-// 	//iterates through all children
-// 	double min_heuristic = numeric_limits<double>::max(); // max value
-// 	for(int x = 0; x < ptr->next_index; x++)
-// 	{
-// 		double h = getMaxHeuristic(start, ptr->next[x], alpha, beta, depth_left--);
-// 		if(h < min_heuristic)
-// 			min_heuristic = h;
-
-// 		if(min_heuristic < beta)
-// 			beta = min_heuristic;
-
-// 		//prunes
-// 		if(beta <= alpha)
-// 			break;
-
-// 	}
-
-// 	ptr->h = min_heuristic;
-
-// 	return min_heuristic;
+	// bestVal = +INFINITY 
+ //    for each child node :
+ //        value = minimax(node, depth+1, true, alpha, beta)
+ //        bestVal = min( bestVal, value) 
+ //        beta = min( beta, bestVal)
+ //        if beta <= alpha:
+ //            break
+ //    return bestVal
 
 
-// }
+	//iterates through all children
+	double min_heuristic = numeric_limits<double>::max(); // max value
+	for(int x = 0; x < numChildren(ptr); x++)
+	{
+		double h = getMaxHeuristic(start, ptr->next[x], alpha, beta, depth_left-1);
+		if(h < min_heuristic)
+			min_heuristic = h;
 
-// //max portion of Minimax
-// double Tree::getMaxHeuristic(node* start, node * ptr, double alpha /* starts as -INFINITY */, double beta /* starts as INFINITY */, int depth_left)
-// {
-// 	double cur_heuristic = -1;
+		if(min_heuristic < beta)
+			beta = min_heuristic;
+
+		//prunes
+		if(beta <= alpha)
+			break;
+
+	}
+
+	ptr->h = min_heuristic;
+
+	return min_heuristic;
+
+
+}
+
+//max portion of Minimax
+double Tree::getMaxHeuristic(node* start, node * ptr, double alpha /* starts as -INFINITY */, double beta /* starts as INFINITY */, int depth_left)
+{
+	double cur_heuristic = -1;
 	
-// 	//if has no children
-// 	if(ptr->next_index == 0 || depth_left<=0)
-// 	{
-// 		cur_heuristic = calculateHeuristic(start, ptr);
-// 		ptr->h = cur_heuristic;
+	//if has no children
+	if(numChildren(ptr) == 0 || depth_left<=0)
+	{
+		cur_heuristic = calculateHeuristic(start, ptr);
+		ptr->h = cur_heuristic;
 
-// 		return cur_heuristic;
-// 	}
+		return cur_heuristic;
+	}
 
-// 	// bestVal = -INFINITY 
-//  //    for each child node :
-//  //        value = minimax(node, depth+1, false, alpha, beta)
-//  //        bestVal = max( bestVal, value) 
-//  //        alpha = max( alpha, bestVal)
-//  //        if beta <= alpha:
-//  //            break
-//  //    return bestVal
+	// bestVal = -INFINITY 
+ //    for each child node :
+ //        value = minimax(node, depth+1, false, alpha, beta)
+ //        bestVal = max( bestVal, value) 
+ //        alpha = max( alpha, bestVal)
+ //        if beta <= alpha:
+ //            break
+ //    return bestVal
 
 
-// 	//iterates through all children
-// 	double max_heuristic = numeric_limits<double>::lowest(); // minimum value
-// 	for(int x = 0; x < ptr->next_index; x++)
-// 	{
-// 		double h = getMinHeuristic(start, ptr->next[x], alpha, beta, depth_left--);
-// 		if(h > max_heuristic)
-// 			max_heuristic = h;
+	//iterates through all children
+	double max_heuristic = numeric_limits<double>::lowest(); // minimum value
+	for(int x = 0; x < numChildren(ptr); x++)
+	{
+		double h = getMinHeuristic(start, ptr->next[x], alpha, beta, depth_left-1);
+		if(h > max_heuristic)
+			max_heuristic = h;
 
-// 		if(max_heuristic > alpha)
-// 			alpha = max_heuristic;
+		if(max_heuristic > alpha)
+			alpha = max_heuristic;
 
-// 		//prune the rest
-// 		if(beta <= alpha)
-// 			break;
+		//prune the rest
+		if(beta <= alpha)
+			break;
 
-// 	}
-// 	ptr->h = max_heuristic;
+	}
+	ptr->h = max_heuristic;
 
-// 	return max_heuristic;
-// }
+	return max_heuristic;
+}
 
 //returns heuristic for specified pointer
 double Tree::calculateHeuristic(node* start, node* ptr)
@@ -426,6 +441,11 @@ double Tree::calculateHeuristic(node* start, node* ptr)
 
 	double player_stability_score = board_obj.getPieceStabilityScore(ptr->board, player_piece);
 	double AI_stability_score = board_obj.getPieceStabilityScore(ptr->board, AI_piece);
+
+	//runs Monte-carlo tree search
+	monteCarlo(ptr, 100);
+	double MCTS_ratio = 100 - ((double)ptr->num_wins/(double)ptr->num_plays)*100;
+
 
 
 
@@ -630,6 +650,8 @@ double Tree::calculateHeuristic(node* start, node* ptr)
 					 weights[weight_index][4]*(player_stability_score - AI_stability_score) + 
 					 weights[weight_index][5]*(good - bad);
 
+		// heuristic = MCTS_ratio;
+
 		// heuristic =  weights[0]*(player_count - AI_count) + 
 		// 			 weights[1]*(player_score - AI_score) + 
 		// 			 weights[2]*(smallest_num_player_moves - smallest_num_AI_moves);
@@ -643,7 +665,7 @@ double Tree::calculateHeuristic(node* start, node* ptr)
 			// 		 weights[5]*(good - bad);
 
 
-		// heuristic =  weights[0]*(player_count-AI_count);
+		// heuristic =  (player_count-AI_count);
 		// heuristic =  weights[0][1]*(player_score-AI_score);
 
 		// heuristic =  weights[0]*(player_count-AI_count) + 
@@ -661,19 +683,20 @@ double Tree::calculateHeuristic(node* start, node* ptr)
 		// heuristic = (player_stability_score - AI_stability_score);
 
 		// moves randomly
-		heuristic = 0;
+		// heuristic = 0;
 	}
 	//good heuristic
 	else
 	{
-		double weights[3][6] = {
+		double weights[4][7] = {
 			//levels 0-40
 			{	0 /*piece count*/, 
 				3 /*scores*/, 
 				10 /*mobility*/, 
 				0 /*potential mobility*/, 
-				3 /*stability*/,
-				1 /*reinforcement*/
+				5 /*stability*/,
+				1 /*reinforcement*/, 
+				1 /*MCTS*/
 			},
 			//levels 40-50
 			{	0 /*piece count*/, 
@@ -681,15 +704,26 @@ double Tree::calculateHeuristic(node* start, node* ptr)
 				10 /*mobility*/, 
 				0 /*potential mobility*/, 
 				1.5 /*stability*/,
-				1 /*reinforcement*/
+				1 /*reinforcement*/, 
+				1 /*MCTS*/
 			},
-			//levels 50-60
-			{	0 /*piece count*/, 
+			//levels 50-55
+			{	1 /*piece count*/, 
 				1 /*scores*/, 
-				20 /*mobility*/, 
+				10 /*mobility*/, 
+				0 /*potential mobility*/, 
+				1 /*stability*/,
+				1 /*reinforcement*/, 
+				1 /*MCTS*/
+			},
+			//levels 55-60
+			{	3 /*piece count*/, 
+				1 /*scores*/, 
+				10 /*mobility*/, 
 				0 /*potential mobility*/, 
 				0 /*stability*/,
-				1 /*reinforcement*/
+				0 /*reinforcement*/, 
+				3 /*MCTS*/
 			}
 		};
 
@@ -729,10 +763,12 @@ double Tree::calculateHeuristic(node* start, node* ptr)
 		int weight_index = 0;
 		if(level <= 40)
 			weight_index = 0;
-		else if(level<=50)
+		else if(level <= 50)
 			weight_index = 1;
-		else
+		else if(level <= 55)
 			weight_index = 2;
+		else
+			weight_index = 3;
 
 
 		 // heuristic =  weights[weight_index][0]*(player_count - AI_count) + 
@@ -746,11 +782,12 @@ double Tree::calculateHeuristic(node* start, node* ptr)
 					 weights[weight_index][1]*(player_score - AI_score) + 
 					 weights[weight_index][2]*(player_mobility - AI_mobility) + 
 					 weights[weight_index][3]*(player_potential_mobility - AI_potential_mobility) + 
-					 weights[weight_index][4]*(player_stability_score - AI_stability_score); 
-					 // weights[weight_index][5]*(good - bad);
+					 weights[weight_index][4]*(player_stability_score - AI_stability_score) + 
+					 weights[weight_index][5]*(good - bad) + 
+					 weights[weight_index][6]*(-1*MCTS_ratio);
 
 
-		// heuristic = 0;
+		// heuristic = weights[weight_index][6]*(-1*MCTS_ratio);
 
 		// heuristic = (player_stability_score - AI_stability_score);
 
@@ -951,6 +988,11 @@ void Tree::printNode(node * ptr, int indents /*default is 0 */)
 	cout<<"Num next nodes: "<<numChildren(ptr)<<endl;
 	cout<<"Heuristic: "<<ptr->h<<endl;
 	cout<<"Reinforcement: (Good: "<<ptr->good<<", Bad: "<<ptr->bad<<")"<<endl;
+	cout<<"Monte carlo results: ("<<ptr->num_wins<<", "<<ptr->num_plays<<") ";
+	if(ptr->num_plays > 0)
+		cout<<(((double)ptr->num_wins/(double)ptr->num_plays)*100)<<endl;
+	else
+		cout<<endl;
 }
 
 char Tree::getOtherPiece(char piece)

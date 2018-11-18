@@ -52,6 +52,10 @@ class Tree
 			float good = 0;
 			float bad = 0;
 
+			//for Monte Carlo Tree Search
+			int num_wins = 0;
+			int num_plays = 0;
+
 			//indices for children
 			// short next_index = 0;
 
@@ -100,6 +104,7 @@ class Tree
 		void newNode(node * ptr, char (&new_board)[size+1][size+1], char piece);
 
 		void determinePossibleMoves(node* ptr, char piece);
+		void monteCarlo(node* ptr, int num_runs);
 		double negamax(node* start, node* ptr, int depth_left, double alpha, double beta, int is_maximizing);
 		double getMinHeuristic(node* start, node * ptr, double alpha, double beta, int depth_left);
 		double getMaxHeuristic(node* start, node * ptr, double alpha, double beta, int depth_left);
