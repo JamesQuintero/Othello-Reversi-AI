@@ -1,0 +1,17 @@
+Control
+3.7GB to 14.5GB - 17M nodes expanded
+
+Removed mobility and potential mobility floats from node struct
+3.7GB to 14.5GB - 19M nodes expanded
+
+Replaced 2d char pointer array with 2d char array in node struct
+4.7GB to 13.5GB - 28M nodes expanded
+4.7GB to 13.6GB - 28M nodes expanded
+
+
+node pointer array next, with size, size*size.
+4.6GB to 14.5GB - 18M nodes expanded
+
+node pointer vector
+5.4GB to 9.5GB - 28M nodes expanded
+5.0GB to 15GB - 70M nodes expanded
