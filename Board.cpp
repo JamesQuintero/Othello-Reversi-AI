@@ -770,14 +770,14 @@ void Board::printBoard(char (&board)[size+1][size+1], int num_indents)
         for(int y = 0; y < size; y++)
         {
             if(board[y][x]=='1')
-                cout<<" B ";
-                // cout<<"[B]";
+                // cout<<" B ";
+                cout<<"[B]";
             else if(board[y][x]=='2')
-                cout<<" W ";
-                // cout<<"[W]";
+                // cout<<" W ";
+                cout<<"[W]";
             else
-                cout<<" . ";
-                // cout<<"[ ]";
+                // cout<<" . ";
+                cout<<"[ ]";
         }
         cout<<endl;
     }

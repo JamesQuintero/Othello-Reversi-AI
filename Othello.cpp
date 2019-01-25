@@ -352,11 +352,11 @@ bool Othello::playersMove(int player_type)
 			for(int x = 0; x < possible_moves.size(); x++)
 			{
 				//prints string notation, ex: c3
-				// string notation = convert_to_notation(possible_moves[x][0], possible_moves[x][1]);
-				// cout<<notation<<endl;	
+				string notation = convert_to_notation(possible_moves[x][0], possible_moves[x][1]);
+				cout<<notation<<endl;	
 
-				//prints coordinates
-				cout<<"("<<possible_moves[x][0]<<", "<<possible_moves[x][1]<<")"<<endl;
+				// //prints coordinates
+				// cout<<"("<<possible_moves[x][0]<<", "<<possible_moves[x][1]<<")"<<endl;
 			}
 			cout<<endl;
 		}
@@ -366,21 +366,21 @@ bool Othello::playersMove(int player_type)
 		//// Comment this if you want the player to move randomly ////
 		if(player_type==0)
 		{
-			// cout<<"Where to move? (ex: c3): ";
-			// cin>>choice;
+			cout<<"Where to move? (ex: c3): ";
+			cin>>choice;
 
-			// int* coordinates = new int[2];
-			// convert_to_coordinates(choice, coordinates);
+			int* coordinates = new int[2];
+			convert_to_coordinates(choice, coordinates);
 
-			int i = 0;
-			int j = 0;
-			cout<<"Where to move? (i,j) "<<endl;
-			cout<<"i: ";
-			cin>>i;
-			cout<<"j: ";
-			cin>>j;
+			// int i = 0;
+			// int j = 0;
+			// cout<<"Where to move? (i,j) "<<endl;
+			// cout<<"i: ";
+			// cin>>i;
+			// cout<<"j: ";
+			// cin>>j;
 
-			int coordinates[2] = {i, j};
+			// int coordinates[2] = {i, j};
 
 
 			//adds to global moves list
