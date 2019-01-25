@@ -1,4 +1,7 @@
-# Othello-AI
+# Othello-Reversi-AI
+
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/1ea791cc9c35459e89aa29e76d4d728d)](https://www.codacy.com/app/JamesQuintero/Othello-Reversi-AI?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=JamesQuintero/Othello-Reversi-AI&amp;utm_campaign=Badge_Grade)
+
 Very good AI that can play Othello/Reversi board game.
 
 ![Preview](./documents/Othello%20board.png)
